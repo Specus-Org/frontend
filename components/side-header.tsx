@@ -1,12 +1,23 @@
 'use client';
 
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Menu, X } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 import { useState } from 'react';
+import { Menu, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 export function SiteHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+
+  const navItems = [
+    { href: '/about', label: 'About' },
+    { href: '/solutions', label: 'Solutions' },
+    { href: '/data-sources', label: 'Data Sources' },
+    { href: '/team', label: 'Team' },
+    { href: '/contact', label: 'Contact' },
+  ];
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
@@ -17,37 +28,24 @@ export function SiteHeader() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            <Link
-              href="/about"
-              className="text-sm font-medium hover:text-muted-foreground transition-colors"
-            >
-              About
-            </Link>
-            <Link
-              href="/solutions"
-              className="text-sm font-medium hover:text-muted-foreground transition-colors"
-            >
-              Solutions
-            </Link>
-            <Link
-              href="/data-sources"
-              className="text-sm font-medium hover:text-muted-foreground transition-colors"
-            >
-              Data Sources
-            </Link>
-            <Link
-              href="/team"
-              className="text-sm font-medium hover:text-muted-foreground transition-colors"
-            >
-              Team
-            </Link>
-            <Link
-              href="/contact"
-              className="text-sm font-medium hover:text-muted-foreground transition-colors"
-            >
-              Contact
-            </Link>
+          <nav className="hidden md:flex items-center space-x-6">
+            {navItems.map(({ href, label }) => {
+              const isActive = pathname === href;
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  className={cn(
+                    'text-sm font-medium transition-colors border-b-2 border-transparent py-0.5',
+                    isActive
+                      ? 'text-primary border-primary'
+                      : 'text-muted-foreground hover:text-foreground',
+                  )}
+                >
+                  {label}
+                </Link>
+              );
+            })}
           </nav>
 
           <div className="hidden md:flex items-center space-x-4">
@@ -70,27 +68,24 @@ export function SiteHeader() {
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
           <nav className="md:hidden py-4 space-y-4 border-t">
-            <Link href="/about" className="block text-sm font-medium hover:text-muted-foreground">
-              About
-            </Link>
-            <Link
-              href="/solutions"
-              className="block text-sm font-medium hover:text-muted-foreground"
-            >
-              Solutions
-            </Link>
-            <Link
-              href="/data-sources"
-              className="block text-sm font-medium hover:text-muted-foreground"
-            >
-              Data Sources
-            </Link>
-            <Link href="/team" className="block text-sm font-medium hover:text-muted-foreground">
-              Team
-            </Link>
-            <Link href="/contact" className="block text-sm font-medium hover:text-muted-foreground">
-              Contact
-            </Link>
+            {navItems.map(({ href, label }) => {
+              const isActive = pathname === href;
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  className={cn(
+                    'block text-sm font-medium rounded-md px-1 py-2',
+                    isActive
+                      ? 'bg-muted text-primary'
+                      : 'text-foreground hover:text-muted-foreground',
+                  )}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {label}
+                </Link>
+              );
+            })}
             <div className="flex flex-col space-y-2 pt-4">
               <Button variant="ghost" size="sm">
                 Sign In
