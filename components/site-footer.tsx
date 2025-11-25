@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Mail, Linkedin, Twitter } from 'lucide-react';
 
 export function SiteFooter() {
@@ -7,9 +8,16 @@ export function SiteFooter() {
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary">
-                <span className="text-lg font-bold text-primary-foreground">PL</span>
+            <div className="flex items-center space-x-3">
+              <div className="relative h-10 w-10">
+                <Image
+                  src="/procurelens_logo.png"
+                  alt="Procure Lens logo"
+                  fill
+                  sizes="40px"
+                  className="object-contain"
+                  priority
+                />
               </div>
               <span className="text-lg font-semibold">Procure Lens</span>
             </div>
