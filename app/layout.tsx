@@ -1,12 +1,18 @@
 import type React from 'react';
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Rethink_Sans } from 'next/font/google';
 import './globals.css';
+import { ThemeProvider } from '@/components/theme-provider';
+import Navbar from '@/components/navbar';
+import Footer from '@/components/footer';
 
-const inter = Inter({ subsets: ['latin'] });
+const rethinkSans = Rethink_Sans({
+  subsets: ['latin'],
+  variable: '--font-rethink-sans',
+});
 
 export const metadata: Metadata = {
-  title: 'Procure Lens - Procurement Intelligence & Compliance Platform',
+  title: 'Specus - Procurement Intelligence & Compliance Platform',
   description:
     'Advanced procurement intelligence platform providing sanctions screening, AML compliance, and vendor risk assessment for informed decision-making.',
   generator: 'v0.app',
@@ -53,8 +59,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`font-sans antialiased ${inter.className}`}>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`font-sans antialiased ${rethinkSans.variable}`}>
+        <ThemeProvider defaultTheme="light" forcedTheme="light" disableTransitionOnChange>
+          <Navbar />
+          <main className="rounded-t-xl rounded-b-xl border-t border-b">{children}</main>
+          <Footer />
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
