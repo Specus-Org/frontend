@@ -102,16 +102,16 @@ export default function AMLSearchPage(): React.ReactElement {
           </span>
         </div>
 
-        {/* <div>
-          <div className="flex flex-row mt-8 gap-6 justify-start items-start">
+        <div>
+          <div className="flex flex-col sm:flex-row mt-8 gap-6 justify-start items-start">
             <Image src={'/images/img_individual.webp'} width={160} height={160} alt="Image type" />
 
-            <div className="space-y-3">
+            <div className="space-y-3 overflow-hidden">
               {bio.details.map((detail) => (
-                <div key={detail.label} className="flex flex-row gap-2">
-                  <p className="w-[160px] text-lg text-muted-foreground">{detail.label}</p>
-                  <span>:</span>
-                  <p className="text-lg text-foreground">{detail.value}</p>
+                <div key={detail.label} className="flex flex-col sm:flex-row sm:gap-2">
+                  <p className="shrink-0 sm:w-[160px] text-base sm:text-lg text-muted-foreground">{detail.label}</p>
+                  <span className="hidden sm:inline">:</span>
+                  <p className="text-base sm:text-lg text-foreground wrap-break-word">{detail.value}</p>
                 </div>
               ))}
             </div>
@@ -122,7 +122,7 @@ export default function AMLSearchPage(): React.ReactElement {
           <h1 className="text-xl font-semibold">Listed In</h1>
           <div className="flex flex-wrap mt-2 max-w-2xl gap-y-3">
             {bio.listed_in.map((item) => (
-              <div key={item.label} className="flex flex-row gap-4 items-center w-1/2">
+              <div key={item.label} className="flex flex-row gap-4 items-center w-full sm:w-1/2">
                 <picture>
                   <source
                     type="image/webp"
@@ -160,7 +160,7 @@ export default function AMLSearchPage(): React.ReactElement {
           <h1 className="text-xl font-semibold">Documents</h1>
           <div className="flex flex-wrap mt-2 max-w-2xl gap-y-3">
             {bio.documents.map((item) => (
-              <div key={item.name} className="flex flex-row gap-4 items-center w-1/2">
+              <div key={item.name} className="flex flex-row gap-4 items-center w-full sm:w-1/2">
                 <FileText />
 
                 <div>
@@ -178,13 +178,13 @@ export default function AMLSearchPage(): React.ReactElement {
               </div>
             ))}
           </div>
-        </div> */}
+        </div>
 
-        <div className="flex flex-row mt-8 gap-6 justify-start items-center max-w-3xl">
-          <Image src={'/images/img_not_found.webp'} width={160} height={160} alt="Image type" />
+        <div className="flex flex-col sm:flex-row mt-8 gap-6 justify-start items-center max-w-3xl">
+          <Image src={'/images/img_not_found.webp'} width={160} height={160} alt="Image type" className="shrink-0" />
 
-          <div className="space-y-1">
-            <h3 className="text-xl font-semibold">No matches found in the screened sources</h3>
+          <div className="space-y-1 text-center sm:text-left">
+            <h3 className="text-lg sm:text-xl font-semibold">No matches found in the screened sources</h3>
             <p className="text-sm">
               “Siti Nurhaliza” was not found on the screened sanctions lists. No further action is
               required based on the current screening results.

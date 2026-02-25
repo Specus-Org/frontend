@@ -47,9 +47,9 @@ export default function AMLPage(): React.ReactNode {
           </Button>
         </div>
 
-        <div className="flex flex-col gap-2 p-3 lg:flex-row lg:items-center">
-          <Info className="w-4 h-4 text-amber-600" />
-          <p>
+        <div className="flex flex-row gap-2 p-3 items-start sm:items-center">
+          <Info className="w-4 h-4 text-amber-600 shrink-0 mt-1 sm:mt-0" />
+          <p className="text-sm sm:text-base">
             Results are checked against the available{' '}
             <Dialog>
               <DialogTrigger className="cursor-pointer text-blue-700 underline underline-offset-4 decoration-blue-700 hover:opacity-95 transition-all">

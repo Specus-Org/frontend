@@ -75,7 +75,7 @@ export default function Navbar(): React.ReactNode {
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="flex flex-row items-center">
+        <div className="hidden md:flex flex-row items-center">
           {navItems.map((navigation, index) => (
             <div key={index} className="inline-flex flex-col gap-3">
               <Link
