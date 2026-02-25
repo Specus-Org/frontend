@@ -4,7 +4,7 @@
 import Image from 'next/image';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { Menu, Search, X } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from './ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from './ui/sheet';
@@ -36,8 +36,6 @@ export default function Navbar(): React.ReactNode {
   const handleMenuItemClick = () => {
     setIsOpen(false);
   };
-
-  const activeTab = navItems.find((item) => path.startsWith(item.href))?.value ?? '';
 
   const [query, setQuery] = useState('');
 

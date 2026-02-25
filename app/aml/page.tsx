@@ -4,17 +4,18 @@ import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { CircleAlert, FileWarningIcon, Info, MessageCircleWarning, Search } from 'lucide-react';
+import { Info, Search } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 export default function AMLPage(): React.ReactNode {
   const [query, setQuery] = useState('');
+  const router = useRouter();
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-4 py-16 text-center sm:px-6 sm:py-24 md:px-8 md:py-32 lg:py-48">
@@ -22,7 +23,7 @@ export default function AMLPage(): React.ReactNode {
         Check a Name Against Global Sanctions Lists
       </h1>
       <p className="text-foreground mx-auto max-w-5xl text-base font-normal sm:text-lg md:text-xl lg:text-2xl">
-        Enter an individual or entity name to see matches across global sanctions databases.
+        Enter an individsl or entity name to see matches across global sanctions databases.
       </p>
 
       {/* Search Card */}
@@ -37,7 +38,9 @@ export default function AMLPage(): React.ReactNode {
           />
 
           <Button
-            onClick={() => {}}
+            onClick={() => {
+              router.push('/aml/search');
+            }}
             className="bg-blue-900 hover:bg-brand/90 absolute top-1/2 right-2 h-7 w-7 -translate-y-1/2 transition-all duration-200 sm:right-2.5 sm:h-8 sm:w-8"
           >
             <Search className="h-4 w-4" />
@@ -57,20 +60,35 @@ export default function AMLPage(): React.ReactNode {
                   <DialogTitle>Sanction Sources</DialogTitle>
                 </DialogHeader>
                 <div className="flex flex-col gap-3 mt-6">
-                  <div className="flex flex-row gap-4">
-                    <Link href="https://google.com">Indonesia List</Link>
-                  </div>
-                  <div className="flex flex-row gap-4">
-                    <Link href="https://google.com">Indonesia List</Link>
-                  </div>
-                  <div className="flex flex-row gap-4">
-                    <Link href="https://google.com">Indonesia List</Link>
-                  </div>
-                  <div className="flex flex-row gap-4">
-                    <Link href="https://google.com">Indonesia List</Link>
-                  </div>
-                  <div className="flex flex-row gap-4">
-                    <Link href="https://google.com">Indonesia List</Link>
+                  <div className="flex flex-row gap-4 items-center">
+                    <picture>
+                      <source
+                        type="image/webp"
+                        srcSet="https://flagcdn.com/h20/id.webp,
+                        https://flagcdn.com/h40/id.webp 2x,
+                        https://flagcdn.com/h60/id.webp 3x"
+                      />
+                      <source
+                        type="image/png"
+                        srcSet="https://flagcdn.com/h20/id.png,
+                        https://flagcdn.com/h40/id.png 2x,
+                        https://flagcdn.com/h60/id.png 3x"
+                      />
+                      <img
+                        src="https://flagcdn.com/h40/id.png"
+                        className="rounded-xs bg-black border"
+                        height="20"
+                        alt="Ukraine"
+                      />
+                    </picture>
+
+                    <Link
+                      href="https://google.com"
+                      target="_blank"
+                      className="text-blue-700 hover:opacity-95 text-lg underline underline-offset-4 decoration-blue-700 py-1"
+                    >
+                      Indonesia List
+                    </Link>
                   </div>
                 </div>
               </DialogContent>
