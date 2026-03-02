@@ -1,4 +1,4 @@
-.PHONY: dev build start lint format clean install
+.PHONY: dev build start lint format clean install fetch-openapi generate-api api
 
 # Development
 dev:
@@ -23,6 +23,17 @@ format:
 # Install dependencies
 install:
 	npm install
+
+# Fetch OpenAPI spec from private backend repo
+fetch-openapi:
+	bash scripts/fetch-openapi.sh
+
+# Generate TypeScript client from OpenAPI spec
+generate-api: fetch-openapi
+	npx openapi-ts
+
+# Fetch spec and generate client (shorthand)
+api: generate-api
 
 # Clean build artifacts and node_modules
 clean:
