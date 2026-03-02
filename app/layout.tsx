@@ -1,4 +1,5 @@
 import type React from 'react';
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { Rethink_Sans } from 'next/font/google';
 import './globals.css';
@@ -62,7 +63,9 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`font-sans antialiased ${rethinkSans.variable}`}>
         <ThemeProvider defaultTheme="light" forcedTheme="light" disableTransitionOnChange>
-          <Navbar />
+          <Suspense>
+            <Navbar />
+          </Suspense>
           <main className="rounded-t-xl rounded-b-xl border-t border-b">{children}</main>
           <Footer />
         </ThemeProvider>

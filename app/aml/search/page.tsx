@@ -11,9 +11,17 @@ import { screeningSearch } from '@/services/generated';
 import type { ScreeningSearchResult } from '@/services/generated';
 import { Search } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 
 export default function AMLSearchPage(): React.ReactElement {
+  return (
+    <Suspense fallback={<SearchSkeleton />}>
+      <AMLSearchContent />
+    </Suspense>
+  );
+}
+
+function AMLSearchContent(): React.ReactElement {
   const searchParams = useSearchParams();
   const q = searchParams.get('q') ?? '';
   const [query, setQuery] = useState(q);
