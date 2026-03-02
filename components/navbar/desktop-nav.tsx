@@ -22,7 +22,7 @@ export default function DesktopNav({ items, currentPath }: DesktopNavProps): Rea
           </Link>
           <div
             className={`h-0.5 w-full rounded-md ${
-              currentPath === navigation.href ? 'bg-blue-900' : 'bg-transparent'
+              currentPath.startsWith(navigation.href) ? 'bg-blue-900' : 'bg-transparent'
             }`}
           />
         </div>

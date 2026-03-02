@@ -38,12 +38,6 @@ export default function Navbar(): React.ReactNode {
     router.push(`/blacklist/search${searchQuery ? `?${searchQuery}` : ''}`);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>): void => {
-    if (e.key === 'Enter') {
-      handleSearchClicked();
-    }
-  };
-
   return (
     <header className="w-full">
       <nav className="m-auto flex max-w-7xl flex-row items-center justify-between p-4 sm:p-6 md:px-8 md:py-6">
@@ -59,12 +53,7 @@ export default function Navbar(): React.ReactNode {
         <DesktopNav items={navItems} currentPath={path} />
 
         {/* Mobile Navigation */}
-        <MobileNav
-          items={navItems}
-          currentPath={path}
-          isOpen={isOpen}
-          onOpenChange={setIsOpen}
-        />
+        <MobileNav items={navItems} currentPath={path} isOpen={isOpen} onOpenChange={setIsOpen} />
       </nav>
     </header>
   );
