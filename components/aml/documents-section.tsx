@@ -1,9 +1,8 @@
-import type { DocumentItem } from '@/data/aml-mock';
 import { FileText } from 'lucide-react';
 import Link from 'next/link';
 
 interface DocumentsSectionProps {
-  documents: DocumentItem[];
+  documents: any[];
 }
 
 export function DocumentsSection({ documents }: DocumentsSectionProps) {
