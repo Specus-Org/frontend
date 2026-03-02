@@ -30,8 +30,12 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files
 .env*
+!.env.example
+
+# OpenAPI generated files (regenerate with `make api`)
+openapi.yaml
 
 # vercel
 .vercel

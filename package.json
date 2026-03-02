@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "fetch-openapi": "bash scripts/fetch-openapi.sh",
+    "generate-api": "openapi-ts",
+    "api": "npm run fetch-openapi && npm run generate-api"
   },
   "dependencies": {
     "@radix-ui/react-label": "^2.1.8",
@@ -23,6 +26,7 @@
     "tailwind-merge": "^3.5.0"
   },
   "devDependencies": {
+    "@hey-api/openapi-ts": "0.93.0",
     "@tailwindcss/postcss": "^4.2.1",
     "@types/node": "^25.3.0",
     "@types/react": "^19.2.14",
