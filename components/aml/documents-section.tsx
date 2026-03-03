@@ -18,7 +18,7 @@ export function DocumentsSection({ documents }: DocumentsSectionProps) {
               <Link
                 href={'https://google.com'}
                 target="_blank"
-                className="text-blue-700 hover:opacity-95 text-lg underline underline-offset-4 decoration-blue-700 py-1"
+                className="text-blue-700 hover:opacity-95 text-base underline underline-offset-4 decoration-blue-700 py-1 sm:text-lg"
               >
                 {item.name}
               </Link>

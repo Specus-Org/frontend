@@ -61,14 +61,13 @@ export default function SanctionSourcesDialog(): React.ReactNode {
               </div>
             ))}
 
-          {error && (
-            <p className="text-sm text-red-600">Failed to load sources.</p>
-          )}
+          {error && <p className="text-sm text-red-600">Failed to load sources.</p>}
 
           {!loading &&
             !error &&
             sources.map((source) => {
               const code = source.country_code.toLowerCase();
+
               return (
                 <div key={source.id} className="flex flex-row gap-4 items-center">
                   <picture>
@@ -92,14 +91,12 @@ export default function SanctionSourcesDialog(): React.ReactNode {
                     <Link
                       href={source.source_url}
                       target="_blank"
-                      className="text-blue-700 hover:opacity-95 text-lg underline underline-offset-4 decoration-blue-700 py-1"
+                      className="text-blue-700 hover:opacity-95 text-base underline underline-offset-4 decoration-blue-700 py-1 sm:text-lg"
                     >
                       {source.name}
                     </Link>
                   ) : (
-                    <span className="text-black text-lg py-1">
-                      {source.name}
-                    </span>
+                    <span className="text-black text-base py-1 sm:text-lg">{source.name}</span>
                   )}
                 </div>
               );

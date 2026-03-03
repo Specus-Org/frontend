@@ -1,10 +1,6 @@
 'use client';
 
-import { BiographySection } from '@/components/aml/biography-section';
-import { DocumentsSection } from '@/components/aml/documents-section';
-import { ListedInSection } from '@/components/aml/listed-in-section';
 import { NoMatchesSection } from '@/components/aml/no-matches-section';
-import { SearchResultHeader } from '@/components/aml/search-result-header';
 import { SearchResultList } from '@/components/aml/search-result-list';
 import { Button } from '@/components/ui/button';
 import { screeningSearch } from '@/services/generated';
@@ -43,9 +39,13 @@ function AMLSearchContent(): React.ReactElement {
 
     screeningSearch({ query: { q } })
       .then((response) => {
-        if (!cancelled) {
-          setResults(response.data?.items ?? []);
+        if (cancelled) return;
+        const items = response.data?.items ?? [];
+        if (items.length === 1 && items[0].id) {
+          router.replace(`/aml/search/${items[0].id}`);
+          return;
         }
+        setResults(items);
       })
       .catch(() => {
         if (!cancelled) setError(true);
@@ -97,30 +97,11 @@ function AMLSearchContent(): React.ReactElement {
           <NoMatchesSection name={q} />
         )}
 
-        {!loading && !error && results.length === 1 && (
-          <SingleResult result={results[0]} />
-        )}
-
-        {!loading && !error && results.length > 1 && (
+        {!loading && !error && results.length > 0 && (
           <SearchResultList entities={results} />
         )}
       </div>
     </div>
-  );
-}
-
-function SingleResult({ result }: { result: ScreeningSearchResult }) {
-  const sanctions = result.sanctions_sources ?? [];
-
-  return (
-    <>
-      <SearchResultHeader name={result.caption} status="Listed" />
-      <BiographySection
-        entityType={result.entity_type}
-        typeFields={result.type_fields}
-      />
-      {sanctions.length > 0 && <ListedInSection items={sanctions} />}
-    </>
   );
 }
 
@@ -129,7 +110,7 @@ function SearchSkeleton() {
     <div className="space-y-4 animate-pulse">
       {Array.from({ length: 3 }).map((_, i) => (
         <div key={i} className="flex items-center gap-4 rounded-2xl bg-slate-50 p-4">
-          <div className="h-24 w-24 rounded-lg bg-gray-200 shrink-0" />
+          <div className="h-16 w-16 rounded-lg bg-gray-200 shrink-0 sm:h-24 sm:w-24" />
           <div className="flex-1 space-y-3">
             <div className="h-5 w-48 rounded bg-gray-200" />
             <div className="h-4 w-32 rounded bg-gray-200" />

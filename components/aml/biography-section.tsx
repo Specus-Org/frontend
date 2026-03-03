@@ -1,3 +1,4 @@
+import { formatValue } from '@/lib/utils';
 import Image from 'next/image';
 
 interface BiographySectionProps {
@@ -24,7 +25,7 @@ export function BiographySection({ entityType, typeFields }: BiographySectionPro
   return (
     <div>
       <div className="flex flex-col sm:flex-row mt-8 gap-6 justify-start items-start">
-        <Image src={imageSrc} width={160} height={160} alt={entityType} />
+        <Image src={imageSrc} width={160} height={160} alt={entityType} className="h-24 w-24 sm:h-40 sm:w-40" />
 
         <div className="space-y-3 overflow-hidden">
           {entries.map(([key, value]) => (
@@ -34,7 +35,7 @@ export function BiographySection({ entityType, typeFields }: BiographySectionPro
               </p>
               <span className="hidden sm:inline">:</span>
               <p className="text-base sm:text-lg text-foreground wrap-break-word">
-                {String(value)}
+                {formatValue(value)}
               </p>
             </div>
           ))}
