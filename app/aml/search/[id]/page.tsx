@@ -81,26 +81,22 @@ export default function AMLEntityDetailPage(): React.ReactElement {
           </p>
         )}
 
-        {!loading && !error && entity && (
-          <EntityDetail entity={entity} />
-        )}
+        {!loading && !error && entity && <EntityDetail entity={entity} />}
       </div>
     </div>
   );
 }
 
 function EntityDetail({ entity }: { entity: ScreeningEntity }) {
-  const sanctionsSources = entity.sanctions
-    ?.map((s) => s.sanctions_list)
-    .filter((s): s is NonNullable<typeof s> => s != null) ?? [];
+  const sanctionsSources =
+    entity.sanctions
+      ?.map((s) => s.sanctions_list)
+      .filter((s): s is NonNullable<typeof s> => s != null) ?? [];
 
   return (
     <>
       <SearchResultHeader name={entity.caption} status="Listed" />
-      <BiographySection
-        entityType={entity.entity_type}
-        typeFields={entity.type_fields}
-      />
+      <BiographySection entityType={entity.entity_type} typeFields={entity.type_fields} />
       {sanctionsSources.length > 0 && <ListedInSection items={sanctionsSources} />}
     </>
   );
