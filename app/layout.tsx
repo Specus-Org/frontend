@@ -1,11 +1,14 @@
 import type React from 'react';
 import { Suspense } from 'react';
 import type { Metadata } from 'next';
-import { Rethink_Sans } from 'next/font/google';
+import { Rethink_Sans, Geist } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import Navbar from '@/components/navbar';
 import Footer from '@/components/footer';
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const rethinkSans = Rethink_Sans({
   subsets: ['latin'],
@@ -60,7 +63,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={cn("font-sans", geist.variable)}>
       <body className={`font-sans antialiased ${rethinkSans.variable}`}>
         <ThemeProvider defaultTheme="light" forcedTheme="light" disableTransitionOnChange>
           <Suspense>

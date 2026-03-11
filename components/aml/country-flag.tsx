@@ -21,7 +21,7 @@ export function CountryFlag({ countryCode, alt }: CountryFlagProps) {
       <img
         src={`https://flagcdn.com/h40/${countryCode}.png`}
         className="rounded-sm bg-black border"
-        height="20"
+        height="40"
         alt={alt}
       />
     </picture>
