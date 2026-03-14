@@ -6,9 +6,9 @@ import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import Navbar from '@/components/navbar';
 import Footer from '@/components/footer';
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
 const rethinkSans = Rethink_Sans({
   subsets: ['latin'],
@@ -63,7 +63,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={cn("font-sans", geist.variable)}>
+    <html lang="en" suppressHydrationWarning className={cn('font-sans', geist.variable)}>
       <body className={`font-sans antialiased ${rethinkSans.variable}`}>
         <ThemeProvider defaultTheme="light" forcedTheme="light" disableTransitionOnChange>
           <Suspense>
