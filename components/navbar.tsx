@@ -44,7 +44,7 @@ export default function Navbar(): React.ReactNode {
         <Link
           href="/"
           onClick={handleMenuItemClick}
-          className="text-blue-900 font-sans text-4xl font-semibold"
+          className="text-brand font-sans text-4xl font-semibold"
         >
           Specus
         </Link>
