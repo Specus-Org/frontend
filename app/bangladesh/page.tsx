@@ -9,6 +9,7 @@ import {
 } from '@/components/charts';
 import HorizontalDivider from '@/components/horizontal-divider';
 import { StatCard } from '@/components/insight/stat-card';
+import { ProfileAccordion } from '@/components/profiles';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { formatMoney, shortenNumber } from '@/lib/helper';
 
@@ -102,7 +103,7 @@ function BangladeshPage() {
       </p>
 
       <Tabs defaultValue="semua">
-        <TabsList className="mb-6 w-full justify-start gap-0 overflow-x-auto rounded-lg bg-secondary p-1">
+        <TabsList className="mb-6 w-full justify-start gap-0 overflow-hidden rounded-lg bg-secondary p-1">
           <TabsTrigger value="semua" className="h-auto cursor-pointer my-2 shadow-none">
             Summary
           </TabsTrigger>
@@ -187,7 +188,31 @@ function BangladeshPage() {
           <p>Test</p>
         </TabsContent>
         <TabsContent value="efisiensi-internal" className="mt-0 space-y-6">
-          <p>Test</p>
+          <ProfileAccordion
+            items={[
+              {
+                value: 'procuring-entity',
+                image: '/images/profiles/procuring-entity.svg',
+                title: 'Procuring Entity Profiles',
+                subtitle: 'A complete overview of all registered procuring entities.',
+                content: <p className="text-muted-foreground">Procuring entity data will appear here.</p>,
+              },
+              {
+                value: 'contractor',
+                image: '/images/profiles/contractor.svg',
+                title: 'Contractor Profiles',
+                subtitle: 'A complete overview of all registered contractors.',
+                content: <p className="text-muted-foreground">Contractor data will appear here.</p>,
+              },
+              {
+                value: 'district',
+                image: '/images/profiles/district.svg',
+                title: 'District Profiles',
+                subtitle: 'A complete overview of all registered districts.',
+                content: <p className="text-muted-foreground">District data will appear here.</p>,
+              },
+            ]}
+          />
         </TabsContent>
       </Tabs>
     </div>
