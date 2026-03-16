@@ -1,11 +1,15 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { CountryFlag } from '@/components/aml/country-flag';
 import {
   DoughnutChartSection,
+  DrillDownNetworkSection,
   LineChartSection,
+  NetworkNode,
   PieChartSection,
   VisualChartSection,
+  type DataPoint,
 } from '@/components/charts';
 import HorizontalDivider from '@/components/horizontal-divider';
 import { StatCard } from '@/components/insight/stat-card';
@@ -14,18 +18,8 @@ import { DataTable } from '@/components/ui/data-table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { formatMoney, shortenNumber } from '@/lib/helper';
 
-const procuringEntityData = [
-  { method: 'Credit Card', status: 'Paid', amount: 250.0 },
-  { method: 'PayPal', status: 'Pending', amount: 150.0 },
-  { method: 'Bank Transfer', status: 'Unpaid', amount: 350.0 },
-  { method: 'Credit Card', status: 'Paid', amount: 450.0 },
-  { method: 'PayPal', status: 'Paid', amount: 550.0 },
-  { method: 'Bank Transfer', status: 'Pending', amount: 200.0 },
-  { method: 'Credit Card', status: 'Unpaid', amount: 300.0 },
-  { method: 'Credit Card', status: 'Unpaid', amount: 300.0 },
-  { method: 'Credit Card', status: 'Unpaid', amount: 300.0 },
-  { method: 'Credit Card', status: 'Unpaid', amount: 300.0 },
-];
+// ─── column definitions stay here (contain render functions, not serialisable) ─
+type ProcuringEntityRow = { method: string; status: string; amount: number };
 
 const procuringEntityColumns = [
   { key: 'method' as const, header: 'Method' },
@@ -38,81 +32,60 @@ const procuringEntityColumns = [
   },
 ];
 
-// Vertical bar chart — -100 fills
-const durationChartData = [
-  { key: 'goods', value: 89_200_000_000_000, percentage: 35, barColor: '#dbeafe' },
-  { key: 'works', value: 112_500_000_000_000, percentage: 44, barColor: '#ede9fe' },
-  { key: 'services', value: 38_700_000_000_000, percentage: 15, barColor: '#fce7f3' },
-  { key: 'consultancy', value: 15_600_000_000_000, percentage: 6, barColor: '#fef3c7' },
-];
+// ─── fetched data shape ────────────────────────────────────────────────────────
+interface BangladeshData {
+  typeOfWork: DataPoint[];
+  byYear: DataPoint[];
+  pieTypeOfWork: DataPoint[];
+  monthlyTrend: DataPoint[];
+  procurementMethod: DataPoint[];
+  procuringEntity: ProcuringEntityRow[];
+  networkHierarchy: NetworkNode;
+}
 
-// Vertical bar chart — indigo-100 fill
-const statusChartData = [
-  { key: '2019', value: 32_400_000_000_000, percentage: 13, barColor: '#e0e7ff' },
-  { key: '2020', value: 41_800_000_000_000, percentage: 16, barColor: '#e0e7ff' },
-  { key: '2021', value: 48_200_000_000_000, percentage: 19, barColor: '#e0e7ff' },
-  { key: '2022', value: 52_600_000_000_000, percentage: 21, barColor: '#e0e7ff' },
-  { key: '2023', value: 56_000_000_000_000, percentage: 22, barColor: '#e0e7ff' },
-  { key: '2024', value: 25_000_000_000_000, percentage: 9, barColor: '#e0e7ff' },
-];
+const BASE = '/data/bangladesh';
 
-// Pie chart — bright -400 fills
-const pieTypeOfWorkData = [
-  { key: 'goods', value: 89_200_000_000_000, percentage: 35, barColor: '#60a5fa' },
-  { key: 'works', value: 112_500_000_000_000, percentage: 44, barColor: '#a78bfa' },
-  { key: 'services', value: 38_700_000_000_000, percentage: 15, barColor: '#f472b6' },
-  { key: 'consultancy', value: 15_600_000_000_000, percentage: 6, barColor: '#fbbf24' },
-];
+async function fetchBangladeshData(): Promise<BangladeshData> {
+  const [
+    typeOfWork,
+    byYear,
+    pieTypeOfWork,
+    monthlyTrend,
+    procurementMethod,
+    procuringEntity,
+    networkHierarchy,
+  ] = await Promise.all([
+    fetch(`${BASE}/chart-type-of-work.json`).then((r) => r.json()),
+    fetch(`${BASE}/chart-by-year.json`).then((r) => r.json()),
+    fetch(`${BASE}/chart-pie-type-of-work.json`).then((r) => r.json()),
+    fetch(`${BASE}/chart-monthly-trend.json`).then((r) => r.json()),
+    fetch(`${BASE}/chart-procurement-method.json`).then((r) => r.json()),
+    fetch(`${BASE}/table-procuring-entity.json`).then((r) => r.json()),
+    fetch(`${BASE}/network-hierarchy.json`).then((r) => r.json()),
+  ]);
 
-// Line chart — monthly contract value trend, indigo-400
-const monthlyContractData = [
-  { key: 'Jan', value: 18_500_000_000_000, percentage: 7, barColor: '#818cf8' },
-  { key: 'Feb', value: 21_200_000_000_000, percentage: 8, barColor: '#818cf8' },
-  { key: 'Mar', value: 19_800_000_000_000, percentage: 8, barColor: '#818cf8' },
-  { key: 'Apr', value: 24_100_000_000_000, percentage: 9, barColor: '#818cf8' },
-  { key: 'May', value: 22_700_000_000_000, percentage: 9, barColor: '#818cf8' },
-  { key: 'Jun', value: 26_300_000_000_000, percentage: 10, barColor: '#818cf8' },
-  { key: 'Jul', value: 28_900_000_000_000, percentage: 11, barColor: '#818cf8' },
-  { key: 'Aug', value: 31_400_000_000_000, percentage: 12, barColor: '#818cf8' },
-  { key: 'Sep', value: 27_600_000_000_000, percentage: 11, barColor: '#818cf8' },
-  { key: 'Oct', value: 29_800_000_000_000, percentage: 12, barColor: '#818cf8' },
-  { key: 'Nov', value: 23_500_000_000_000, percentage: 9, barColor: '#818cf8' },
-  { key: 'Dec', value: 20_200_000_000_000, percentage: 8, barColor: '#818cf8' },
-];
+  return {
+    typeOfWork,
+    byYear,
+    pieTypeOfWork,
+    monthlyTrend,
+    procurementMethod,
+    procuringEntity,
+    networkHierarchy,
+  };
+}
 
-// Doughnut chart — -100 fill + -400 stroke at 1px
-const procurementMethodData = [
-  {
-    key: 'Open Tender',
-    value: 148_000_000_000_000,
-    percentage: 58,
-    barColor: '#dbeafe',
-    strokeColor: '#60a5fa',
-  },
-  {
-    key: 'Limited Tender',
-    value: 61_000_000_000_000,
-    percentage: 24,
-    barColor: '#ede9fe',
-    strokeColor: '#a78bfa',
-  },
-  {
-    key: 'Direct Purchase',
-    value: 31_000_000_000_000,
-    percentage: 12,
-    barColor: '#fce7f3',
-    strokeColor: '#f472b6',
-  },
-  {
-    key: 'Request for Quotation',
-    value: 16_000_000_000_000,
-    percentage: 6,
-    barColor: '#fef3c7',
-    strokeColor: '#fbbf24',
-  },
-];
-
+// ─── page ──────────────────────────────────────────────────────────────────────
 function BangladeshPage() {
+  const [data, setData] = useState<BangladeshData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchBangladeshData()
+      .then(setData)
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
     <div className="px-4 py-16 text-center sm:px-6 sm:py-24 md:px-8 md:py-16 max-w-5xl mx-auto">
       <span className="inline-flex flex-row gap-1.5 py-2 px-3.5 justify-center border rounded-full mb-6">
@@ -146,6 +119,7 @@ function BangladeshPage() {
           </TabsTrigger>
         </TabsList>
 
+        {/* ── Summary ─────────────────────────────────────────────────────── */}
         <TabsContent value="semua" className="mt-0 space-y-6">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-end border-muted border rounded-xl">
             <StatCard
@@ -169,23 +143,22 @@ function BangladeshPage() {
             <VisualChartSection
               title="Total Contract Value by Type of Work"
               subtitle="Spending is distributed across different types of work."
-              loading={false}
-              data={durationChartData}
+              loading={loading}
+              data={data?.typeOfWork ?? []}
             />
-
             <VisualChartSection
               title="Total Contract Value by Year"
               subtitle="Procurement spending changes over time."
-              loading={false}
-              data={statusChartData}
+              loading={loading}
+              data={data?.byYear ?? []}
             />
           </div>
 
           <LineChartSection
             title="Monthly Contract Value Trend"
             subtitle="How procurement spending shifted across each month of the year."
-            loading={false}
-            data={monthlyContractData}
+            loading={loading}
+            data={data?.monthlyTrend ?? []}
             valueFormatter={formatMoney}
           />
 
@@ -193,25 +166,45 @@ function BangladeshPage() {
             <PieChartSection
               title="Total Contract Value by Type of Work"
               subtitle="Spending is distributed across different types of work."
-              loading={false}
-              data={pieTypeOfWorkData}
+              loading={loading}
+              data={data?.pieTypeOfWork ?? []}
             />
-
             <DoughnutChartSection
               title="Total Contract Value by Procurement Method"
               subtitle="Contracts are awarded using several procurement methods."
-              loading={false}
-              data={procurementMethodData}
+              loading={loading}
+              data={data?.procurementMethod ?? []}
               centerLabel={'256T\nTotal Value'}
             />
           </div>
         </TabsContent>
+
+        {/* ── Critical Analysis ────────────────────────────────────────────── */}
         <TabsContent value="kesempatan-pasar" className="mt-0 space-y-6">
           <p>Test</p>
         </TabsContent>
+
+        {/* ── Hierarchy Tree ───────────────────────────────────────────────── */}
         <TabsContent value="kompetisi" className="mt-0 space-y-6">
-          <p>Test</p>
+          {data?.networkHierarchy ? (
+            <DrillDownNetworkSection
+              title="Procurement Hierarchy Network"
+              subtitle="Explore how contract value is distributed across government agencies and their top contractors. Orange curves reveal companies operating across multiple agencies. Click any dashed-ring node to drill down."
+              loading={false}
+              data={data.networkHierarchy}
+              valueFormatter={formatMoney}
+            />
+          ) : (
+            <DrillDownNetworkSection
+              title="Procurement Hierarchy Network"
+              subtitle="Loading network data…"
+              loading={true}
+              data={{ id: 'root', label: 'Bangladesh', value: 0, percentage: 100, color: '#e0e7ff' }}
+            />
+          )}
         </TabsContent>
+
+        {/* ── Profiles ─────────────────────────────────────────────────────── */}
         <TabsContent value="efisiensi-internal" className="mt-0 space-y-6">
           <ProfileAccordion
             items={[
@@ -220,7 +213,12 @@ function BangladeshPage() {
                 image: null,
                 title: 'Procuring Entity Profiles',
                 subtitle: 'A complete overview of all registered procuring entities.',
-                content: <DataTable columns={procuringEntityColumns} data={procuringEntityData} />,
+                content: (
+                  <DataTable
+                    columns={procuringEntityColumns}
+                    data={data?.procuringEntity ?? []}
+                  />
+                ),
               },
               {
                 value: 'contractor',
