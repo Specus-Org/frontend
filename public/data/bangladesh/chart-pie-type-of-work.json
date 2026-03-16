@@ -1,0 +1,6 @@
+[
+  { "key": "goods",       "value": 89200000000000,  "percentage": 35, "barColor": "#60a5fa" },
+  { "key": "works",       "value": 112500000000000, "percentage": 44, "barColor": "#a78bfa" },
+  { "key": "services",    "value": 38700000000000,  "percentage": 15, "barColor": "#f472b6" },
+  { "key": "consultancy", "value": 15600000000000,  "percentage": 6,  "barColor": "#fbbf24" }
+]

@@ -1,0 +1,12 @@
+[
+  { "method": "Credit Card",   "status": "Paid",    "amount": 250.0 },
+  { "method": "PayPal",        "status": "Pending", "amount": 150.0 },
+  { "method": "Bank Transfer", "status": "Unpaid",  "amount": 350.0 },
+  { "method": "Credit Card",   "status": "Paid",    "amount": 450.0 },
+  { "method": "PayPal",        "status": "Paid",    "amount": 550.0 },
+  { "method": "Bank Transfer", "status": "Pending", "amount": 200.0 },
+  { "method": "Credit Card",   "status": "Unpaid",  "amount": 300.0 },
+  { "method": "Credit Card",   "status": "Unpaid",  "amount": 300.0 },
+  { "method": "Credit Card",   "status": "Unpaid",  "amount": 300.0 },
+  { "method": "Credit Card",   "status": "Unpaid",  "amount": 300.0 }
+]

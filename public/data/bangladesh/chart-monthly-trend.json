@@ -1,0 +1,14 @@
+[
+  { "key": "Jan", "value": 18500000000000, "percentage": 7,  "barColor": "#818cf8" },
+  { "key": "Feb", "value": 21200000000000, "percentage": 8,  "barColor": "#818cf8" },
+  { "key": "Mar", "value": 19800000000000, "percentage": 8,  "barColor": "#818cf8" },
+  { "key": "Apr", "value": 24100000000000, "percentage": 9,  "barColor": "#818cf8" },
+  { "key": "May", "value": 22700000000000, "percentage": 9,  "barColor": "#818cf8" },
+  { "key": "Jun", "value": 26300000000000, "percentage": 10, "barColor": "#818cf8" },
+  { "key": "Jul", "value": 28900000000000, "percentage": 11, "barColor": "#818cf8" },
+  { "key": "Aug", "value": 31400000000000, "percentage": 12, "barColor": "#818cf8" },
+  { "key": "Sep", "value": 27600000000000, "percentage": 11, "barColor": "#818cf8" },
+  { "key": "Oct", "value": 29800000000000, "percentage": 12, "barColor": "#818cf8" },
+  { "key": "Nov", "value": 23500000000000, "percentage": 9,  "barColor": "#818cf8" },
+  { "key": "Dec", "value": 20200000000000, "percentage": 8,  "barColor": "#818cf8" }
+]

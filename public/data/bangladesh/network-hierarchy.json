@@ -1,0 +1,330 @@
+{
+  "id": "root",
+  "label": "Bangladesh",
+  "value": 256000000000000,
+  "percentage": 100,
+  "color": "#e0e7ff",
+  "childLinks": [
+    { "source": "cptu",  "target": "lged",  "title": "MaxBuild Ltd",  "label": "MaxBuild Ltd has active contracts in both agencies" },
+    { "source": "cptu",  "target": "pwd",   "title": "Apex Group",    "label": "Apex Group operates across both central agencies" },
+    { "source": "lged",  "target": "rhd",   "title": "BD Roads Co.",  "label": "BD Roads Co. spans both road-focused agencies" },
+    { "source": "pwd",   "target": "bwdb",  "title": "Delta Eng.",    "label": "Delta Engineering serves both civil & water sectors" },
+    { "source": "bpdb",  "target": "btcl",  "title": "PowerNet Ltd",  "label": "PowerNet Ltd builds infrastructure for both utilities" },
+    { "source": "moe",   "target": "moh",   "title": "InfoTech Sol.", "label": "InfoTech Solutions handles IT for both ministries" },
+    { "source": "bwdb",  "target": "dwasa", "title": "AquaWorks",     "label": "AquaWorks specialises in water infrastructure" },
+    { "source": "rhd",   "target": "brta",  "title": "Highway Eng.",  "label": "Highway Engineering serves both transport agencies" },
+    { "source": "cptu",  "target": "bpdb",  "title": "Summit Works",  "label": "Summit Works active in both central & power sectors" },
+    { "source": "lged",  "target": "moe",   "title": "EduBuild Inc",  "label": "EduBuild constructs local government & school buildings" },
+    { "source": "moa",   "target": "bwdb",  "title": "IrrigatePro",  "label": "IrrigatePro works across agriculture & water boards" },
+    { "source": "doe",   "target": "bwdb",  "title": "EnviroSol",    "label": "EnviroSol links environment & water development projects" }
+  ],
+  "children": [
+    {
+      "id": "cptu", "label": "CPTU", "value": 46080000000000, "percentage": 18, "color": "#dbeafe",
+      "childLinks": [
+        { "source": "cptu-maxbuild", "target": "cptu-apex",     "title": "JV: Stadium Ph.2", "label": "Joint Venture: National Stadium Phase 2" },
+        { "source": "cptu-tech",     "target": "cptu-urban",    "title": "JV: Smart City",   "label": "Joint Venture: Smart City Initiative" },
+        { "source": "cptu-green",    "target": "cptu-horizon",  "title": "Eco-Park JV",      "label": "Joint Venture: National Eco-Park Development" },
+        { "source": "cptu-summit",   "target": "cptu-pioneer",  "title": "Infra Corridor",   "label": "Joint Bid: Industrial Infrastructure Corridor" },
+        { "source": "cptu-atlas",    "target": "cptu-zenith",   "title": "Trade Hub",        "label": "Consortium: International Trade Hub Complex" },
+        { "source": "cptu-vanguard", "target": "cptu-castle",   "title": "Port Expansion",   "label": "Joint Venture: Chittagong Port Expansion" }
+      ],
+      "children": [
+        { "id": "cptu-maxbuild", "label": "MaxBuild Ltd",  "value": 8294400000000, "percentage": 18, "color": "#93c5fd",
+          "children": [
+            { "id": "cptu-mb-dhaka",    "label": "Dhaka Expressway",  "value": 2900000000000, "percentage": 35, "color": "#bfdbfe" },
+            { "id": "cptu-mb-airport",  "label": "Airport Terminal",  "value": 2070000000000, "percentage": 25, "color": "#93c5fd" },
+            { "id": "cptu-mb-padma",    "label": "Padma Approach",    "value": 1658000000000, "percentage": 20, "color": "#60a5fa" },
+            { "id": "cptu-mb-industry", "label": "Industrial Zone",   "value": 995000000000,  "percentage": 12, "color": "#3b82f6" },
+            { "id": "cptu-mb-smart",    "label": "Smart City Hub",    "value": 663000000000,  "percentage": 8,  "color": "#2563eb" }
+          ]
+        },
+        { "id": "cptu-apex",    "label": "Apex Group",    "value": 6912000000000, "percentage": 15, "color": "#60a5fa",
+          "children": [
+            { "id": "cptu-ap-stadium", "label": "National Stadium",   "value": 2765000000000, "percentage": 40, "color": "#bfdbfe" },
+            { "id": "cptu-ap-library", "label": "Parliament Library", "value": 1728000000000, "percentage": 25, "color": "#93c5fd" },
+            { "id": "cptu-ap-govoff",  "label": "Gov Office Block",  "value": 1382000000000, "percentage": 20, "color": "#60a5fa" },
+            { "id": "cptu-ap-court",   "label": "Court Complex",     "value": 1037000000000, "percentage": 15, "color": "#3b82f6" }
+          ]
+        },
+        { "id": "cptu-tech",    "label": "TechBridge",    "value": 5529600000000, "percentage": 12, "color": "#3b82f6",
+          "children": [
+            { "id": "cptu-tb-fiber",  "label": "Fiber Backbone",   "value": 1659000000000, "percentage": 30, "color": "#bfdbfe" },
+            { "id": "cptu-tb-portal", "label": "e-Gov Portal",     "value": 1106000000000, "percentage": 20, "color": "#93c5fd" },
+            { "id": "cptu-tb-data",   "label": "Nat. Data Centre", "value": 1106000000000, "percentage": 20, "color": "#60a5fa" },
+            { "id": "cptu-tb-cctv",   "label": "City CCTV Grid",   "value": 830000000000,  "percentage": 15, "color": "#3b82f6" },
+            { "id": "cptu-tb-erp",    "label": "Govt ERP System",  "value": 553000000000,  "percentage": 10, "color": "#2563eb" },
+            { "id": "cptu-tb-cyber",  "label": "Cybersec Centre",  "value": 277000000000,  "percentage": 5,  "color": "#1d4ed8" }
+          ]
+        },
+        { "id": "cptu-urban",   "label": "UrbanPlan",     "value": 4608000000000, "percentage": 10, "color": "#2563eb",
+          "children": [
+            { "id": "cptu-up-dhaka", "label": "Dhaka Master Plan", "value": 1843000000000, "percentage": 40, "color": "#bfdbfe" },
+            { "id": "cptu-up-ctg",   "label": "Ctg City Plan",    "value": 1382000000000, "percentage": 30, "color": "#93c5fd" },
+            { "id": "cptu-up-park",  "label": "Public Parks",     "value": 922000000000,  "percentage": 20, "color": "#60a5fa" },
+            { "id": "cptu-up-zone",  "label": "Zoning Reform",    "value": 461000000000,  "percentage": 10, "color": "#3b82f6" }
+          ]
+        },
+        { "id": "cptu-green",    "label": "GreenBuild",    "value": 4147200000000, "percentage": 9, "color": "#1d4ed8" },
+        { "id": "cptu-horizon",  "label": "Horizon Infra", "value": 3686400000000, "percentage": 8, "color": "#1e40af" },
+        { "id": "cptu-summit",   "label": "Summit Works",  "value": 3225600000000, "percentage": 7, "color": "#1e3a8a" },
+        { "id": "cptu-pioneer",  "label": "Pioneer Dev",   "value": 2764800000000, "percentage": 6, "color": "#172554" },
+        { "id": "cptu-atlas",    "label": "Atlas Build",   "value": 2304000000000, "percentage": 5, "color": "#93c5fd" },
+        { "id": "cptu-zenith",   "label": "Zenith Corp",   "value": 1843200000000, "percentage": 4, "color": "#60a5fa" },
+        { "id": "cptu-vanguard", "label": "Vanguard Ltd",  "value": 1382400000000, "percentage": 3, "color": "#3b82f6" },
+        { "id": "cptu-castle",   "label": "Castle Build",  "value": 921600000000,  "percentage": 2, "color": "#2563eb" },
+        { "id": "cptu-pinnacle", "label": "Pinnacle Grp",  "value": 460800000000,  "percentage": 1, "color": "#1d4ed8" }
+      ]
+    },
+    {
+      "id": "lged", "label": "LGED", "value": 38400000000000, "percentage": 15, "color": "#ede9fe",
+      "childLinks": [
+        { "source": "lged-maxbuild", "target": "lged-bdroads", "title": "Rural Roads",    "label": "Joint Bid: Rural Road Network Expansion" },
+        { "source": "lged-infra",    "target": "lged-green",   "title": "Green Corridor", "label": "Consortium: Rural Green Corridor Initiative" },
+        { "source": "lged-edubuild", "target": "lged-civic",   "title": "Civic Schools",  "label": "Joint Venture: Civic & School Infrastructure" },
+        { "source": "lged-metro",    "target": "lged-urban",   "title": "Metro Renewal",  "label": "Joint Bid: Metro Urban Renewal Programme" },
+        { "source": "lged-horizon",  "target": "lged-summit",  "title": "Bridge Network", "label": "Consortium: Rural Bridge Network Phase 4" }
+      ],
+      "children": [
+        { "id": "lged-maxbuild", "label": "MaxBuild Ltd",  "value": 7680000000000, "percentage": 20, "color": "#c4b5fd",
+          "children": [
+            { "id": "lged-mb-sylhet",  "label": "Sylhet Ring Rd",    "value": 2304000000000, "percentage": 30, "color": "#ddd6fe" },
+            { "id": "lged-mb-khulna",  "label": "Khulna Bypass",     "value": 1920000000000, "percentage": 25, "color": "#c4b5fd" },
+            { "id": "lged-mb-barisal", "label": "Barisal Connector", "value": 1536000000000, "percentage": 20, "color": "#a78bfa" },
+            { "id": "lged-mb-rangpur", "label": "Rangpur Feeder Rd", "value": 1152000000000, "percentage": 15, "color": "#8b5cf6" },
+            { "id": "lged-mb-mymen",   "label": "Mymensingh Ring",   "value": 768000000000,  "percentage": 10, "color": "#7c3aed" }
+          ]
+        },
+        { "id": "lged-bdroads", "label": "BD Roads Co.", "value": 9216000000000, "percentage": 24, "color": "#a78bfa",
+          "children": [
+            { "id": "lged-br-n1",    "label": "N1 Upgrade",      "value": 3686000000000, "percentage": 40, "color": "#ddd6fe" },
+            { "id": "lged-br-n2",    "label": "N2 Expansion",    "value": 2765000000000, "percentage": 30, "color": "#c4b5fd" },
+            { "id": "lged-br-rural", "label": "Rural Feeder",    "value": 1843000000000, "percentage": 20, "color": "#a78bfa" },
+            { "id": "lged-br-maint", "label": "Maint. Contract", "value": 922000000000,  "percentage": 10, "color": "#8b5cf6" }
+          ]
+        },
+        { "id": "lged-infra",    "label": "Infra Corp",    "value": 5376000000000, "percentage": 14, "color": "#8b5cf6" },
+        { "id": "lged-green",    "label": "Greenways",     "value": 3840000000000, "percentage": 10, "color": "#7c3aed" },
+        { "id": "lged-edubuild", "label": "EduBuild Inc",  "value": 2688000000000, "percentage": 7,  "color": "#6d28d9" },
+        { "id": "lged-civic",    "label": "Civic Works",   "value": 2304000000000, "percentage": 6,  "color": "#5b21b6" },
+        { "id": "lged-metro",    "label": "Metro Dev",     "value": 1920000000000, "percentage": 5,  "color": "#4c1d95" },
+        { "id": "lged-urban",    "label": "Urban Craft",   "value": 1536000000000, "percentage": 4,  "color": "#c4b5fd" },
+        { "id": "lged-horizon",  "label": "Horizon Infra", "value": 1536000000000, "percentage": 4,  "color": "#a78bfa" },
+        { "id": "lged-summit",   "label": "Summit Works",  "value": 1152000000000, "percentage": 3,  "color": "#8b5cf6" },
+        { "id": "lged-rural",    "label": "RuralTech",     "value": 768000000000,  "percentage": 2,  "color": "#7c3aed" },
+        { "id": "lged-pioneer",  "label": "Pioneer Dev",   "value": 384000000000,  "percentage": 1,  "color": "#6d28d9" }
+      ]
+    },
+    {
+      "id": "pwd", "label": "PWD", "value": 30720000000000, "percentage": 12, "color": "#fce7f3",
+      "childLinks": [
+        { "source": "pwd-apex",    "target": "pwd-delta",    "title": "Delta–Apex JV",    "label": "Consortium: Delta–Apex Civil Works" },
+        { "source": "pwd-pioneer", "target": "pwd-metro",    "title": "Metro Office JV",  "label": "Joint Venture: Metropolitan Office Complex" },
+        { "source": "pwd-summit",  "target": "pwd-horizon",  "title": "Gov Buildings",    "label": "Joint Bid: Government Buildings Phase 3" },
+        { "source": "pwd-castle",  "target": "pwd-zenith",   "title": "Heritage Restor.", "label": "Consortium: Heritage Building Restoration" },
+        { "source": "pwd-atlas",   "target": "pwd-vanguard", "title": "Cultural Centres", "label": "Joint Venture: Cultural Centres Network" }
+      ],
+      "children": [
+        { "id": "pwd-apex",     "label": "Apex Group",    "value": 9216000000000, "percentage": 30, "color": "#f9a8d4" },
+        { "id": "pwd-delta",    "label": "Delta Eng.",    "value": 7680000000000, "percentage": 25, "color": "#f472b6" },
+        { "id": "pwd-pioneer",  "label": "Pioneer Dev",   "value": 4608000000000, "percentage": 15, "color": "#ec4899" },
+        { "id": "pwd-metro",    "label": "Metro Build",   "value": 3072000000000, "percentage": 10, "color": "#db2777" },
+        { "id": "pwd-summit",   "label": "Summit Works",  "value": 2457600000000, "percentage": 8,  "color": "#be185d" },
+        { "id": "pwd-horizon",  "label": "Horizon Infra", "value": 1843200000000, "percentage": 6,  "color": "#9d174d" },
+        { "id": "pwd-castle",   "label": "Castle Build",  "value": 921600000000,  "percentage": 3,  "color": "#831843" },
+        { "id": "pwd-zenith",   "label": "Zenith Corp",   "value": 614400000000,  "percentage": 2,  "color": "#f9a8d4" },
+        { "id": "pwd-atlas",    "label": "Atlas Build",   "value": 307200000000,  "percentage": 1,  "color": "#fbcfe8" },
+        { "id": "pwd-vanguard", "label": "Vanguard Ltd",  "value": 307200000000,  "percentage": 1,  "color": "#fce7f3" }
+      ]
+    },
+    {
+      "id": "rhd", "label": "RHD", "value": 25600000000000, "percentage": 10, "color": "#fef3c7",
+      "childLinks": [
+        { "source": "rhd-bdroads", "target": "rhd-highway", "title": "Hwy Widening",   "label": "Joint Bid: National Highway Widening" },
+        { "source": "rhd-bridge",  "target": "rhd-nordway", "title": "Bridge Intl JV", "label": "International Consortium: Bridge Construction" },
+        { "source": "rhd-rapid",   "target": "rhd-skyway",  "title": "Expressway",     "label": "Joint Venture: Eastern Expressway" },
+        { "source": "rhd-pave",    "target": "rhd-asphalt", "title": "Paving Bid",     "label": "Joint Bid: National Pavement Upgrade" }
+      ],
+      "children": [
+        { "id": "rhd-bdroads", "label": "BD Roads Co.", "value": 7680000000000, "percentage": 30, "color": "#fcd34d" },
+        { "id": "rhd-highway", "label": "Highway Eng.", "value": 6400000000000, "percentage": 25, "color": "#fbbf24" },
+        { "id": "rhd-bridge",  "label": "BridgeTech",  "value": 5120000000000, "percentage": 20, "color": "#f59e0b" },
+        { "id": "rhd-nordway", "label": "Nordway Int.", "value": 2560000000000, "percentage": 10, "color": "#d97706" },
+        { "id": "rhd-rapid",   "label": "Rapid Infra", "value": 1280000000000, "percentage": 5,  "color": "#b45309" },
+        { "id": "rhd-skyway",  "label": "Skyway Eng.", "value": 1024000000000, "percentage": 4,  "color": "#92400e" },
+        { "id": "rhd-pave",    "label": "PavePro Ltd", "value": 768000000000,  "percentage": 3,  "color": "#fde68a" },
+        { "id": "rhd-asphalt", "label": "AsphaltBD",   "value": 512000000000,  "percentage": 2,  "color": "#fcd34d" },
+        { "id": "rhd-roadcon", "label": "RoadCon BD",  "value": 256000000000,  "percentage": 1,  "color": "#fbbf24" }
+      ]
+    },
+    {
+      "id": "bwdb", "label": "BWDB", "value": 20480000000000, "percentage": 8, "color": "#dcfce7",
+      "childLinks": [
+        { "source": "bwdb-delta",   "target": "bwdb-hydro",    "title": "Flood Mgmt.",  "label": "Consortium: Flood Management Infrastructure" },
+        { "source": "bwdb-aqua",    "target": "bwdb-river",    "title": "River Mgmt.",  "label": "Joint Venture: River Basin Management" },
+        { "source": "bwdb-water",   "target": "bwdb-enviro",   "title": "Water & Env.", "label": "Consortium: Water Quality & Environment" },
+        { "source": "bwdb-coastal", "target": "bwdb-embankmt", "title": "Coastal Def.", "label": "Joint Bid: Coastal Defence Embankment" }
+      ],
+      "children": [
+        { "id": "bwdb-delta",    "label": "Delta Eng.",    "value": 6144000000000, "percentage": 30, "color": "#86efac" },
+        { "id": "bwdb-hydro",    "label": "HydroTech",     "value": 4096000000000, "percentage": 20, "color": "#4ade80" },
+        { "id": "bwdb-aqua",     "label": "AquaWorks",     "value": 3072000000000, "percentage": 15, "color": "#22c55e" },
+        { "id": "bwdb-river",    "label": "RiverSol",      "value": 2048000000000, "percentage": 10, "color": "#16a34a" },
+        { "id": "bwdb-water",    "label": "WaterPro",      "value": 1536000000000, "percentage": 7,  "color": "#15803d" },
+        { "id": "bwdb-enviro",   "label": "EnviroSol",     "value": 1024000000000, "percentage": 5,  "color": "#166534" },
+        { "id": "bwdb-coastal",  "label": "Coastal Eng.",  "value": 1024000000000, "percentage": 5,  "color": "#14532d" },
+        { "id": "bwdb-embankmt", "label": "Embankment BD", "value": 819200000000,  "percentage": 4,  "color": "#86efac" },
+        { "id": "bwdb-drain",    "label": "DrainTech BD",  "value": 614400000000,  "percentage": 3,  "color": "#4ade80" },
+        { "id": "bwdb-irrigate", "label": "IrrigatePro",   "value": 204800000000,  "percentage": 1,  "color": "#22c55e" }
+      ]
+    },
+    {
+      "id": "moe", "label": "MoE", "value": 17920000000000, "percentage": 7, "color": "#fef9c3",
+      "childLinks": [
+        { "source": "moe-edubuild",  "target": "moe-smart",     "title": "Smart School",  "label": "Joint Venture: Smart School Infrastructure" },
+        { "source": "moe-infotech",  "target": "moe-digital",   "title": "DigiEdu",       "label": "Consortium: Digital Education Platform" },
+        { "source": "moe-construct", "target": "moe-furniture",  "title": "School Equip.", "label": "Joint Bid: School Construction & Furnishing" },
+        { "source": "moe-lab",       "target": "moe-it",         "title": "STEM Labs",     "label": "Joint Venture: National STEM Lab Network" }
+      ],
+      "children": [
+        { "id": "moe-edubuild",  "label": "EduBuild Inc",  "value": 4659200000000, "percentage": 26, "color": "#fef08a" },
+        { "id": "moe-smart",     "label": "Smart Infra",   "value": 3584000000000, "percentage": 20, "color": "#fde047" },
+        { "id": "moe-infotech",  "label": "InfoTech Sol.", "value": 3046400000000, "percentage": 17, "color": "#facc15" },
+        { "id": "moe-digital",   "label": "DigitalEd",     "value": 2508800000000, "percentage": 14, "color": "#eab308" },
+        { "id": "moe-construct", "label": "Edu Construct", "value": 1792000000000, "percentage": 10, "color": "#ca8a04" },
+        { "id": "moe-furniture", "label": "FurnishPro",    "value": 1075200000000, "percentage": 6,  "color": "#a16207" },
+        { "id": "moe-it",        "label": "SchoolIT Ltd",  "value": 716800000000,  "percentage": 4,  "color": "#854d0e" },
+        { "id": "moe-lab",       "label": "LabEquip BD",   "value": 537600000000,  "percentage": 3,  "color": "#713f12" }
+      ]
+    },
+    {
+      "id": "moh", "label": "MoH", "value": 15360000000000, "percentage": 6, "color": "#ffe4e6",
+      "childLinks": [
+        { "source": "moh-healthcon", "target": "moh-medequip", "title": "Hospital Equip.", "label": "Joint Bid: Hospital Construction & Equipment" },
+        { "source": "moh-infotech",  "target": "moh-pharma",   "title": "Health IT",       "label": "Consortium: Health IT & Pharma Supply" },
+        { "source": "moh-ambu",      "target": "moh-lab",      "title": "Emergency Net.",  "label": "Joint Venture: Emergency Response Network" },
+        { "source": "moh-clinic",    "target": "moh-digital",  "title": "DigiHealth",      "label": "Joint Bid: Digital Health Infrastructure" }
+      ],
+      "children": [
+        { "id": "moh-healthcon", "label": "HealthCon",      "value": 4608000000000, "percentage": 30, "color": "#fecdd3" },
+        { "id": "moh-medequip",  "label": "MedEquip Ltd",  "value": 3072000000000, "percentage": 20, "color": "#fda4af" },
+        { "id": "moh-infotech",  "label": "InfoTech Sol.", "value": 2304000000000, "percentage": 15, "color": "#fb7185" },
+        { "id": "moh-pharma",    "label": "PharmaSupply",  "value": 1843200000000, "percentage": 12, "color": "#f43f5e" },
+        { "id": "moh-ambu",      "label": "AmbuFleet BD",  "value": 1228800000000, "percentage": 8,  "color": "#e11d48" },
+        { "id": "moh-lab",       "label": "LabDiag BD",    "value": 921600000000,  "percentage": 6,  "color": "#be123c" },
+        { "id": "moh-clinic",    "label": "ClinicBuild",   "value": 768000000000,  "percentage": 5,  "color": "#9f1239" },
+        { "id": "moh-digital",   "label": "HealthDigital", "value": 614400000000,  "percentage": 4,  "color": "#881337" }
+      ]
+    },
+    {
+      "id": "bpdb", "label": "BPDB", "value": 15360000000000, "percentage": 6, "color": "#fff7ed",
+      "childLinks": [
+        { "source": "bpdb-summit", "target": "bpdb-power", "title": "Grid Expansion",  "label": "Joint Venture: National Grid Expansion" },
+        { "source": "bpdb-solar",  "target": "bpdb-green", "title": "Renewables JV",   "label": "Consortium: Renewable Energy Initiative" },
+        { "source": "bpdb-cable",  "target": "bpdb-sub",   "title": "Infra Upgrade",   "label": "Joint Bid: Grid Infrastructure Upgrade" },
+        { "source": "bpdb-turbo",  "target": "bpdb-coil",  "title": "Generator Plant", "label": "Joint Venture: Peaking Generator Plant" }
+      ],
+      "children": [
+        { "id": "bpdb-summit", "label": "Summit Works", "value": 3840000000000, "percentage": 25, "color": "#fed7aa" },
+        { "id": "bpdb-power",  "label": "PowerNet Ltd", "value": 3072000000000, "percentage": 20, "color": "#fdba74" },
+        { "id": "bpdb-solar",  "label": "SolarTech BD", "value": 2304000000000, "percentage": 15, "color": "#fb923c" },
+        { "id": "bpdb-green",  "label": "GreenPower",   "value": 1843200000000, "percentage": 12, "color": "#f97316" },
+        { "id": "bpdb-cable",  "label": "CablePlus",    "value": 1382400000000, "percentage": 9,  "color": "#ea580c" },
+        { "id": "bpdb-sub",    "label": "SubStation BD","value": 921600000000,  "percentage": 6,  "color": "#dc2626" },
+        { "id": "bpdb-turbo",  "label": "TurboGen",     "value": 768000000000,  "percentage": 5,  "color": "#b91c1c" },
+        { "id": "bpdb-elec",   "label": "ElecGrid BD",  "value": 614400000000,  "percentage": 4,  "color": "#991b1b" },
+        { "id": "bpdb-coil",   "label": "CoilTech BD",  "value": 460800000000,  "percentage": 3,  "color": "#fed7aa" },
+        { "id": "bpdb-volt",   "label": "VoltSystems",  "value": 153600000000,  "percentage": 1,  "color": "#fdba74" }
+      ]
+    },
+    {
+      "id": "btcl", "label": "BTCL", "value": 12800000000000, "percentage": 5, "color": "#f0f9ff",
+      "childLinks": [
+        { "source": "btcl-power",  "target": "btcl-fiber",  "title": "Fiber & Power", "label": "Joint Venture: National Fiber-Optic Grid" },
+        { "source": "btcl-telecom","target": "btcl-it",     "title": "Telecom IT",    "label": "Consortium: Telecom & IT Integration" },
+        { "source": "btcl-tower",  "target": "btcl-signal", "title": "Tower Signal",  "label": "Joint Bid: Tower & Signal Infrastructure" }
+      ],
+      "children": [
+        { "id": "btcl-power",   "label": "PowerNet Ltd", "value": 3072000000000, "percentage": 24, "color": "#bae6fd" },
+        { "id": "btcl-fiber",   "label": "FiberLink BD", "value": 2560000000000, "percentage": 20, "color": "#7dd3fc" },
+        { "id": "btcl-telecom", "label": "TelecomPlus",  "value": 1920000000000, "percentage": 15, "color": "#38bdf8" },
+        { "id": "btcl-it",      "label": "ITSolutions",  "value": 1536000000000, "percentage": 12, "color": "#0ea5e9" },
+        { "id": "btcl-net",     "label": "NetBuilders",  "value": 1280000000000, "percentage": 10, "color": "#0284c7" },
+        { "id": "btcl-signal",  "label": "SignalTech",   "value": 896000000000,  "percentage": 7,  "color": "#0369a1" },
+        { "id": "btcl-tower",   "label": "TowerWave",    "value": 768000000000,  "percentage": 6,  "color": "#075985" },
+        { "id": "btcl-connect", "label": "ConnectBD",    "value": 512000000000,  "percentage": 4,  "color": "#0c4a6e" },
+        { "id": "btcl-micro",   "label": "MicroWave BD", "value": 256000000000,  "percentage": 2,  "color": "#bae6fd" }
+      ]
+    },
+    {
+      "id": "dwasa", "label": "DWASA", "value": 10240000000000, "percentage": 4, "color": "#ecfdf5",
+      "childLinks": [
+        { "source": "dwasa-aqua",  "target": "dwasa-pipe",   "title": "Water Network", "label": "Joint Venture: Urban Water Distribution Network" },
+        { "source": "dwasa-sewer", "target": "dwasa-treat",  "title": "Wastewater JV", "label": "Consortium: Wastewater Treatment Upgrade" },
+        { "source": "dwasa-pump",  "target": "dwasa-filter", "title": "Pump & Filter", "label": "Joint Bid: Pumping & Filtration Upgrade" }
+      ],
+      "children": [
+        { "id": "dwasa-aqua",   "label": "AquaWorks",   "value": 3072000000000, "percentage": 30, "color": "#a7f3d0" },
+        { "id": "dwasa-pipe",   "label": "PipeMaster",  "value": 2048000000000, "percentage": 20, "color": "#6ee7b7" },
+        { "id": "dwasa-sewer",  "label": "SewerBuild",  "value": 1536000000000, "percentage": 15, "color": "#34d399" },
+        { "id": "dwasa-treat",  "label": "TreatTech",   "value": 1024000000000, "percentage": 10, "color": "#10b981" },
+        { "id": "dwasa-pump",   "label": "PumpPro BD",  "value": 921600000000,  "percentage": 9,  "color": "#059669" },
+        { "id": "dwasa-filter", "label": "FilterPlant", "value": 614400000000,  "percentage": 6,  "color": "#047857" },
+        { "id": "dwasa-valve",  "label": "ValveTech",   "value": 512000000000,  "percentage": 5,  "color": "#065f46" },
+        { "id": "dwasa-meter",  "label": "MeterSmart",  "value": 307200000000,  "percentage": 3,  "color": "#a7f3d0" },
+        { "id": "dwasa-ctrl",   "label": "CtrlSystems", "value": 204800000000,  "percentage": 2,  "color": "#6ee7b7" }
+      ]
+    },
+    {
+      "id": "brta", "label": "BRTA", "value": 7680000000000, "percentage": 3, "color": "#fdf4ff",
+      "childLinks": [
+        { "source": "brta-highway", "target": "brta-signal",   "title": "Smart Roads",  "label": "Joint Bid: Smart Road Management System" },
+        { "source": "brta-vehicle", "target": "brta-it",       "title": "Fleet & IT",   "label": "Consortium: Vehicle Fleet & IT Management" },
+        { "source": "brta-road",    "target": "brta-training", "title": "Safety Train.", "label": "Joint Venture: Road Safety Training Centres" }
+      ],
+      "children": [
+        { "id": "brta-highway",  "label": "Highway Eng.", "value": 2304000000000, "percentage": 30, "color": "#f0abfc" },
+        { "id": "brta-signal",   "label": "SignalSmart",  "value": 1536000000000, "percentage": 20, "color": "#e879f9" },
+        { "id": "brta-vehicle",  "label": "VehicleTrack", "value": 1152000000000, "percentage": 15, "color": "#d946ef" },
+        { "id": "brta-it",       "label": "TransportIT",  "value": 921600000000,  "percentage": 12, "color": "#c026d3" },
+        { "id": "brta-road",     "label": "RoadSafety",   "value": 768000000000,  "percentage": 10, "color": "#a21caf" },
+        { "id": "brta-training", "label": "TrainDrive",   "value": 614400000000,  "percentage": 8,  "color": "#86198f" },
+        { "id": "brta-permit",   "label": "PermitTech",   "value": 230400000000,  "percentage": 3,  "color": "#701a75" },
+        { "id": "brta-inspect",  "label": "InspectPro",   "value": 153600000000,  "percentage": 2,  "color": "#f0abfc" }
+      ]
+    },
+    {
+      "id": "moa", "label": "MoA", "value": 7680000000000, "percentage": 3, "color": "#f0fdf4",
+      "childLinks": [
+        { "source": "moa-agro",   "target": "moa-irrigate", "title": "AgroIrrigate", "label": "Consortium: Agricultural Irrigation Network" },
+        { "source": "moa-seed",   "target": "moa-storage",  "title": "Seed & Store", "label": "Joint Bid: Seed Distribution & Cold Storage" },
+        { "source": "moa-fertil", "target": "moa-pest",     "title": "Input Supply", "label": "Consortium: Agricultural Input Supply Chain" }
+      ],
+      "children": [
+        { "id": "moa-agro",     "label": "AgroTech BD",  "value": 2304000000000, "percentage": 30, "color": "#bbf7d0" },
+        { "id": "moa-irrigate", "label": "IrrigatePro",  "value": 1920000000000, "percentage": 25, "color": "#86efac" },
+        { "id": "moa-seed",     "label": "SeedSupply",   "value": 1152000000000, "percentage": 15, "color": "#4ade80" },
+        { "id": "moa-storage",  "label": "ColdStorage",  "value": 921600000000,  "percentage": 12, "color": "#22c55e" },
+        { "id": "moa-fertil",   "label": "FertilDist",   "value": 768000000000,  "percentage": 10, "color": "#16a34a" },
+        { "id": "moa-pest",     "label": "PestControl",  "value": 460800000000,  "percentage": 6,  "color": "#15803d" },
+        { "id": "moa-equip",    "label": "FarmEquip BD", "value": 153600000000,  "percentage": 2,  "color": "#bbf7d0" }
+      ]
+    },
+    {
+      "id": "doe", "label": "DoE", "value": 5120000000000, "percentage": 2, "color": "#f7fee7",
+      "childLinks": [
+        { "source": "doe-enviro", "target": "doe-monitor", "title": "Env. Monitor", "label": "Joint Venture: National Environment Monitoring" },
+        { "source": "doe-waste",  "target": "doe-recycle", "title": "Waste Mgmt.",  "label": "Consortium: Waste Management & Recycling" }
+      ],
+      "children": [
+        { "id": "doe-enviro",  "label": "EnviroSol",   "value": 1536000000000, "percentage": 30, "color": "#d9f99d" },
+        { "id": "doe-monitor", "label": "MonitorTech", "value": 1024000000000, "percentage": 20, "color": "#bef264" },
+        { "id": "doe-waste",   "label": "WasteManage", "value": 768000000000,  "percentage": 15, "color": "#a3e635" },
+        { "id": "doe-recycle", "label": "RecyclePro",  "value": 614400000000,  "percentage": 12, "color": "#84cc16" },
+        { "id": "doe-green",   "label": "GreenPolicy", "value": 512000000000,  "percentage": 10, "color": "#65a30d" },
+        { "id": "doe-forest",  "label": "ForestGuard", "value": 409600000000,  "percentage": 8,  "color": "#4d7c0f" },
+        { "id": "doe-audit",   "label": "EcoAudit BD", "value": 256000000000,  "percentage": 5,  "color": "#d9f99d" }
+      ]
+    }
+  ]
+}
