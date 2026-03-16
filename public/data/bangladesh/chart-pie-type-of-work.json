@@ -1,6 +1,8 @@
 [
-  { "key": "goods",       "value": 89200000000000,  "percentage": 35, "barColor": "#60a5fa" },
-  { "key": "works",       "value": 112500000000000, "percentage": 44, "barColor": "#a78bfa" },
-  { "key": "services",    "value": 38700000000000,  "percentage": 15, "barColor": "#f472b6" },
-  { "key": "consultancy", "value": 15600000000000,  "percentage": 6,  "barColor": "#fbbf24" }
+  { "key": "Road",       "value": 97280000000000, "percentage": 38, "barColor": "#dbeafe", "strokeColor": "#60a5fa" },
+  { "key": "Building",   "value": 71680000000000, "percentage": 28, "barColor": "#ede9fe", "strokeColor": "#a78bfa" },
+  { "key": "Housing",    "value": 40960000000000, "percentage": 16, "barColor": "#fce7f3", "strokeColor": "#f472b6" },
+  { "key": "Bridge",     "value": 25600000000000, "percentage": 10, "barColor": "#fef3c7", "strokeColor": "#fbbf24" },
+  { "key": "Culvert",    "value": 15360000000000, "percentage": 6,  "barColor": "#d1fae5", "strokeColor": "#34d399" },
+  { "key": "Plantation", "value":  5120000000000, "percentage": 2,  "barColor": "#fee2e2", "strokeColor": "#f87171" }
 ]

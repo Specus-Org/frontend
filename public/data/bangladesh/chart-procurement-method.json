@@ -1,6 +1,6 @@
 [
-  { "key": "Open Tender",            "value": 148000000000000, "percentage": 58, "barColor": "#dbeafe", "strokeColor": "#60a5fa" },
-  { "key": "Limited Tender",         "value": 61000000000000,  "percentage": 24, "barColor": "#ede9fe", "strokeColor": "#a78bfa" },
-  { "key": "Direct Purchase",        "value": 31000000000000,  "percentage": 12, "barColor": "#fce7f3", "strokeColor": "#f472b6" },
-  { "key": "Request for Quotation",  "value": 16000000000000,  "percentage": 6,  "barColor": "#fef3c7", "strokeColor": "#fbbf24" }
+  { "key": "Open Tender",           "value": 275, "percentage": 33, "barColor": "#60a5fa" },
+  { "key": "Limited Tender",        "value": 200, "percentage": 24, "barColor": "#a78bfa" },
+  { "key": "Direct Purchase",       "value": 187, "percentage": 22, "barColor": "#f472b6" },
+  { "key": "Request for Quotation", "value": 173, "percentage": 21, "barColor": "#fbbf24" }
 ]
