@@ -10,8 +10,33 @@ import {
 import HorizontalDivider from '@/components/horizontal-divider';
 import { StatCard } from '@/components/insight/stat-card';
 import { ProfileAccordion } from '@/components/profiles';
+import { DataTable } from '@/components/ui/data-table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { formatMoney, shortenNumber } from '@/lib/helper';
+
+const procuringEntityData = [
+  { method: 'Credit Card', status: 'Paid', amount: 250.0 },
+  { method: 'PayPal', status: 'Pending', amount: 150.0 },
+  { method: 'Bank Transfer', status: 'Unpaid', amount: 350.0 },
+  { method: 'Credit Card', status: 'Paid', amount: 450.0 },
+  { method: 'PayPal', status: 'Paid', amount: 550.0 },
+  { method: 'Bank Transfer', status: 'Pending', amount: 200.0 },
+  { method: 'Credit Card', status: 'Unpaid', amount: 300.0 },
+  { method: 'Credit Card', status: 'Unpaid', amount: 300.0 },
+  { method: 'Credit Card', status: 'Unpaid', amount: 300.0 },
+  { method: 'Credit Card', status: 'Unpaid', amount: 300.0 },
+];
+
+const procuringEntityColumns = [
+  { key: 'method' as const, header: 'Method' },
+  { key: 'status' as const, header: 'Status' },
+  {
+    key: 'amount' as const,
+    header: 'Amount',
+    align: 'right' as const,
+    render: (value: unknown) => `$${(value as number).toFixed(2)}`,
+  },
+];
 
 // Vertical bar chart — -100 fills
 const durationChartData = [
@@ -192,21 +217,21 @@ function BangladeshPage() {
             items={[
               {
                 value: 'procuring-entity',
-                image: '/images/profiles/procuring-entity.svg',
+                image: null,
                 title: 'Procuring Entity Profiles',
                 subtitle: 'A complete overview of all registered procuring entities.',
-                content: <p className="text-muted-foreground">Procuring entity data will appear here.</p>,
+                content: <DataTable columns={procuringEntityColumns} data={procuringEntityData} />,
               },
               {
                 value: 'contractor',
-                image: '/images/profiles/contractor.svg',
+                image: null,
                 title: 'Contractor Profiles',
                 subtitle: 'A complete overview of all registered contractors.',
                 content: <p className="text-muted-foreground">Contractor data will appear here.</p>,
               },
               {
                 value: 'district',
-                image: '/images/profiles/district.svg',
+                image: null,
                 title: 'District Profiles',
                 subtitle: 'A complete overview of all registered districts.',
                 content: <p className="text-muted-foreground">District data will appear here.</p>,
