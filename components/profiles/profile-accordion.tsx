@@ -11,7 +11,7 @@ import {
 
 interface ProfileAccordionItem {
   value: string;
-  image: string;
+  image?: string | null;
   title: string;
   subtitle: string;
   content: React.ReactNode;
@@ -27,13 +27,15 @@ export function ProfileAccordion({ items }: ProfileAccordionProps) {
       {items.map((item) => (
         <AccordionItem key={item.value} value={item.value}>
           <AccordionTrigger className="gap-4 py-4">
-            <Image
-              src={item.image}
-              alt={item.title}
-              width={40}
-              height={40}
-              className="shrink-0 rounded-md"
-            />
+            {item.image && (
+              <Image
+                src={item.image}
+                alt={item.title}
+                width={40}
+                height={40}
+                className="shrink-0 rounded-md"
+              />
+            )}
             <div className="flex flex-1 flex-col items-start gap-0.5">
               <span className="text-base font-semibold text-foreground">{item.title}</span>
               <span className="text-sm text-muted-foreground">{item.subtitle}</span>
