@@ -5,7 +5,6 @@ import { CountryFlag } from '@/components/aml/country-flag';
 import {
   DoughnutChartSection,
   DrillDownNetworkSection,
-  LineChartSection,
   NetworkNode,
   PieChartSection,
   VisualChartSection,
@@ -18,7 +17,6 @@ import { DataTable } from '@/components/ui/data-table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { formatMoney, shortenNumber } from '@/lib/helper';
 
-// ─── column definitions stay here (contain render functions, not serialisable) ─
 type ProcuringEntityRow = { method: string; status: string; amount: number };
 
 const procuringEntityColumns = [
@@ -32,7 +30,6 @@ const procuringEntityColumns = [
   },
 ];
 
-// ─── fetched data shape ────────────────────────────────────────────────────────
 interface BangladeshData {
   typeOfWork: DataPoint[];
   byYear: DataPoint[];
@@ -75,7 +72,15 @@ async function fetchBangladeshData(): Promise<BangladeshData> {
   };
 }
 
-// ─── page ──────────────────────────────────────────────────────────────────────
+const TYPE_OF_WORK_COUNTS: Record<string, number> = {
+  Road: 89450,
+  Building: 64218,
+  Housing: 38752,
+  Bridge: 22103,
+  Culvert: 14387,
+  Plantation: 8376,
+};
+
 function BangladeshPage() {
   const [data, setData] = useState<BangladeshData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -119,8 +124,8 @@ function BangladeshPage() {
           </TabsTrigger>
         </TabsList>
 
-        {/* ── Summary ─────────────────────────────────────────────────────── */}
         <TabsContent value="semua" className="mt-0 space-y-6">
+          {/* 1. Key statistics */}
           <div className="flex flex-col gap-3 lg:flex-row lg:items-end border-muted border rounded-xl">
             <StatCard
               label={'Total Number of Contracts'}
@@ -139,7 +144,36 @@ function BangladeshPage() {
             <StatCard label={'Average Contract Period'} value={233.0} loading={false} />
           </div>
 
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:col-span-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <PieChartSection
+              title="Total Contract Value by Procurement Method"
+              subtitle="Contracts are awarded using several procurement methods."
+              loading={loading}
+              data={data?.procurementMethod ?? []}
+            />
+            <DoughnutChartSection
+              title="Distribution of Type of Work"
+              subtitle="Work categories reveal how procurement resources are allocated across sectors."
+              loading={loading}
+              data={data?.pieTypeOfWork ?? []}
+            />
+          </div>
+
+          <div className="grid grid-cols-3 overflow-hidden rounded-xl border border-muted">
+            {Object.entries(TYPE_OF_WORK_COUNTS).map(([key, count], index) => (
+              <div
+                key={key}
+                className={[
+                  index % 3 !== 2 ? 'border-r border-muted' : '',
+                  index < 3 ? 'border-b border-muted' : '',
+                ].join(' ')}
+              >
+                <StatCard label={key} value={count} centered />
+              </div>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <VisualChartSection
               title="Total Contract Value by Type of Work"
               subtitle="Spending is distributed across different types of work."
@@ -153,38 +187,12 @@ function BangladeshPage() {
               data={data?.byYear ?? []}
             />
           </div>
-
-          <LineChartSection
-            title="Monthly Contract Value Trend"
-            subtitle="How procurement spending shifted across each month of the year."
-            loading={loading}
-            data={data?.monthlyTrend ?? []}
-            valueFormatter={formatMoney}
-          />
-
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:col-span-4">
-            <PieChartSection
-              title="Total Contract Value by Type of Work"
-              subtitle="Spending is distributed across different types of work."
-              loading={loading}
-              data={data?.pieTypeOfWork ?? []}
-            />
-            <DoughnutChartSection
-              title="Total Contract Value by Procurement Method"
-              subtitle="Contracts are awarded using several procurement methods."
-              loading={loading}
-              data={data?.procurementMethod ?? []}
-              centerLabel={'256T\nTotal Value'}
-            />
-          </div>
         </TabsContent>
 
-        {/* ── Critical Analysis ────────────────────────────────────────────── */}
         <TabsContent value="kesempatan-pasar" className="mt-0 space-y-6">
           <p>Test</p>
         </TabsContent>
 
-        {/* ── Hierarchy Tree ───────────────────────────────────────────────── */}
         <TabsContent value="kompetisi" className="mt-0 space-y-6">
           {data?.networkHierarchy ? (
             <DrillDownNetworkSection
@@ -199,12 +207,17 @@ function BangladeshPage() {
               title="Procurement Hierarchy Network"
               subtitle="Loading network data…"
               loading={true}
-              data={{ id: 'root', label: 'Bangladesh', value: 0, percentage: 100, color: '#e0e7ff' }}
+              data={{
+                id: 'root',
+                label: 'Bangladesh',
+                value: 0,
+                percentage: 100,
+                color: '#e0e7ff',
+              }}
             />
           )}
         </TabsContent>
 
-        {/* ── Profiles ─────────────────────────────────────────────────────── */}
         <TabsContent value="efisiensi-internal" className="mt-0 space-y-6">
           <ProfileAccordion
             items={[
@@ -214,10 +227,7 @@ function BangladeshPage() {
                 title: 'Procuring Entity Profiles',
                 subtitle: 'A complete overview of all registered procuring entities.',
                 content: (
-                  <DataTable
-                    columns={procuringEntityColumns}
-                    data={data?.procuringEntity ?? []}
-                  />
+                  <DataTable columns={procuringEntityColumns} data={data?.procuringEntity ?? []} />
                 ),
               },
               {
