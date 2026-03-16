@@ -26,6 +26,7 @@
   --input: oklch(0.922 0 0); /* neutral/6 */
   --ring: oklch(0.708 0 0); /* blue/5 */
   --tertiary: #f8fafc; /* blue/5 */
+  --brand: #192E49;
 
   /* Chart Colors */
   --chart-1: oklch(0.809 0.105 251.813); /* blue/5 */
@@ -359,6 +360,7 @@
   --color-neutral-13: var(--neutral-13);
 
   --color-tertiary: var(--tertiary);
+  --color-brand: var(--brand);
 
   --font-sans: var(--font-sans);
 
