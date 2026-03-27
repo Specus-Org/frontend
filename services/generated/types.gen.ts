@@ -47,6 +47,11 @@ export type PaginationMeta = {
 };
 
 export type ScreeningSearchResponse = {
+    /**
+     * Indicates query specificity. "broad" for single-word queries (higher threshold, treat results as suggestions). "specific" for multi-word queries (normal threshold, treat results as matches).
+     *
+     */
+    query_type: 'broad' | 'specific';
     items: Array<ScreeningSearchResult>;
     pagination: PaginationMeta;
 };
@@ -315,6 +320,18 @@ export type ScreeningSearchData = {
          * Number of results per page
          */
         page_size?: number;
+        /**
+         * Filter by entity type
+         */
+        entity_type?: 'person' | 'organization';
+        /**
+         * Filter by topics (repeated param)
+         */
+        topics?: Array<'sanction' | 'pep' | 'blacklist'>;
+        /**
+         * Filter by sanctions list ID
+         */
+        sanctions_list_id?: string;
     };
     url: '/api/v1/screening/search';
 };

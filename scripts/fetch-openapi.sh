@@ -14,7 +14,7 @@ echo "Fetching OpenAPI spec..."
 curl -sf \
   -H "Authorization: token ${GITHUB_TOKEN}" \
   -H "Accept: application/vnd.github.v3.raw" \
-  "https://api.github.com/repos/Specus-Org/backend/contents/api/openapi/openapi.yaml?ref=feat/aml-screening-openapi" \
+  "https://api.github.com/repos/Specus-Org/backend/contents/api/openapi/openapi.yaml?ref=main" \
   -o ./openapi.yaml
 
 echo "OpenAPI spec saved to ./openapi.yaml"

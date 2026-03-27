@@ -11,6 +11,7 @@ import { listScreeningSources } from '@/services/generated';
 import type { SanctionsList } from '@/services/generated';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { CountryFlag } from './country-flag';
 
 export default function SanctionSourcesDialog(): React.ReactNode {
   const [open, setOpen] = useState(false);
@@ -50,13 +51,13 @@ export default function SanctionSourcesDialog(): React.ReactNode {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Sanction Sources</DialogTitle>
+          <DialogTitle className="font-semibold text-lg">Sanction Sources</DialogTitle>
         </DialogHeader>
-        <div className="flex flex-col gap-3 mt-6">
+        <div className="flex flex-col gap-3 mt-2">
           {loading &&
             Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="flex flex-row gap-4 items-center animate-pulse">
-                <div className="h-5 w-8 rounded bg-gray-200" />
+                <div className="rounded bg-gray-200 shrink-0" style={{ width: 30, height: 20 }} />
                 <div className="h-5 w-48 rounded bg-gray-200" />
               </div>
             ))}
@@ -70,22 +71,12 @@ export default function SanctionSourcesDialog(): React.ReactNode {
 
               return (
                 <div key={source.id} className="flex flex-row gap-4 items-center">
-                  <picture>
-                    <source
-                      type="image/webp"
-                      srcSet={`https://flagcdn.com/h20/${code}.webp, https://flagcdn.com/h40/${code}.webp 2x, https://flagcdn.com/h60/${code}.webp 3x`}
-                    />
-                    <source
-                      type="image/png"
-                      srcSet={`https://flagcdn.com/h20/${code}.png, https://flagcdn.com/h40/${code}.png 2x, https://flagcdn.com/h60/${code}.png 3x`}
-                    />
-                    <img
-                      src={`https://flagcdn.com/h40/${code}.png`}
-                      className="rounded-xs bg-black border"
-                      height="20"
-                      alt={source.name}
-                    />
-                  </picture>
+                  <CountryFlag
+                    countryCode={source.country_code}
+                    authority={source.authority}
+                    alt={source.name}
+                    size="sm"
+                  />
 
                   {source.source_url ? (
                     <Link

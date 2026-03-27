@@ -40,11 +40,15 @@ function AMLSearchContent(): React.ReactElement {
     screeningSearch({ query: { q } })
       .then((response) => {
         if (cancelled) return;
-        const items = response.data?.items ?? [];
-        if (items.length === 1 && items[0].id) {
+        const data = response.data;
+        const items = data?.items ?? [];
+        const queryType = data?.query_type;
+
+        if (queryType === 'specific' && items.length === 1 && items[0].id) {
           router.replace(`/aml/search/${items[0].id}`);
           return;
         }
+
         setResults(items);
       })
       .catch(() => {
@@ -80,7 +84,7 @@ function AMLSearchContent(): React.ReactElement {
 
         <Button
           onClick={handleSearch}
-          className="bg-brand hover:bg-brand/90 absolute top-1/2 right-2 h-7 w-7 -translate-y-1/2 transition-all duration-200 sm:right-2.5 sm:h-8 sm:w-8"
+          className="bg-brand cursor-pointer hover:bg-brand/90 absolute top-1/2 right-2 h-7 w-7 -translate-y-1/2 transition-all duration-200 sm:right-2.5 sm:h-8 sm:w-8"
         >
           <Search className="h-4 w-4" />
         </Button>
@@ -89,17 +93,11 @@ function AMLSearchContent(): React.ReactElement {
       <div className="py-8 space-y-8 mb-40">
         {loading && <SearchSkeleton />}
 
-        {error && (
-          <p className="text-sm text-red-600">Failed to load results. Please try again.</p>
-        )}
+        {error && <p className="text-sm text-red-600">Failed to load results. Please try again.</p>}
 
-        {!loading && !error && results.length === 0 && (
-          <NoMatchesSection name={q} />
-        )}
+        {!loading && !error && results.length === 0 && <NoMatchesSection name={q} />}
 
-        {!loading && !error && results.length > 0 && (
-          <SearchResultList entities={results} />
-        )}
+        {!loading && !error && results.length > 0 && <SearchResultList entities={results} />}
       </div>
     </div>
   );

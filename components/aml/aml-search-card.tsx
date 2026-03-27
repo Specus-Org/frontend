@@ -28,7 +28,7 @@ export default function AmlSearchCard({
 
         <Button
           onClick={onSearch}
-          className="bg-brand hover:bg-brand/90 absolute top-1/2 right-2 h-7 w-7 -translate-y-1/2 transition-all duration-200 sm:right-2.5 sm:h-8 sm:w-8"
+          className="bg-brand cursor-pointer hover:bg-brand/90 absolute top-1/2 right-2 h-7 w-7 -translate-y-1/2 transition-all duration-200 sm:right-2.5 sm:h-8 sm:w-8"
         >
           <Search className="h-4 w-4" />
         </Button>
@@ -37,9 +37,7 @@ export default function AmlSearchCard({
       <div className="flex flex-row gap-2 p-3 items-start sm:items-center">
         <Info className="w-4 h-4 text-amber-600 shrink-0 mt-1 sm:mt-0" />
         <p className="text-sm sm:text-base">
-          Results are checked against the available{' '}
-          <SanctionSourcesDialog />
-          .
+          Results are checked against the available <SanctionSourcesDialog />.
         </p>
       </div>
     </div>
