@@ -94,7 +94,7 @@ function BangladeshPage() {
   return (
     <div className="px-4 py-16 text-center sm:px-6 sm:py-24 md:px-8 md:py-16 max-w-5xl mx-auto">
       <span className="inline-flex flex-row gap-1.5 py-2 px-3.5 justify-center border rounded-full mb-6">
-        <CountryFlag countryCode="bd" alt="Bangladesh Country Flag" />
+        <CountryFlag countryCode="bd" alt="Bangladesh Country Flag" size="sm" />
         Bangladesh
       </span>
       <h1 className="text-foreground font-rethink mb-3 text-2xl font-semibold sm:text-3xl md:text-4xl lg:text-5xl">
