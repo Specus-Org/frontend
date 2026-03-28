@@ -21,14 +21,18 @@ export default function AmlSearchCard({
         <input
           className="placeholder-muted-foreground w-full rounded-xl px-3 py-2.5 text-base font-normal outline-none sm:px-4 sm:py-3 sm:text-lg"
           onInput={(input) => onQueryChange(input.currentTarget.value)}
-          onKeyDown={() => {}}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') onSearch();
+          }}
           value={query}
           placeholder="Search individual or entity name…"
+          required
         />
 
         <Button
           onClick={onSearch}
-          className="bg-brand cursor-pointer hover:bg-brand/90 absolute top-1/2 right-2 h-7 w-7 -translate-y-1/2 transition-all duration-200 sm:right-2.5 sm:h-8 sm:w-8"
+          disabled={!query.trim()}
+          className="bg-brand cursor-pointer hover:bg-brand/90 absolute top-1/2 right-2 h-7 w-7 -translate-y-1/2 transition-all duration-200 sm:right-2.5 sm:h-8 sm:w-8 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Search className="h-4 w-4" />
         </Button>
