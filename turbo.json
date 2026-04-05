@@ -7,7 +7,8 @@
     "AUTH_TRUST_HOST",
     "AUTH_AUTHENTIK_ID",
     "AUTH_AUTHENTIK_SECRET",
-    "AUTH_AUTHENTIK_ISSUER"
+    "AUTH_AUTHENTIK_ISSUER",
+    "AUTH_AUTHENTIK_REDIRECT_URI"
   ],
   "tasks": {
     "build": {
