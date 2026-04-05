@@ -1,7 +1,14 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "globalDependencies": [".env"],
-  "globalEnv": ["NEXT_PUBLIC_API_BASE_URL", "GITHUB_TOKEN"],
+  "globalEnv": [
+    "NEXT_PUBLIC_API_BASE_URL",
+    "AUTH_SECRET",
+    "AUTH_TRUST_HOST",
+    "AUTH_AUTHENTIK_ID",
+    "AUTH_AUTHENTIK_SECRET",
+    "AUTH_AUTHENTIK_ISSUER"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
