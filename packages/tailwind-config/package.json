@@ -1,0 +1,10 @@
+{
+  "name": "@specus/tailwind-config",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "@tailwindcss/postcss": "catalog:",
+    "tailwindcss": "catalog:",
+    "tw-animate-css": "catalog:"
+  }
+}
