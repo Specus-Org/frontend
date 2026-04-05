@@ -76,11 +76,18 @@ export default function UserMenu(): React.ReactNode {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link href="/api/auth/signout">
-            <LogOut className="size-4" />
-            Sign out
-          </Link>
+        <DropdownMenuItem
+          onSelect={() => {
+            // POST to federated signout for full OIDC logout
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/api/auth/federated-signout';
+            document.body.appendChild(form);
+            form.submit();
+          }}
+        >
+          <LogOut className="size-4" />
+          Sign out
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

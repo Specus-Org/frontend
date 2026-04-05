@@ -100,14 +100,16 @@ export default function MobileNav({ items, currentPath, isOpen, onOpenChange }: 
                   <User className="size-4" />
                   <span className="text-base font-medium">Profile</span>
                 </Link>
-                <Link
-                  href="/api/auth/signout"
-                  onClick={handleMenuItemClick}
-                  className="hover:bg-accent flex items-center gap-3 rounded-lg px-3 py-3 text-muted-foreground transition-colors"
-                >
-                  <LogOut className="size-4" />
-                  <span className="text-base font-medium">Sign out</span>
-                </Link>
+                <form method="POST" action="/api/auth/federated-signout">
+                  <button
+                    type="submit"
+                    onClick={handleMenuItemClick}
+                    className="hover:bg-accent flex w-full items-center gap-3 rounded-lg px-3 py-3 text-muted-foreground transition-colors"
+                  >
+                    <LogOut className="size-4" />
+                    <span className="text-base font-medium">Sign out</span>
+                  </button>
+                </form>
               </>
             ) : (
               <Link

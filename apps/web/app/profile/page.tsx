@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import Image from 'next/image';
-import { auth, signOut } from '@specus/auth';
+import { auth } from '@specus/auth';
 import { Button } from '@specus/ui/components/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@specus/ui/components/card';
 import { LogOut, Mail, User } from 'lucide-react';
@@ -48,12 +48,7 @@ export default async function ProfilePage() {
           )}
         </CardHeader>
         <CardContent>
-          <form
-            action={async () => {
-              'use server';
-              await signOut({ redirectTo: '/' });
-            }}
-          >
+          <form method="POST" action="/api/auth/federated-signout">
             <Button type="submit" variant="outline" className="w-full gap-2">
               <LogOut className="size-4" />
               Sign out
