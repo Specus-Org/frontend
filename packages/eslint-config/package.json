@@ -1,0 +1,13 @@
+{
+  "name": "@specus/eslint-config",
+  "version": "0.0.0",
+  "private": true,
+  "files": ["next.mjs", "library.mjs"],
+  "dependencies": {
+    "eslint-config-next": "catalog:",
+    "eslint-config-prettier": "catalog:"
+  },
+  "peerDependencies": {
+    "eslint": "catalog:"
+  }
+}

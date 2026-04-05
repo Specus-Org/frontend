@@ -1,0 +1,20 @@
+{
+  "extends": "@specus/typescript-config/nextjs.json",
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./*"],
+      "@specus/ui/*": ["../../packages/ui/src/*"],
+      "@specus/api-client": ["../../packages/api-client/src/generated/index.ts"],
+      "@specus/api-client/*": ["../../packages/api-client/src/*"]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts",
+    "**/*.mts"
+  ],
+  "exclude": ["node_modules"]
+}

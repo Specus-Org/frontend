@@ -1,40 +1,31 @@
-.PHONY: dev build start lint format clean install fetch-openapi generate-api api
+.PHONY: dev build lint format install api clean
 
-# Development
+# Development (starts all apps)
 dev:
-	npm run dev
+	pnpm dev
 
 # Production build
 build:
-	npm run build
-
-# Start production server
-start:
-	npm run start
+	pnpm build
 
 # Run ESLint
 lint:
-	npm run lint
+	pnpm lint
 
 # Format code with Prettier
 format:
-	npm run format
+	pnpm format
 
 # Install dependencies
 install:
-	npm install
+	pnpm install
 
-# Fetch OpenAPI spec from private backend repo
-fetch-openapi:
-	bash scripts/fetch-openapi.sh
-
-# Generate TypeScript client from OpenAPI spec
-generate-api: fetch-openapi
-	npx openapi-ts
-
-# Fetch spec and generate client (shorthand)
-api: generate-api
+# Fetch OpenAPI spec and generate client
+api:
+	pnpm api
 
 # Clean build artifacts and node_modules
 clean:
-	rm -rf .next node_modules
+	pnpm turbo clean
+	find . -name 'node_modules' -type d -prune -exec rm -rf {} +
+	find . -name '.next' -type d -prune -exec rm -rf {} +

@@ -1,0 +1,20 @@
+{
+  "name": "@specus/api-client",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/generated/index.ts",
+    "./config": "./src/client.ts"
+  },
+  "scripts": {
+    "fetch-openapi": "bash scripts/fetch-openapi.sh",
+    "generate": "openapi-ts",
+    "api": "pnpm run fetch-openapi && pnpm run generate"
+  },
+  "devDependencies": {
+    "@hey-api/openapi-ts": "catalog:",
+    "@specus/typescript-config": "workspace:*",
+    "typescript": "catalog:"
+  }
+}

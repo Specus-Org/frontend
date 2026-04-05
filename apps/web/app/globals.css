@@ -1,0 +1,7 @@
+@import '@specus/ui/styles/globals.css';
+
+@source "../../packages/ui/src/**/*.tsx";
+
+.font-rethink {
+  font-family: var(--font-rethink-sans);
+}
