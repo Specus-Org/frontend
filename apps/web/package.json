@@ -10,9 +10,11 @@
   },
   "dependencies": {
     "@specus/api-client": "workspace:*",
+    "@specus/auth": "workspace:*",
     "@specus/ui": "workspace:*",
     "lucide-react": "catalog:",
     "next": "catalog:",
+    "next-auth": "catalog:",
     "next-themes": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:"

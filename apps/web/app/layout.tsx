@@ -3,7 +3,9 @@ import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { Rethink_Sans } from 'next/font/google';
 import './globals.css';
+import { auth } from '@specus/auth';
 import { ThemeProvider } from '@/components/theme-provider';
+import { SessionProvider } from '@/components/session-provider';
 import Navbar from '@/components/navbar';
 import Footer from '@/components/footer';
 
@@ -54,20 +56,24 @@ export const metadata: Metadata = {
   manifest: '/favicon/site.webmanifest',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`font-sans antialiased ${rethinkSans.variable}`}>
         <ThemeProvider defaultTheme="light" forcedTheme="light" disableTransitionOnChange>
-          <Suspense>
-            <Navbar />
-          </Suspense>
-          <main className="rounded-t-xl rounded-b-xl border-t border-b">{children}</main>
-          <Footer />
+          <SessionProvider session={session}>
+            <Suspense>
+              <Navbar />
+            </Suspense>
+            <main className="rounded-t-xl rounded-b-xl border-t border-b">{children}</main>
+            <Footer />
+          </SessionProvider>
         </ThemeProvider>
       </body>
     </html>
