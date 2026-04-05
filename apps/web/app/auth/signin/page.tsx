@@ -2,6 +2,8 @@ import { redirect } from 'next/navigation';
 import { auth, signIn } from '@specus/auth';
 import { Button } from '@specus/ui/components/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@specus/ui/components/card';
+import { Input } from '@specus/ui/components/input';
+import { Label } from '@specus/ui/components/label';
 import { LogIn, AlertCircle } from 'lucide-react';
 
 interface SignInPageProps {
@@ -9,9 +11,9 @@ interface SignInPageProps {
 }
 
 const ERROR_MESSAGES: Record<string, string> = {
+  CredentialsSignin: 'Invalid email or password. Please try again.',
   OAuthSignin: 'Could not start the sign-in process. Please try again.',
   OAuthCallback: 'Something went wrong during sign-in. Please try again.',
-  OAuthAccountNotLinked: 'This account is already linked to another sign-in method.',
   Default: 'An unexpected error occurred. Please try again.',
 };
 
@@ -42,15 +44,40 @@ export default async function SignInPage({ searchParams }: SignInPageProps) {
             </div>
           )}
           <form
-            action={async () => {
+            action={async (formData: FormData) => {
               'use server';
-              await signIn('authentik', {
+              await signIn('authentik-credentials', {
+                email: formData.get('email') as string,
+                password: formData.get('password') as string,
                 redirectTo: callbackUrl ?? '/profile',
               });
             }}
+            className="flex flex-col gap-4"
           >
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                placeholder="you@example.com"
+                required
+                autoComplete="email"
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                placeholder="Enter your password"
+                required
+                autoComplete="current-password"
+              />
+            </div>
             <Button type="submit" className="w-full" size="lg">
-              Sign in with Authentik
+              Sign in
             </Button>
           </form>
         </CardContent>
