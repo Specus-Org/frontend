@@ -72,27 +72,25 @@ export default function LoginPage() {
   }
 
   return (
-    <Card className="border-border/50 shadow-lg">
-      <CardHeader className="space-y-4 pb-4 text-center">
-        <div className="mx-auto flex size-11 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-          <Shield className="size-5" />
+    <Card className="border-border/50 py-8 shadow-lg">
+      <CardHeader className="text-center">
+        <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+          <Shield className="size-6" />
         </div>
-        <div className="space-y-1.5">
-          <CardTitle className="text-xl font-semibold">Specus Admin</CardTitle>
-          <CardDescription>
-            Sign in to the administration dashboard
-          </CardDescription>
-        </div>
+        <CardTitle className="text-xl font-semibold">Specus Admin</CardTitle>
+        <CardDescription>
+          Sign in to the administration dashboard
+        </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="grid gap-5">
           {error && (
             <div className="rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2.5 text-sm text-destructive">
               {error}
             </div>
           )}
 
-          <div className="space-y-2">
+          <div className="grid gap-2">
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
@@ -107,7 +105,7 @@ export default function LoginPage() {
             />
           </div>
 
-          <div className="space-y-2">
+          <div className="grid gap-2">
             <Label htmlFor="password">Password</Label>
             <Input
               id="password"
@@ -123,7 +121,7 @@ export default function LoginPage() {
 
           <Button
             type="submit"
-            className="w-full"
+            className="mt-1 w-full"
             disabled={isLoading}
           >
             {isLoading ? (
