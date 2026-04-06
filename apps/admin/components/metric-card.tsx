@@ -1,11 +1,6 @@
 import type { LucideIcon } from 'lucide-react';
 import Link from 'next/link';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@specus/ui/components/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@specus/ui/components/card';
 import { Skeleton } from '@specus/ui/components/skeleton';
 
 interface MetricCardProps {
@@ -31,23 +26,25 @@ export function MetricCard({
     <Card
       className={
         href
-          ? 'transition-colors hover:border-primary/40 hover:shadow-md cursor-pointer'
+          ? 'transition-colors hover:border-primary/30 cursor-pointer'
           : undefined
       }
     >
-      <CardHeader className="flex flex-row items-center justify-between pb-0">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium text-muted-foreground">
           {title}
         </CardTitle>
-        <Icon className="size-5 text-muted-foreground" />
+        <div className="flex size-8 items-center justify-center rounded-md bg-muted">
+          <Icon className="size-4 text-muted-foreground" />
+        </div>
       </CardHeader>
-      <CardContent className="pt-0">
+      <CardContent>
         {loading ? (
-          <Skeleton className="h-8 w-24 rounded-md" />
+          <Skeleton className="h-7 w-20" />
         ) : error ? (
           <p className="text-sm text-muted-foreground">Failed to load</p>
         ) : (
-          <div className="text-3xl font-bold tracking-tight">{value}</div>
+          <div className="text-2xl font-semibold tracking-tight">{value}</div>
         )}
         {description && !loading && !error && (
           <p className="mt-1 text-xs text-muted-foreground">{description}</p>

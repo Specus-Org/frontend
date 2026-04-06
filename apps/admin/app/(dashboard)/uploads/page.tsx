@@ -59,8 +59,8 @@ export default function UploadsPage() {
       {/* Page header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Uploads</h1>
-          <p className="mt-1 text-muted-foreground">
+          <h1 className="text-2xl font-semibold tracking-tight">Uploads</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
             Manage images and documents for your content.
           </p>
         </div>

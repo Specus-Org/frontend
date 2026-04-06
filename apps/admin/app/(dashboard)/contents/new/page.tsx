@@ -71,7 +71,7 @@ export default function NewContentPage() {
           </Link>
         </Button>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">New Content</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">New Content</h1>
           <p className="mt-1 text-muted-foreground">
             Create a new page, blog post, or flexible page.
           </p>

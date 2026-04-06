@@ -126,9 +126,9 @@ export default function AuthorsPage() {
     <div className="flex flex-1 flex-col gap-6">
       {/* Page header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-2">
-          <Users className="size-6 text-muted-foreground" />
-          <h1 className="text-2xl font-bold tracking-tight">Authors</h1>
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Authors</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Manage author profiles for your content.</p>
         </div>
         <Button onClick={handleCreate} size="sm">
           <Plus className="size-4" />

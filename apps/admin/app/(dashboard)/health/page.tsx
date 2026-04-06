@@ -132,15 +132,11 @@ export default function HealthPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <Activity className="size-6 text-muted-foreground" />
-            <h1 className="text-2xl font-bold tracking-tight">
+            <h1 className="text-2xl font-semibold tracking-tight">
               System Health
             </h1>
             {isRefreshing && (
-              <span className="ml-2 inline-flex items-center gap-1 text-xs text-muted-foreground">
-                <RefreshCw className="size-3 animate-spin" />
-                refreshing...
-              </span>
+              <RefreshCw className="size-3.5 animate-spin text-muted-foreground" />
             )}
           </div>
           {lastChecked && (

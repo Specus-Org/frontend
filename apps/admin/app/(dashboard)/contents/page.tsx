@@ -144,14 +144,14 @@ export default function ContentsPage() {
       {/* Page header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Content</h1>
-          <p className="mt-1 text-muted-foreground">
+          <h1 className="text-2xl font-semibold tracking-tight">Content</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
             Manage your pages, blog posts, and other content.
           </p>
         </div>
-        <Button asChild>
+        <Button asChild size="sm">
           <Link href="/contents/new">
-            <Plus className="mr-2 size-4" />
+            <Plus className="size-4" />
             New Content
           </Link>
         </Button>

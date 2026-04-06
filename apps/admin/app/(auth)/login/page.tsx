@@ -17,7 +17,8 @@ import {
 const ERROR_MESSAGES: Record<string, string> = {
   INVALID_CREDENTIALS: 'Invalid email or password.',
   ACCOUNT_NOT_VERIFIED: 'Please verify your email first.',
-  AUTH_SERVICE_UNAVAILABLE: 'Authentication service is temporarily unavailable. Please try again later.',
+  AUTH_SERVICE_UNAVAILABLE:
+    'Authentication service is temporarily unavailable. Please try again later.',
   BAD_REQUEST: 'Please provide both email and password.',
   AUTH_ERROR: 'An authentication error occurred. Please try again.',
   INTERNAL_ERROR: 'An unexpected error occurred. Please try again.',
@@ -52,39 +53,46 @@ export default function LoginPage() {
         }));
 
         const errorMessage =
-          ERROR_MESSAGES[data.code] ?? data.message ?? 'Authentication failed. Please try again.';
+          ERROR_MESSAGES[data.code] ??
+          data.message ??
+          'Authentication failed. Please try again.';
         setError(errorMessage);
         return;
       }
 
-      // Success - redirect to the callback URL or dashboard
       router.push(callbackUrl);
       router.refresh();
     } catch {
-      setError('Network error. Please check your connection and try again.');
+      setError(
+        'Network error. Please check your connection and try again.',
+      );
     } finally {
       setIsLoading(false);
     }
   }
 
   return (
-    <Card>
-      <CardHeader className="text-center">
-        <div className="mx-auto mb-2 flex size-12 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-          <Shield className="size-6" />
+    <Card className="border-border/50 shadow-lg">
+      <CardHeader className="space-y-4 pb-4 text-center">
+        <div className="mx-auto flex size-11 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+          <Shield className="size-5" />
         </div>
-        <CardTitle className="text-2xl">Specus Admin</CardTitle>
-        <CardDescription>Sign in to the administration dashboard</CardDescription>
+        <div className="space-y-1.5">
+          <CardTitle className="text-xl font-semibold">Specus Admin</CardTitle>
+          <CardDescription>
+            Sign in to the administration dashboard
+          </CardDescription>
+        </div>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
-            <div className="rounded-md border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+            <div className="rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2.5 text-sm text-destructive">
               {error}
             </div>
           )}
 
-          <div className="flex flex-col gap-2">
+          <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
@@ -99,7 +107,7 @@ export default function LoginPage() {
             />
           </div>
 
-          <div className="flex flex-col gap-2">
+          <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
             <Input
               id="password"
@@ -113,7 +121,11 @@ export default function LoginPage() {
             />
           </div>
 
-          <Button type="submit" className="mt-2 w-full" size="lg" disabled={isLoading}>
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={isLoading}
+          >
             {isLoading ? (
               <>
                 <Loader2 className="size-4 animate-spin" />

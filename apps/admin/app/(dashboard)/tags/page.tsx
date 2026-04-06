@@ -83,14 +83,16 @@ export default function TagsPage() {
     <div className="flex flex-1 flex-col gap-6">
       {/* Page header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-2">
-          <Tag className="size-6 text-muted-foreground" />
-          <h1 className="text-2xl font-bold tracking-tight">Tags</h1>
-          {!loading && (
-            <Badge variant="secondary" className="ml-1">
-              {tags.length}
-            </Badge>
-          )}
+        <div>
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-semibold tracking-tight">Tags</h1>
+            {!loading && (
+              <Badge variant="secondary">
+                {tags.length}
+              </Badge>
+            )}
+          </div>
+          <p className="mt-1 text-sm text-muted-foreground">Label and organize content with tags.</p>
         </div>
         <Button onClick={() => setDialogOpen(true)} size="sm">
           <Plus className="size-4" />

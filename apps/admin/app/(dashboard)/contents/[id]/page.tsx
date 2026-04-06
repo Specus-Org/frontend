@@ -172,7 +172,7 @@ export default function EditContentPage() {
             </Link>
           </Button>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">
+            <h1 className="text-2xl font-semibold tracking-tight">
               Edit Content
             </h1>
             <p className="mt-1 text-muted-foreground">{content.title}</p>

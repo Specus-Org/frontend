@@ -22,22 +22,24 @@ export function EmptyState({
   action,
 }: EmptyStateProps) {
   return (
-    <div className="flex min-h-[400px] flex-col items-center justify-center rounded-lg border border-dashed p-8 text-center animate-in fade-in-50">
-      <div className="flex size-16 items-center justify-center rounded-full bg-muted">
-        <Icon className="size-8 text-muted-foreground" />
+    <div className="flex min-h-[300px] flex-col items-center justify-center rounded-lg border bg-muted/30 p-8 text-center">
+      <div className="flex size-12 items-center justify-center rounded-full bg-muted">
+        <Icon className="size-6 text-muted-foreground" />
       </div>
-      <h3 className="mt-4 text-lg font-semibold">{title}</h3>
-      <p className="mb-4 mt-2 max-w-sm text-sm text-muted-foreground">
+      <h3 className="mt-4 text-sm font-medium">{title}</h3>
+      <p className="mb-5 mt-1.5 max-w-xs text-sm text-muted-foreground">
         {description}
       </p>
       {action && (
         <>
           {action.href ? (
-            <Button asChild>
+            <Button asChild size="sm">
               <Link href={action.href}>{action.label}</Link>
             </Button>
           ) : (
-            <Button onClick={action.onClick}>{action.label}</Button>
+            <Button size="sm" onClick={action.onClick}>
+              {action.label}
+            </Button>
           )}
         </>
       )}
