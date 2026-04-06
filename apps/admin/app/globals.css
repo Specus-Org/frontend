@@ -1,5 +1,4 @@
 @import '@specus/ui/styles/globals.css';
 
 @source "../../../packages/ui/src/**/*.tsx";
-@source "../../../packages/ui/src/hooks/*.tsx";
 
