@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { AdminAuthLoginData, AdminAuthLoginErrors, AdminAuthLoginResponses, AdminAuthLogoutData, AdminAuthLogoutResponses, AdminAuthRefreshData, AdminAuthRefreshErrors, AdminAuthRefreshResponses, AdminConfirmUploadData, AdminConfirmUploadErrors, AdminConfirmUploadResponses, AdminCreateAuthorData, AdminCreateAuthorErrors, AdminCreateAuthorResponses, AdminCreateCategoryData, AdminCreateCategoryErrors, AdminCreateCategoryResponses, AdminCreateContentData, AdminCreateContentErrors, AdminCreateContentResponses, AdminCreatePageTypeData, AdminCreatePageTypeErrors, AdminCreatePageTypeResponses, AdminCreateTagData, AdminCreateTagErrors, AdminCreateTagResponses, AdminDeleteAuthorData, AdminDeleteAuthorErrors, AdminDeleteAuthorResponses, AdminDeleteCategoryData, AdminDeleteCategoryErrors, AdminDeleteCategoryResponses, AdminDeleteContentData, AdminDeleteContentErrors, AdminDeleteContentResponses, AdminDeletePageTypeData, AdminDeletePageTypeErrors, AdminDeletePageTypeResponses, AdminDeleteTagData, AdminDeleteTagErrors, AdminDeleteTagResponses, AdminDeleteUploadData, AdminDeleteUploadErrors, AdminDeleteUploadResponses, AdminGetAuthorData, AdminGetAuthorErrors, AdminGetAuthorResponses, AdminGetContentData, AdminGetContentErrors, AdminGetContentResponses, AdminListAuthorsData, AdminListAuthorsResponses, AdminListCategoriesData, AdminListCategoriesResponses, AdminListContentsData, AdminListContentsErrors, AdminListContentsResponses, AdminListPageTypesData, AdminListPageTypesResponses, AdminListTagsData, AdminListTagsResponses, AdminListUploadsData, AdminListUploadsResponses, AdminPresignUploadData, AdminPresignUploadErrors, AdminPresignUploadResponses, AdminReorderPagesData, AdminReorderPagesErrors, AdminReorderPagesResponses, AdminUpdateAuthorData, AdminUpdateAuthorErrors, AdminUpdateAuthorResponses, AdminUpdateCategoryData, AdminUpdateCategoryErrors, AdminUpdateCategoryResponses, AdminUpdateContentData, AdminUpdateContentErrors, AdminUpdateContentResponses, AuthForgotPasswordData, AuthForgotPasswordResponses, AuthLoginData, AuthLoginErrors, AuthLoginResponses, AuthLogoutData, AuthLogoutResponses, AuthRefreshData, AuthRefreshErrors, AuthRefreshResponses, AuthRegisterData, AuthRegisterErrors, AuthRegisterResponses, AuthResetPasswordData, AuthResetPasswordErrors, AuthResetPasswordResponses, GetScreeningEntityData, GetScreeningEntityErrors, GetScreeningEntityResponses, HealthLiveData, HealthLiveResponses, HealthReadyData, HealthReadyErrors, HealthReadyResponses, ListScreeningSourcesData, ListScreeningSourcesResponses, PublicGetAuthorBySlugData, PublicGetAuthorBySlugErrors, PublicGetAuthorBySlugResponses, PublicGetContentByTypeAndSlugData, PublicGetContentByTypeAndSlugErrors, PublicGetContentByTypeAndSlugResponses, PublicGetPageTreeData, PublicGetPageTreeResponses, PublicGetUploadUrlData, PublicGetUploadUrlErrors, PublicGetUploadUrlResponses, PublicListCategoriesData, PublicListCategoriesResponses, PublicListContentsData, PublicListContentsErrors, PublicListContentsResponses, PublicListTagsData, PublicListTagsResponses, PublicResolvePagePathData, PublicResolvePagePathErrors, PublicResolvePagePathResponses, ScreeningSearchData, ScreeningSearchErrors, ScreeningSearchResponses } from './types.gen';
+import type { AdminConfirmUploadData, AdminConfirmUploadErrors, AdminConfirmUploadResponses, AdminCreateAuthorData, AdminCreateAuthorErrors, AdminCreateAuthorResponses, AdminCreateCategoryData, AdminCreateCategoryErrors, AdminCreateCategoryResponses, AdminCreateContentData, AdminCreateContentErrors, AdminCreateContentResponses, AdminCreatePageTypeData, AdminCreatePageTypeErrors, AdminCreatePageTypeResponses, AdminCreateTagData, AdminCreateTagErrors, AdminCreateTagResponses, AdminDeleteAuthorData, AdminDeleteAuthorErrors, AdminDeleteAuthorResponses, AdminDeleteCategoryData, AdminDeleteCategoryErrors, AdminDeleteCategoryResponses, AdminDeleteContentData, AdminDeleteContentErrors, AdminDeleteContentResponses, AdminDeletePageTypeData, AdminDeletePageTypeErrors, AdminDeletePageTypeResponses, AdminDeleteTagData, AdminDeleteTagErrors, AdminDeleteTagResponses, AdminDeleteUploadData, AdminDeleteUploadErrors, AdminDeleteUploadResponses, AdminGetAuthorData, AdminGetAuthorErrors, AdminGetAuthorResponses, AdminGetContentData, AdminGetContentErrors, AdminGetContentResponses, AdminListAuthorsData, AdminListAuthorsResponses, AdminListCategoriesData, AdminListCategoriesResponses, AdminListContentsData, AdminListContentsErrors, AdminListContentsResponses, AdminListPageTypesData, AdminListPageTypesResponses, AdminListTagsData, AdminListTagsResponses, AdminListUploadsData, AdminListUploadsResponses, AdminPresignUploadData, AdminPresignUploadErrors, AdminPresignUploadResponses, AdminReorderPagesData, AdminReorderPagesErrors, AdminReorderPagesResponses, AdminUpdateAuthorData, AdminUpdateAuthorErrors, AdminUpdateAuthorResponses, AdminUpdateCategoryData, AdminUpdateCategoryErrors, AdminUpdateCategoryResponses, AdminUpdateContentData, AdminUpdateContentErrors, AdminUpdateContentResponses, GetScreeningEntityData, GetScreeningEntityErrors, GetScreeningEntityResponses, HealthLiveData, HealthLiveResponses, HealthReadyData, HealthReadyErrors, HealthReadyResponses, ListScreeningSourcesData, ListScreeningSourcesResponses, PublicGetAuthorBySlugData, PublicGetAuthorBySlugErrors, PublicGetAuthorBySlugResponses, PublicGetContentByTypeAndSlugData, PublicGetContentByTypeAndSlugErrors, PublicGetContentByTypeAndSlugResponses, PublicGetPageTreeData, PublicGetPageTreeResponses, PublicGetUploadUrlData, PublicGetUploadUrlErrors, PublicGetUploadUrlResponses, PublicListCategoriesData, PublicListCategoriesResponses, PublicListContentsData, PublicListContentsErrors, PublicListContentsResponses, PublicListTagsData, PublicListTagsResponses, PublicResolvePagePathData, PublicResolvePagePathErrors, PublicResolvePagePathResponses, ScreeningSearchData, ScreeningSearchErrors, ScreeningSearchResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -17,53 +17,6 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
      */
     meta?: Record<string, unknown>;
 };
-
-/**
- * Admin login with email and password
- *
- * Authenticates an admin via Authentik Flow Executor. Returns access token,
- * refresh token, and ID token.
- *
- */
-export const adminAuthLogin = <ThrowOnError extends boolean = false>(options: Options<AdminAuthLoginData, ThrowOnError>) => (options.client ?? client).post<AdminAuthLoginResponses, AdminAuthLoginErrors, ThrowOnError>({
-    url: '/api/v1/admin/auth/login',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-/**
- * Admin logout and revoke refresh token
- *
- * Revokes the refresh token at Authentik. Always returns 204 even if
- * revocation fails (the client should discard tokens regardless).
- *
- */
-export const adminAuthLogout = <ThrowOnError extends boolean = false>(options: Options<AdminAuthLogoutData, ThrowOnError>) => (options.client ?? client).post<AdminAuthLogoutResponses, unknown, ThrowOnError>({
-    url: '/api/v1/admin/auth/logout',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-/**
- * Refresh admin access token
- *
- * Exchanges a valid refresh token for a new access token and rotated refresh token.
- *
- */
-export const adminAuthRefresh = <ThrowOnError extends boolean = false>(options: Options<AdminAuthRefreshData, ThrowOnError>) => (options.client ?? client).post<AdminAuthRefreshResponses, AdminAuthRefreshErrors, ThrowOnError>({
-    url: '/api/v1/admin/auth/refresh',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
 
 /**
  * List authors
@@ -243,18 +196,6 @@ export const adminDeleteTag = <ThrowOnError extends boolean = false>(options: Op
 export const adminListUploads = <ThrowOnError extends boolean = false>(options?: Options<AdminListUploadsData, ThrowOnError>) => (options?.client ?? client).get<AdminListUploadsResponses, unknown, ThrowOnError>({ url: '/api/v1/admin/cms/uploads', ...options });
 
 /**
- * Request presigned upload URL
- */
-export const adminPresignUpload = <ThrowOnError extends boolean = false>(options: Options<AdminPresignUploadData, ThrowOnError>) => (options.client ?? client).post<AdminPresignUploadResponses, AdminPresignUploadErrors, ThrowOnError>({
-    url: '/api/v1/admin/cms/uploads/presign',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-/**
  * Delete upload
  */
 export const adminDeleteUpload = <ThrowOnError extends boolean = false>(options: Options<AdminDeleteUploadData, ThrowOnError>) => (options.client ?? client).delete<AdminDeleteUploadResponses, AdminDeleteUploadErrors, ThrowOnError>({ url: '/api/v1/admin/cms/uploads/{id}', ...options });
@@ -267,95 +208,10 @@ export const adminDeleteUpload = <ThrowOnError extends boolean = false>(options:
 export const adminConfirmUpload = <ThrowOnError extends boolean = false>(options: Options<AdminConfirmUploadData, ThrowOnError>) => (options.client ?? client).post<AdminConfirmUploadResponses, AdminConfirmUploadErrors, ThrowOnError>({ url: '/api/v1/admin/cms/uploads/{id}/confirm', ...options });
 
 /**
- * Request password reset
- *
- * Initiates the Authentik recovery flow. If the email is registered, a
- * password reset link is sent. Always returns 202 regardless of email
- * existence (account enumeration protection).
- *
+ * Request presigned upload URL
  */
-export const authForgotPassword = <ThrowOnError extends boolean = false>(options: Options<AuthForgotPasswordData, ThrowOnError>) => (options.client ?? client).post<AuthForgotPasswordResponses, unknown, ThrowOnError>({
-    url: '/api/v1/auth/forgot-password',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-/**
- * Login with email and password
- *
- * Authenticates a customer via Authentik Flow Executor. Returns access token,
- * refresh token, and ID token. A local profile is upserted on first login.
- *
- */
-export const authLogin = <ThrowOnError extends boolean = false>(options: Options<AuthLoginData, ThrowOnError>) => (options.client ?? client).post<AuthLoginResponses, AuthLoginErrors, ThrowOnError>({
-    url: '/api/v1/auth/login',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-/**
- * Logout and revoke refresh token
- *
- * Revokes the refresh token at Authentik. Always returns 204 even if
- * revocation fails (the client should discard tokens regardless).
- *
- */
-export const authLogout = <ThrowOnError extends boolean = false>(options: Options<AuthLogoutData, ThrowOnError>) => (options.client ?? client).post<AuthLogoutResponses, unknown, ThrowOnError>({
-    url: '/api/v1/auth/logout',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-/**
- * Refresh access token
- *
- * Exchanges a valid refresh token for a new access token and rotated refresh token.
- *
- */
-export const authRefresh = <ThrowOnError extends boolean = false>(options: Options<AuthRefreshData, ThrowOnError>) => (options.client ?? client).post<AuthRefreshResponses, AuthRefreshErrors, ThrowOnError>({
-    url: '/api/v1/auth/refresh',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-/**
- * Register a new customer account
- *
- * Creates a new customer account via Authentik enrollment flow. A verification
- * email is sent if the email is not already registered. Always returns 201
- * regardless of whether the account exists (account enumeration protection).
- *
- */
-export const authRegister = <ThrowOnError extends boolean = false>(options: Options<AuthRegisterData, ThrowOnError>) => (options.client ?? client).post<AuthRegisterResponses, AuthRegisterErrors, ThrowOnError>({
-    url: '/api/v1/auth/register',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-/**
- * Complete password reset
- *
- * Completes the Authentik recovery flow by submitting the flow token
- * (from the reset email link) and the new password.
- *
- */
-export const authResetPassword = <ThrowOnError extends boolean = false>(options: Options<AuthResetPasswordData, ThrowOnError>) => (options.client ?? client).post<AuthResetPasswordResponses, AuthResetPasswordErrors, ThrowOnError>({
-    url: '/api/v1/auth/reset-password',
+export const adminPresignUpload = <ThrowOnError extends boolean = false>(options: Options<AdminPresignUploadData, ThrowOnError>) => (options.client ?? client).post<AdminPresignUploadResponses, AdminPresignUploadErrors, ThrowOnError>({
+    url: '/api/v1/admin/cms/uploads/presign',
     ...options,
     headers: {
         'Content-Type': 'application/json',
