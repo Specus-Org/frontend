@@ -28,8 +28,9 @@ export default function DesktopNav({ items, currentPath }: DesktopNavProps): Rea
           />
         </div>
       ))}
-      <div className="ml-2">
+      <div className="ml-2 inline-flex flex-col gap-3">
         <UserMenu />
+        <div className="h-0.5 w-full" aria-hidden="true" />
       </div>
     </div>
   );

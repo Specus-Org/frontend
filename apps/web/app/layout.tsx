@@ -1,13 +1,10 @@
 import type React from 'react';
-import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { Rethink_Sans } from 'next/font/google';
 import './globals.css';
 import { auth } from '@specus/auth';
 import { ThemeProvider } from '@/components/theme-provider';
 import { SessionProvider } from '@/components/session-provider';
-import Navbar from '@/components/navbar';
-import Footer from '@/components/footer';
 
 const rethinkSans = Rethink_Sans({
   subsets: ['latin'],
@@ -67,13 +64,7 @@ export default async function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`font-sans antialiased ${rethinkSans.variable}`}>
         <ThemeProvider defaultTheme="light" forcedTheme="light" disableTransitionOnChange>
-          <SessionProvider session={session}>
-            <Suspense>
-              <Navbar />
-            </Suspense>
-            <main className="rounded-t-xl rounded-b-xl border-t border-b">{children}</main>
-            <Footer />
-          </SessionProvider>
+          <SessionProvider session={session}>{children}</SessionProvider>
         </ThemeProvider>
       </body>
     </html>

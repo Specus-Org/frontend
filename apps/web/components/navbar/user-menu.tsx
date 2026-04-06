@@ -39,7 +39,7 @@ export default function UserMenu(): React.ReactNode {
   // Unauthenticated — show sign-in button
   if (!session?.user) {
     return (
-      <Button variant="outline" size="sm" asChild>
+      <Button size="sm" asChild>
         <Link href="/auth/signin">Sign in</Link>
       </Button>
     );

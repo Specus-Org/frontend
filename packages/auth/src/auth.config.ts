@@ -280,9 +280,21 @@ const config: NextAuthConfig = {
         if (!email || !password) return null;
 
         try {
-          // Authenticate via Authentik Flow Executor (headless OIDC flow)
-          const tokens = await authenticateViaFlowExecutor(email, password);
-          if (!tokens) return null;
+          // Authenticate via the backend API (which proxies to Authentik)
+          const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:8080';
+          const loginRes = await fetch(`${baseUrl}/api/v1/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password }),
+          });
+
+          if (!loginRes.ok) return null;
+
+          const tokens = (await loginRes.json()) as {
+            access_token: string;
+            refresh_token: string;
+            id_token?: string;
+          };
 
           // Fetch user profile from Authentik's userinfo endpoint
           const oidcConfig = await getOidcConfig();
@@ -299,6 +311,11 @@ const config: NextAuthConfig = {
             picture?: string;
           };
 
+          // Decode expires_at from the JWT access token
+          const payload = JSON.parse(
+            Buffer.from(tokens.access_token.split('.')[1]!, 'base64').toString(),
+          );
+
           return {
             id: userInfo.sub,
             name: userInfo.name ?? email,
@@ -307,10 +324,10 @@ const config: NextAuthConfig = {
             accessToken: tokens.access_token,
             idToken: tokens.id_token,
             refreshToken: tokens.refresh_token,
-            expiresAt: Math.floor(Date.now() / 1000 + tokens.expires_in),
+            expiresAt: payload.exp as number,
           };
         } catch (error) {
-          console.error('Authentik flow authentication failed:', error);
+          console.error('Authentication failed:', error);
           return null;
         }
       },
@@ -393,7 +410,19 @@ const config: NextAuthConfig = {
     },
 
     async session({ session, token }) {
-      // Expose only safe fields to the client — access tokens stay server-only
+      // Populate user fields from JWT so useSession() has them on the client
+      if (token.sub) {
+        session.user.id = token.sub;
+      }
+      if (token.name) {
+        session.user.name = token.name;
+      }
+      if (token.email) {
+        session.user.email = token.email;
+      }
+      if (token.picture) {
+        session.user.image = token.picture;
+      }
       if (token.error) {
         session.error = token.error;
       }

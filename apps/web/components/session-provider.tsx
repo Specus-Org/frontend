@@ -9,5 +9,9 @@ interface SessionProviderProps {
 }
 
 export function SessionProvider({ children, session }: SessionProviderProps) {
-  return <NextAuthSessionProvider session={session}>{children}</NextAuthSessionProvider>;
+  return (
+    <NextAuthSessionProvider session={session} refetchOnWindowFocus refetchInterval={0}>
+      {children}
+    </NextAuthSessionProvider>
+  );
 }

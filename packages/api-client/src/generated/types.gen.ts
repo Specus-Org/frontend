@@ -4,60 +4,389 @@ export type ClientOptions = {
     baseUrl: 'http://localhost:8080' | (string & {});
 };
 
-export type HealthResponse = {
-    status: string;
-    checks?: {
-        [key: string]: string;
-    };
-    timestamp: string;
-};
-
-export type User = {
-    id: string;
-    email: string;
-    name: string;
+export type CmsAuthor = {
+    avatar_url?: string | null;
+    bio?: string | null;
     created_at: string;
+    id: string;
+    name: string;
+    slug: string;
+    social_links: {
+        [key: string]: unknown;
+    };
     updated_at: string;
 };
 
-export type CreateUserRequest = {
-    email: string;
-    name: string;
+export type CmsAuthorListResponse = {
+    items: Array<CmsAuthor>;
 };
 
-export type UpdateUserRequest = {
-    email: string;
+export type CmsCategory = {
+    created_at: string;
+    description?: string | null;
+    id: string;
     name: string;
+    slug: string;
+    updated_at: string;
 };
 
-export type Error = {
-    message: string;
+export type CmsCategoryListResponse = {
+    items: Array<CmsCategory>;
+};
+
+export type CmsContent = {
+    author?: CmsAuthor;
+    author_id?: string | null;
+    body?: string | null;
+    categories?: Array<CmsCategory>;
+    content_type: 'static_page' | 'blog_post' | 'flexible_page';
+    created_at: string;
+    excerpt?: string | null;
+    id: string;
+    meta_description?: string | null;
+    meta_title?: string | null;
+    og_image_url?: string | null;
+    page_type?: CmsPageType;
+    page_type_id?: string | null;
+    parent_id?: string | null;
+    publish_at?: string | null;
+    published_at?: string | null;
+    slug: string;
+    sort_order: number;
+    status: 'draft' | 'published' | 'scheduled';
+    tags?: Array<CmsTag>;
+    title: string;
+    updated_at: string;
+};
+
+/**
+ * Content item for list views (excludes body, includes excerpt)
+ */
+export type CmsContentListItem = {
+    author?: CmsAuthor;
+    author_id?: string | null;
+    categories?: Array<CmsCategory>;
+    content_type: 'static_page' | 'blog_post' | 'flexible_page';
+    created_at: string;
+    excerpt?: string | null;
+    id: string;
+    meta_description?: string | null;
+    meta_title?: string | null;
+    og_image_url?: string | null;
+    page_type?: CmsPageType;
+    page_type_id?: string | null;
+    parent_id?: string | null;
+    publish_at?: string | null;
+    published_at?: string | null;
+    slug: string;
+    sort_order: number;
+    status: 'draft' | 'published' | 'scheduled';
+    tags?: Array<CmsTag>;
+    title: string;
+    updated_at: string;
+};
+
+export type CmsContentListResponse = {
+    items: Array<CmsContentListItem>;
+    pagination: CmsPaginationMeta;
+};
+
+export type CmsCreateAuthorRequest = {
+    avatar_url?: string | null;
+    bio?: string | null;
+    name: string;
+    slug: string;
+    social_links?: {
+        [key: string]: unknown;
+    };
+};
+
+export type CmsCreateCategoryRequest = {
+    description?: string | null;
+    name: string;
+    slug: string;
+};
+
+export type CmsCreateContentRequest = {
+    author_id?: string | null;
+    body?: string | null;
+    category_ids?: Array<string>;
+    content_type: 'static_page' | 'blog_post' | 'flexible_page';
+    excerpt?: string | null;
+    meta_description?: string | null;
+    meta_title?: string | null;
+    og_image_url?: string | null;
+    page_type_id?: string | null;
+    parent_id?: string | null;
+    publish_at?: string | null;
+    slug: string;
+    sort_order?: number;
+    status?: 'draft' | 'published' | 'scheduled';
+    tag_ids?: Array<string>;
+    title: string;
+};
+
+export type CmsCreatePageTypeRequest = {
+    name: string;
+    slug: string;
+};
+
+export type CmsCreateTagRequest = {
+    name: string;
+    slug: string;
+};
+
+export type CmsError = {
     code?: string;
+    message: string;
 };
 
-export type PaginationMeta = {
-    /**
-     * Opaque cursor token for the next page
-     */
-    next_cursor?: string | null;
+export type CmsNavigationNode = {
+    children: Array<CmsNavigationNode>;
+    id: string;
+    parent_id?: string | null;
+    slug: string;
+    sort_order: number;
+    title: string;
+};
+
+export type CmsPageTreeResponse = {
+    items: Array<CmsNavigationNode>;
+};
+
+export type CmsPageType = {
+    created_at: string;
+    id: string;
+    name: string;
+    slug: string;
+    updated_at: string;
+};
+
+export type CmsPageTypeListResponse = {
+    items: Array<CmsPageType>;
+};
+
+export type CmsPaginationMeta = {
     /**
      * Whether additional pages of results exist
      */
     has_more: boolean;
+    /**
+     * Opaque cursor token for the next page
+     */
+    next_cursor?: string | null;
+};
+
+export type CmsReorderPagesRequest = {
+    /**
+     * Array of content IDs in desired sort order
+     */
+    content_ids: Array<string>;
+    /**
+     * Parent page ID whose children are being reordered. Null or omitted for root-level pages.
+     */
+    parent_id?: string | null;
+};
+
+export type CmsTag = {
+    created_at: string;
+    id: string;
+    name: string;
+    slug: string;
+    updated_at: string;
+};
+
+export type CmsTagListResponse = {
+    items: Array<CmsTag>;
+};
+
+export type CmsUpdateAuthorRequest = {
+    avatar_url?: string | null;
+    bio?: string | null;
+    name: string;
+    slug: string;
+    social_links?: {
+        [key: string]: unknown;
+    };
+};
+
+export type CmsUpdateCategoryRequest = {
+    description?: string | null;
+    name: string;
+    slug: string;
+};
+
+export type CmsUpdateContentRequest = {
+    author_id?: string | null;
+    body?: string | null;
+    category_ids?: Array<string>;
+    excerpt?: string | null;
+    meta_description?: string | null;
+    meta_title?: string | null;
+    og_image_url?: string | null;
+    page_type_id?: string | null;
+    parent_id?: string | null;
+    publish_at?: string | null;
+    slug: string;
+    sort_order?: number;
+    status?: 'draft' | 'published' | 'scheduled';
+    tag_ids?: Array<string>;
+    title: string;
+};
+
+export type CmsUpload = {
+    content_type: string;
+    created_at: string;
+    filename: string;
+    id: string;
+    public_url: string;
+    size_bytes?: number | null;
+    status: 'pending' | 'confirmed';
+    storage_key: string;
+    updated_at: string;
+    upload_type: 'image' | 'document';
+};
+
+export type CmsUploadListResponse = {
+    items: Array<CmsUpload>;
+};
+
+export type CmsUploadPresignRequest = {
+    /**
+     * MIME type (e.g., image/jpeg, application/pdf)
+     */
+    content_type: string;
+    filename: string;
+    /**
+     * File size in bytes. Validated against per-type limits (images 10MB, documents 50MB).
+     */
+    size_bytes: number;
+    upload_type: 'image' | 'document';
+};
+
+export type CmsUploadPresignResponse = {
+    /**
+     * When the presigned upload URL expires
+     */
+    expires_at: string;
+    /**
+     * Stable public URL for accessing the file after upload
+     */
+    public_url: string;
+    upload_id: string;
+    /**
+     * Presigned URL for uploading the file
+     */
+    upload_url: string;
+};
+
+export type CmsUploadUrlResponse = {
+    /**
+     * Presigned GET URL for downloading the file (time-limited)
+     */
+    download_url: string;
+    /**
+     * When the presigned download URL expires
+     */
+    expires_at: string;
+};
+
+export type EntityName = {
+    name_type: 'primary' | 'alias' | 'weak_alias';
+    name_value: string;
+};
+
+export type EntitySanction = {
+    event_type: 'sanction' | 'pep' | 'blacklist';
+    /**
+     * Event-specific attributes from Lexicon
+     */
+    properties?: {
+        [key: string]: unknown;
+    };
+    role?: string;
+    sanctions_list?: SanctionsListSummary;
+    title?: string;
+};
+
+export type Error = {
+    code?: string;
+    message: string;
+};
+
+export type HealthResponse = {
+    checks?: {
+        [key: string]: string;
+    };
+    status: string;
+    timestamp: string;
+};
+
+export type PaginationMeta = {
+    /**
+     * Whether additional pages of results exist
+     */
+    has_more: boolean;
+    /**
+     * Opaque cursor token for the next page
+     */
+    next_cursor?: string | null;
+};
+
+export type SanctionsList = {
+    authority: string;
+    country_code: string;
+    description?: string;
+    id: string;
+    name: string;
+    source_url?: string;
+};
+
+export type SanctionsListSummary = {
+    authority?: string;
+    country_code: string;
+    id: string;
+    name: string;
+};
+
+export type ScreeningEntity = {
+    caption: string;
+    entity_type: 'person' | 'organization';
+    first_seen?: string;
+    id: string;
+    last_seen?: string;
+    names: Array<EntityName>;
+    sanctions: Array<EntitySanction>;
+    topics?: Array<string>;
+    /**
+     * Type-specific fields from Lexicon properties JSONB
+     */
+    type_fields?: {
+        [key: string]: unknown;
+    };
 };
 
 export type ScreeningSearchResponse = {
     items: Array<ScreeningSearchResult>;
     pagination: PaginationMeta;
+    /**
+     * Indicates query specificity. "broad" for single-word queries (higher threshold, treat results as suggestions). "specific" for multi-word queries (normal threshold, treat results as matches).
+     *
+     */
+    query_type: 'broad' | 'specific';
 };
 
 export type ScreeningSearchResult = {
-    id: string;
-    entity_type: 'person' | 'organization';
     /**
      * Display name of the entity
      */
     caption: string;
+    entity_type: 'person' | 'organization';
+    id: string;
+    /**
+     * Sanctions lists where this entity appears
+     */
+    sanctions_sources?: Array<SanctionsListSummary>;
     /**
      * BM25 relevance score
      */
@@ -72,66 +401,981 @@ export type ScreeningSearchResult = {
     type_fields?: {
         [key: string]: unknown;
     };
-    /**
-     * Sanctions lists where this entity appears
-     */
-    sanctions_sources?: Array<SanctionsListSummary>;
-};
-
-export type ScreeningEntity = {
-    id: string;
-    entity_type: 'person' | 'organization';
-    caption: string;
-    /**
-     * Type-specific fields from Lexicon properties JSONB
-     */
-    type_fields?: {
-        [key: string]: unknown;
-    };
-    topics?: Array<string>;
-    names: Array<EntityName>;
-    sanctions: Array<EntitySanction>;
-    first_seen?: string;
-    last_seen?: string;
-};
-
-export type EntityName = {
-    name_value: string;
-    name_type: 'primary' | 'alias' | 'weak_alias';
-};
-
-export type EntitySanction = {
-    event_type: 'sanction' | 'pep' | 'blacklist';
-    title?: string;
-    role?: string;
-    /**
-     * Event-specific attributes from Lexicon
-     */
-    properties?: {
-        [key: string]: unknown;
-    };
-    sanctions_list?: SanctionsListSummary;
-};
-
-export type SanctionsListSummary = {
-    id: string;
-    name: string;
-    country_code: string;
-    authority?: string;
 };
 
 export type ScreeningSourcesResponse = {
     sources: Array<SanctionsList>;
 };
 
-export type SanctionsList = {
-    id: string;
-    name: string;
-    country_code: string;
-    authority: string;
-    description?: string;
-    source_url?: string;
+export type AdminListAuthorsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/admin/cms/authors';
 };
+
+export type AdminListAuthorsResponses = {
+    /**
+     * List of authors
+     */
+    200: CmsAuthorListResponse;
+};
+
+export type AdminListAuthorsResponse = AdminListAuthorsResponses[keyof AdminListAuthorsResponses];
+
+export type AdminCreateAuthorData = {
+    body: CmsCreateAuthorRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/admin/cms/authors';
+};
+
+export type AdminCreateAuthorErrors = {
+    /**
+     * Invalid request
+     */
+    400: CmsError;
+};
+
+export type AdminCreateAuthorError = AdminCreateAuthorErrors[keyof AdminCreateAuthorErrors];
+
+export type AdminCreateAuthorResponses = {
+    /**
+     * Author created
+     */
+    201: CmsAuthor;
+};
+
+export type AdminCreateAuthorResponse = AdminCreateAuthorResponses[keyof AdminCreateAuthorResponses];
+
+export type AdminDeleteAuthorData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/cms/authors/{id}';
+};
+
+export type AdminDeleteAuthorErrors = {
+    /**
+     * Author not found
+     */
+    404: CmsError;
+    /**
+     * Author is referenced by content and cannot be deleted
+     */
+    409: CmsError;
+};
+
+export type AdminDeleteAuthorError = AdminDeleteAuthorErrors[keyof AdminDeleteAuthorErrors];
+
+export type AdminDeleteAuthorResponses = {
+    /**
+     * Author deleted
+     */
+    204: void;
+};
+
+export type AdminDeleteAuthorResponse = AdminDeleteAuthorResponses[keyof AdminDeleteAuthorResponses];
+
+export type AdminGetAuthorData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/cms/authors/{id}';
+};
+
+export type AdminGetAuthorErrors = {
+    /**
+     * Author not found
+     */
+    404: CmsError;
+};
+
+export type AdminGetAuthorError = AdminGetAuthorErrors[keyof AdminGetAuthorErrors];
+
+export type AdminGetAuthorResponses = {
+    /**
+     * Author found
+     */
+    200: CmsAuthor;
+};
+
+export type AdminGetAuthorResponse = AdminGetAuthorResponses[keyof AdminGetAuthorResponses];
+
+export type AdminUpdateAuthorData = {
+    body: CmsUpdateAuthorRequest;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/cms/authors/{id}';
+};
+
+export type AdminUpdateAuthorErrors = {
+    /**
+     * Invalid request
+     */
+    400: CmsError;
+    /**
+     * Author not found
+     */
+    404: CmsError;
+};
+
+export type AdminUpdateAuthorError = AdminUpdateAuthorErrors[keyof AdminUpdateAuthorErrors];
+
+export type AdminUpdateAuthorResponses = {
+    /**
+     * Author updated
+     */
+    200: CmsAuthor;
+};
+
+export type AdminUpdateAuthorResponse = AdminUpdateAuthorResponses[keyof AdminUpdateAuthorResponses];
+
+export type AdminListCategoriesData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/admin/cms/categories';
+};
+
+export type AdminListCategoriesResponses = {
+    /**
+     * List of categories
+     */
+    200: CmsCategoryListResponse;
+};
+
+export type AdminListCategoriesResponse = AdminListCategoriesResponses[keyof AdminListCategoriesResponses];
+
+export type AdminCreateCategoryData = {
+    body: CmsCreateCategoryRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/admin/cms/categories';
+};
+
+export type AdminCreateCategoryErrors = {
+    /**
+     * Invalid request
+     */
+    400: CmsError;
+};
+
+export type AdminCreateCategoryError = AdminCreateCategoryErrors[keyof AdminCreateCategoryErrors];
+
+export type AdminCreateCategoryResponses = {
+    /**
+     * Category created
+     */
+    201: CmsCategory;
+};
+
+export type AdminCreateCategoryResponse = AdminCreateCategoryResponses[keyof AdminCreateCategoryResponses];
+
+export type AdminDeleteCategoryData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/cms/categories/{id}';
+};
+
+export type AdminDeleteCategoryErrors = {
+    /**
+     * Category not found
+     */
+    404: CmsError;
+    /**
+     * Category is referenced by content and cannot be deleted
+     */
+    409: CmsError;
+};
+
+export type AdminDeleteCategoryError = AdminDeleteCategoryErrors[keyof AdminDeleteCategoryErrors];
+
+export type AdminDeleteCategoryResponses = {
+    /**
+     * Category deleted
+     */
+    204: void;
+};
+
+export type AdminDeleteCategoryResponse = AdminDeleteCategoryResponses[keyof AdminDeleteCategoryResponses];
+
+export type AdminUpdateCategoryData = {
+    body: CmsUpdateCategoryRequest;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/cms/categories/{id}';
+};
+
+export type AdminUpdateCategoryErrors = {
+    /**
+     * Invalid request
+     */
+    400: CmsError;
+    /**
+     * Category not found
+     */
+    404: CmsError;
+};
+
+export type AdminUpdateCategoryError = AdminUpdateCategoryErrors[keyof AdminUpdateCategoryErrors];
+
+export type AdminUpdateCategoryResponses = {
+    /**
+     * Category updated
+     */
+    200: CmsCategory;
+};
+
+export type AdminUpdateCategoryResponse = AdminUpdateCategoryResponses[keyof AdminUpdateCategoryResponses];
+
+export type AdminListContentsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Opaque cursor token for fetching the next page of results
+         */
+        cursor?: string;
+        /**
+         * Number of results per page
+         */
+        page_size?: number;
+        /**
+         * Filter by content type
+         */
+        content_type?: 'static_page' | 'blog_post' | 'flexible_page';
+        /**
+         * Filter by status
+         */
+        status?: 'draft' | 'published' | 'scheduled';
+        /**
+         * Filter by tag slug
+         */
+        tag?: string;
+        /**
+         * Filter by category slug
+         */
+        category?: string;
+        /**
+         * Filter by page type slug
+         */
+        page_type?: string;
+    };
+    url: '/api/v1/admin/cms/contents';
+};
+
+export type AdminListContentsErrors = {
+    /**
+     * Invalid request parameters
+     */
+    400: CmsError;
+};
+
+export type AdminListContentsError = AdminListContentsErrors[keyof AdminListContentsErrors];
+
+export type AdminListContentsResponses = {
+    /**
+     * Content list
+     */
+    200: CmsContentListResponse;
+};
+
+export type AdminListContentsResponse = AdminListContentsResponses[keyof AdminListContentsResponses];
+
+export type AdminCreateContentData = {
+    body: CmsCreateContentRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/admin/cms/contents';
+};
+
+export type AdminCreateContentErrors = {
+    /**
+     * Invalid request
+     */
+    400: CmsError;
+};
+
+export type AdminCreateContentError = AdminCreateContentErrors[keyof AdminCreateContentErrors];
+
+export type AdminCreateContentResponses = {
+    /**
+     * Content created
+     */
+    201: CmsContent;
+};
+
+export type AdminCreateContentResponse = AdminCreateContentResponses[keyof AdminCreateContentResponses];
+
+export type AdminDeleteContentData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/cms/contents/{id}';
+};
+
+export type AdminDeleteContentErrors = {
+    /**
+     * Content not found
+     */
+    404: CmsError;
+    /**
+     * Content has child pages and cannot be deleted
+     */
+    409: CmsError;
+};
+
+export type AdminDeleteContentError = AdminDeleteContentErrors[keyof AdminDeleteContentErrors];
+
+export type AdminDeleteContentResponses = {
+    /**
+     * Content deleted
+     */
+    204: void;
+};
+
+export type AdminDeleteContentResponse = AdminDeleteContentResponses[keyof AdminDeleteContentResponses];
+
+export type AdminGetContentData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/cms/contents/{id}';
+};
+
+export type AdminGetContentErrors = {
+    /**
+     * Content not found
+     */
+    404: CmsError;
+};
+
+export type AdminGetContentError = AdminGetContentErrors[keyof AdminGetContentErrors];
+
+export type AdminGetContentResponses = {
+    /**
+     * Content found
+     */
+    200: CmsContent;
+};
+
+export type AdminGetContentResponse = AdminGetContentResponses[keyof AdminGetContentResponses];
+
+export type AdminUpdateContentData = {
+    body: CmsUpdateContentRequest;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/cms/contents/{id}';
+};
+
+export type AdminUpdateContentErrors = {
+    /**
+     * Invalid request
+     */
+    400: CmsError;
+    /**
+     * Content not found
+     */
+    404: CmsError;
+};
+
+export type AdminUpdateContentError = AdminUpdateContentErrors[keyof AdminUpdateContentErrors];
+
+export type AdminUpdateContentResponses = {
+    /**
+     * Content updated
+     */
+    200: CmsContent;
+};
+
+export type AdminUpdateContentResponse = AdminUpdateContentResponses[keyof AdminUpdateContentResponses];
+
+export type AdminListPageTypesData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/admin/cms/page-types';
+};
+
+export type AdminListPageTypesResponses = {
+    /**
+     * List of page types
+     */
+    200: CmsPageTypeListResponse;
+};
+
+export type AdminListPageTypesResponse = AdminListPageTypesResponses[keyof AdminListPageTypesResponses];
+
+export type AdminCreatePageTypeData = {
+    body: CmsCreatePageTypeRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/admin/cms/page-types';
+};
+
+export type AdminCreatePageTypeErrors = {
+    /**
+     * Invalid request
+     */
+    400: CmsError;
+};
+
+export type AdminCreatePageTypeError = AdminCreatePageTypeErrors[keyof AdminCreatePageTypeErrors];
+
+export type AdminCreatePageTypeResponses = {
+    /**
+     * Page type created
+     */
+    201: CmsPageType;
+};
+
+export type AdminCreatePageTypeResponse = AdminCreatePageTypeResponses[keyof AdminCreatePageTypeResponses];
+
+export type AdminDeletePageTypeData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/cms/page-types/{id}';
+};
+
+export type AdminDeletePageTypeErrors = {
+    /**
+     * Page type not found
+     */
+    404: CmsError;
+    /**
+     * Page type is referenced by content and cannot be deleted
+     */
+    409: CmsError;
+};
+
+export type AdminDeletePageTypeError = AdminDeletePageTypeErrors[keyof AdminDeletePageTypeErrors];
+
+export type AdminDeletePageTypeResponses = {
+    /**
+     * Page type deleted
+     */
+    204: void;
+};
+
+export type AdminDeletePageTypeResponse = AdminDeletePageTypeResponses[keyof AdminDeletePageTypeResponses];
+
+export type AdminReorderPagesData = {
+    body: CmsReorderPagesRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/admin/cms/pages/reorder';
+};
+
+export type AdminReorderPagesErrors = {
+    /**
+     * Invalid request
+     */
+    400: CmsError;
+};
+
+export type AdminReorderPagesError = AdminReorderPagesErrors[keyof AdminReorderPagesErrors];
+
+export type AdminReorderPagesResponses = {
+    /**
+     * Pages reordered
+     */
+    200: unknown;
+};
+
+export type AdminListTagsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/admin/cms/tags';
+};
+
+export type AdminListTagsResponses = {
+    /**
+     * List of tags
+     */
+    200: CmsTagListResponse;
+};
+
+export type AdminListTagsResponse = AdminListTagsResponses[keyof AdminListTagsResponses];
+
+export type AdminCreateTagData = {
+    body: CmsCreateTagRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/admin/cms/tags';
+};
+
+export type AdminCreateTagErrors = {
+    /**
+     * Invalid request
+     */
+    400: CmsError;
+};
+
+export type AdminCreateTagError = AdminCreateTagErrors[keyof AdminCreateTagErrors];
+
+export type AdminCreateTagResponses = {
+    /**
+     * Tag created or retrieved
+     */
+    201: CmsTag;
+};
+
+export type AdminCreateTagResponse = AdminCreateTagResponses[keyof AdminCreateTagResponses];
+
+export type AdminDeleteTagData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/cms/tags/{id}';
+};
+
+export type AdminDeleteTagErrors = {
+    /**
+     * Tag not found
+     */
+    404: CmsError;
+};
+
+export type AdminDeleteTagError = AdminDeleteTagErrors[keyof AdminDeleteTagErrors];
+
+export type AdminDeleteTagResponses = {
+    /**
+     * Tag deleted
+     */
+    204: void;
+};
+
+export type AdminDeleteTagResponse = AdminDeleteTagResponses[keyof AdminDeleteTagResponses];
+
+export type AdminListUploadsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/admin/cms/uploads';
+};
+
+export type AdminListUploadsResponses = {
+    /**
+     * List of uploads
+     */
+    200: CmsUploadListResponse;
+};
+
+export type AdminListUploadsResponse = AdminListUploadsResponses[keyof AdminListUploadsResponses];
+
+export type AdminDeleteUploadData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/cms/uploads/{id}';
+};
+
+export type AdminDeleteUploadErrors = {
+    /**
+     * Upload not found
+     */
+    404: CmsError;
+};
+
+export type AdminDeleteUploadError = AdminDeleteUploadErrors[keyof AdminDeleteUploadErrors];
+
+export type AdminDeleteUploadResponses = {
+    /**
+     * Upload deleted
+     */
+    204: void;
+};
+
+export type AdminDeleteUploadResponse = AdminDeleteUploadResponses[keyof AdminDeleteUploadResponses];
+
+export type AdminConfirmUploadData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/cms/uploads/{id}/confirm';
+};
+
+export type AdminConfirmUploadErrors = {
+    /**
+     * Validation failed (file too large or content type mismatch)
+     */
+    400: CmsError;
+    /**
+     * Upload not found
+     */
+    404: CmsError;
+};
+
+export type AdminConfirmUploadError = AdminConfirmUploadErrors[keyof AdminConfirmUploadErrors];
+
+export type AdminConfirmUploadResponses = {
+    /**
+     * Upload confirmed
+     */
+    200: CmsUpload;
+};
+
+export type AdminConfirmUploadResponse = AdminConfirmUploadResponses[keyof AdminConfirmUploadResponses];
+
+export type AdminPresignUploadData = {
+    body: CmsUploadPresignRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/admin/cms/uploads/presign';
+};
+
+export type AdminPresignUploadErrors = {
+    /**
+     * Invalid request
+     */
+    400: CmsError;
+};
+
+export type AdminPresignUploadError = AdminPresignUploadErrors[keyof AdminPresignUploadErrors];
+
+export type AdminPresignUploadResponses = {
+    /**
+     * Presigned URL generated
+     */
+    201: CmsUploadPresignResponse;
+};
+
+export type AdminPresignUploadResponse = AdminPresignUploadResponses[keyof AdminPresignUploadResponses];
+
+export type PublicGetAuthorBySlugData = {
+    body?: never;
+    path: {
+        slug: string;
+    };
+    query?: never;
+    url: '/api/v1/cms/authors/{slug}';
+};
+
+export type PublicGetAuthorBySlugErrors = {
+    /**
+     * Author not found
+     */
+    404: CmsError;
+};
+
+export type PublicGetAuthorBySlugError = PublicGetAuthorBySlugErrors[keyof PublicGetAuthorBySlugErrors];
+
+export type PublicGetAuthorBySlugResponses = {
+    /**
+     * Author found
+     */
+    200: CmsAuthor;
+};
+
+export type PublicGetAuthorBySlugResponse = PublicGetAuthorBySlugResponses[keyof PublicGetAuthorBySlugResponses];
+
+export type PublicListCategoriesData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/cms/categories';
+};
+
+export type PublicListCategoriesResponses = {
+    /**
+     * List of categories
+     */
+    200: CmsCategoryListResponse;
+};
+
+export type PublicListCategoriesResponse = PublicListCategoriesResponses[keyof PublicListCategoriesResponses];
+
+export type PublicListContentsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Opaque cursor token for fetching the next page of results
+         */
+        cursor?: string;
+        /**
+         * Number of results per page
+         */
+        page_size?: number;
+        /**
+         * Filter by content type
+         */
+        content_type?: 'static_page' | 'blog_post' | 'flexible_page';
+        /**
+         * Filter by tag slug
+         */
+        tag?: string;
+        /**
+         * Filter by category slug
+         */
+        category?: string;
+        /**
+         * Filter by page type slug
+         */
+        page_type?: string;
+    };
+    url: '/api/v1/cms/contents';
+};
+
+export type PublicListContentsErrors = {
+    /**
+     * Invalid request parameters
+     */
+    400: CmsError;
+};
+
+export type PublicListContentsError = PublicListContentsErrors[keyof PublicListContentsErrors];
+
+export type PublicListContentsResponses = {
+    /**
+     * Published content list
+     */
+    200: CmsContentListResponse;
+};
+
+export type PublicListContentsResponse = PublicListContentsResponses[keyof PublicListContentsResponses];
+
+export type PublicGetContentByTypeAndSlugData = {
+    body?: never;
+    path: {
+        content_type: 'static_page' | 'blog_post' | 'flexible_page';
+        slug: string;
+    };
+    query?: never;
+    url: '/api/v1/cms/contents/{content_type}/{slug}';
+};
+
+export type PublicGetContentByTypeAndSlugErrors = {
+    /**
+     * Content not found
+     */
+    404: CmsError;
+};
+
+export type PublicGetContentByTypeAndSlugError = PublicGetContentByTypeAndSlugErrors[keyof PublicGetContentByTypeAndSlugErrors];
+
+export type PublicGetContentByTypeAndSlugResponses = {
+    /**
+     * Content found
+     */
+    200: CmsContent;
+};
+
+export type PublicGetContentByTypeAndSlugResponse = PublicGetContentByTypeAndSlugResponses[keyof PublicGetContentByTypeAndSlugResponses];
+
+export type PublicResolvePagePathData = {
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * URL path to resolve (e.g., /about/team)
+         */
+        path: string;
+    };
+    url: '/api/v1/cms/pages/resolve';
+};
+
+export type PublicResolvePagePathErrors = {
+    /**
+     * Page not found at path
+     */
+    404: CmsError;
+};
+
+export type PublicResolvePagePathError = PublicResolvePagePathErrors[keyof PublicResolvePagePathErrors];
+
+export type PublicResolvePagePathResponses = {
+    /**
+     * Page resolved
+     */
+    200: CmsContent;
+};
+
+export type PublicResolvePagePathResponse = PublicResolvePagePathResponses[keyof PublicResolvePagePathResponses];
+
+export type PublicGetPageTreeData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/cms/pages/tree';
+};
+
+export type PublicGetPageTreeResponses = {
+    /**
+     * Page tree
+     */
+    200: CmsPageTreeResponse;
+};
+
+export type PublicGetPageTreeResponse = PublicGetPageTreeResponses[keyof PublicGetPageTreeResponses];
+
+export type PublicListTagsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/cms/tags';
+};
+
+export type PublicListTagsResponses = {
+    /**
+     * List of tags
+     */
+    200: CmsTagListResponse;
+};
+
+export type PublicListTagsResponse = PublicListTagsResponses[keyof PublicListTagsResponses];
+
+export type PublicGetUploadUrlData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/cms/uploads/{id}/url';
+};
+
+export type PublicGetUploadUrlErrors = {
+    /**
+     * Upload not yet confirmed
+     */
+    400: CmsError;
+    /**
+     * Upload not found
+     */
+    404: CmsError;
+};
+
+export type PublicGetUploadUrlError = PublicGetUploadUrlErrors[keyof PublicGetUploadUrlErrors];
+
+export type PublicGetUploadUrlResponses = {
+    /**
+     * Presigned download URL
+     */
+    200: CmsUploadUrlResponse;
+};
+
+export type PublicGetUploadUrlResponse = PublicGetUploadUrlResponses[keyof PublicGetUploadUrlResponses];
+
+export type GetScreeningEntityData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/screening/entities/{id}';
+};
+
+export type GetScreeningEntityErrors = {
+    /**
+     * Entity not found
+     */
+    404: Error;
+};
+
+export type GetScreeningEntityError = GetScreeningEntityErrors[keyof GetScreeningEntityErrors];
+
+export type GetScreeningEntityResponses = {
+    /**
+     * Entity details
+     */
+    200: ScreeningEntity;
+};
+
+export type GetScreeningEntityResponse = GetScreeningEntityResponses[keyof GetScreeningEntityResponses];
+
+export type ScreeningSearchData = {
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * Name to search for
+         */
+        q: string;
+        /**
+         * Opaque cursor token for fetching the next page of results
+         */
+        cursor?: string;
+        /**
+         * Number of results per page
+         */
+        page_size?: number;
+        /**
+         * Filter by entity type
+         */
+        entity_type?: 'person' | 'organization';
+        /**
+         * Filter by topics (repeated param)
+         */
+        topics?: Array<'sanction' | 'pep' | 'blacklist'>;
+        /**
+         * Filter by sanctions list ID
+         */
+        sanctions_list_id?: string;
+    };
+    url: '/api/v1/screening/search';
+};
+
+export type ScreeningSearchErrors = {
+    /**
+     * Invalid request parameters
+     */
+    400: Error;
+};
+
+export type ScreeningSearchError = ScreeningSearchErrors[keyof ScreeningSearchErrors];
+
+export type ScreeningSearchResponses = {
+    /**
+     * Search results ranked by relevance
+     */
+    200: ScreeningSearchResponse;
+};
+
+export type ScreeningSearchResponse2 = ScreeningSearchResponses[keyof ScreeningSearchResponses];
+
+export type ListScreeningSourcesData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/screening/sources';
+};
+
+export type ListScreeningSourcesResponses = {
+    /**
+     * List of sanctions sources
+     */
+    200: ScreeningSourcesResponse;
+};
+
+export type ListScreeningSourcesResponse = ListScreeningSourcesResponses[keyof ListScreeningSourcesResponses];
 
 export type HealthLiveData = {
     body?: never;
@@ -173,209 +1417,3 @@ export type HealthReadyResponses = {
 };
 
 export type HealthReadyResponse = HealthReadyResponses[keyof HealthReadyResponses];
-
-export type ListUsersData = {
-    body?: never;
-    path?: never;
-    query?: {
-        limit?: number;
-        offset?: number;
-    };
-    url: '/users';
-};
-
-export type ListUsersResponses = {
-    /**
-     * List of users
-     */
-    200: Array<User>;
-};
-
-export type ListUsersResponse = ListUsersResponses[keyof ListUsersResponses];
-
-export type CreateUserData = {
-    body: CreateUserRequest;
-    path?: never;
-    query?: never;
-    url: '/users';
-};
-
-export type CreateUserErrors = {
-    /**
-     * Invalid request
-     */
-    400: Error;
-};
-
-export type CreateUserError = CreateUserErrors[keyof CreateUserErrors];
-
-export type CreateUserResponses = {
-    /**
-     * User created
-     */
-    201: User;
-};
-
-export type CreateUserResponse = CreateUserResponses[keyof CreateUserResponses];
-
-export type DeleteUserData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/users/{id}';
-};
-
-export type DeleteUserErrors = {
-    /**
-     * User not found
-     */
-    404: Error;
-};
-
-export type DeleteUserError = DeleteUserErrors[keyof DeleteUserErrors];
-
-export type DeleteUserResponses = {
-    /**
-     * User deleted
-     */
-    204: void;
-};
-
-export type DeleteUserResponse = DeleteUserResponses[keyof DeleteUserResponses];
-
-export type GetUserData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/users/{id}';
-};
-
-export type GetUserErrors = {
-    /**
-     * User not found
-     */
-    404: Error;
-};
-
-export type GetUserError = GetUserErrors[keyof GetUserErrors];
-
-export type GetUserResponses = {
-    /**
-     * User found
-     */
-    200: User;
-};
-
-export type GetUserResponse = GetUserResponses[keyof GetUserResponses];
-
-export type UpdateUserData = {
-    body: UpdateUserRequest;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/users/{id}';
-};
-
-export type UpdateUserErrors = {
-    /**
-     * User not found
-     */
-    404: Error;
-};
-
-export type UpdateUserError = UpdateUserErrors[keyof UpdateUserErrors];
-
-export type UpdateUserResponses = {
-    /**
-     * User updated
-     */
-    200: User;
-};
-
-export type UpdateUserResponse = UpdateUserResponses[keyof UpdateUserResponses];
-
-export type ScreeningSearchData = {
-    body?: never;
-    path?: never;
-    query: {
-        /**
-         * Name to search for
-         */
-        q: string;
-        /**
-         * Opaque cursor token for fetching the next page of results
-         */
-        cursor?: string;
-        /**
-         * Number of results per page
-         */
-        page_size?: number;
-    };
-    url: '/api/v1/screening/search';
-};
-
-export type ScreeningSearchErrors = {
-    /**
-     * Invalid request parameters
-     */
-    400: Error;
-};
-
-export type ScreeningSearchError = ScreeningSearchErrors[keyof ScreeningSearchErrors];
-
-export type ScreeningSearchResponses = {
-    /**
-     * Search results ranked by relevance
-     */
-    200: ScreeningSearchResponse;
-};
-
-export type ScreeningSearchResponse2 = ScreeningSearchResponses[keyof ScreeningSearchResponses];
-
-export type GetScreeningEntityData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/api/v1/screening/entities/{id}';
-};
-
-export type GetScreeningEntityErrors = {
-    /**
-     * Entity not found
-     */
-    404: Error;
-};
-
-export type GetScreeningEntityError = GetScreeningEntityErrors[keyof GetScreeningEntityErrors];
-
-export type GetScreeningEntityResponses = {
-    /**
-     * Entity details
-     */
-    200: ScreeningEntity;
-};
-
-export type GetScreeningEntityResponse = GetScreeningEntityResponses[keyof GetScreeningEntityResponses];
-
-export type ListScreeningSourcesData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/api/v1/screening/sources';
-};
-
-export type ListScreeningSourcesResponses = {
-    /**
-     * List of sanctions sources
-     */
-    200: ScreeningSourcesResponse;
-};
-
-export type ListScreeningSourcesResponse = ListScreeningSourcesResponses[keyof ListScreeningSourcesResponses];
