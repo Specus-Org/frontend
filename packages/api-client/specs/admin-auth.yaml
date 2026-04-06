@@ -1,0 +1,185 @@
+openapi: "3.0.3"
+info:
+  title: Specus Admin Auth API
+  version: "1.0.0"
+  description: |
+    Admin authentication endpoints for the Specus backend. Uses email+password
+    login via Authentik Flow Executor — the frontend never calls Authentik directly.
+    Admin auth has no registration, forgot-password, or reset-password endpoints.
+    Admin accounts are provisioned directly in Authentik.
+
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+
+paths:
+  /api/v1/admin/auth/login:
+    post:
+      operationId: adminAuthLogin
+      summary: Admin login with email and password
+      description: |
+        Authenticates an admin via Authentik Flow Executor. Returns access token,
+        refresh token, and ID token.
+      tags:
+        - Admin Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenPair"
+        "400":
+          description: Invalid request body
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthError"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthError"
+        "403":
+          description: Account not verified or insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthError"
+        "502":
+          description: Authentication service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthError"
+
+  /api/v1/admin/auth/refresh:
+    post:
+      operationId: adminAuthRefresh
+      summary: Refresh admin access token
+      description: |
+        Exchanges a valid refresh token for a new access token and rotated refresh token.
+      tags:
+        - Admin Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RefreshRequest"
+      responses:
+        "200":
+          description: Token refreshed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenPair"
+        "400":
+          description: Invalid request body
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthError"
+        "401":
+          description: Invalid or expired refresh token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthError"
+        "502":
+          description: Authentication service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthError"
+
+  /api/v1/admin/auth/logout:
+    post:
+      operationId: adminAuthLogout
+      summary: Admin logout and revoke refresh token
+      description: |
+        Revokes the refresh token at Authentik. Always returns 204 even if
+        revocation fails (the client should discard tokens regardless).
+      tags:
+        - Admin Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LogoutRequest"
+      responses:
+        "204":
+          description: Logout accepted
+
+components:
+  schemas:
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+
+    RefreshRequest:
+      type: object
+      required:
+        - refresh_token
+      properties:
+        refresh_token:
+          type: string
+
+    LogoutRequest:
+      type: object
+      properties:
+        refresh_token:
+          type: string
+
+    TokenPair:
+      type: object
+      required:
+        - access_token
+        - refresh_token
+      properties:
+        access_token:
+          type: string
+          description: Short-lived JWT access token (15 minutes)
+        refresh_token:
+          type: string
+          description: Long-lived refresh token (30 days, rotated on use)
+        id_token:
+          type: string
+          description: OIDC ID token with user claims
+
+    AuthError:
+      type: object
+      required:
+        - message
+        - code
+      properties:
+        message:
+          type: string
+        code:
+          type: string
+          enum:
+            - BAD_REQUEST
+            - INVALID_CREDENTIALS
+            - ACCOUNT_NOT_VERIFIED
+            - TOKEN_INVALID
+            - AUTH_SERVICE_UNAVAILABLE
+            - AUTH_ERROR
+            - INTERNAL_ERROR
+            - UNAUTHORIZED
+            - FORBIDDEN

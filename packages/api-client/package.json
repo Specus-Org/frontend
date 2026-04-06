@@ -9,12 +9,14 @@
   },
   "scripts": {
     "fetch-openapi": "bash scripts/fetch-openapi.sh",
-    "generate": "openapi-ts",
+    "merge-specs": "node scripts/merge-specs.js",
+    "generate": "pnpm run merge-specs && openapi-ts",
     "api": "pnpm run fetch-openapi && pnpm run generate"
   },
   "devDependencies": {
     "@hey-api/openapi-ts": "catalog:",
     "@specus/typescript-config": "workspace:*",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "yaml": "^2.7.1"
   }
 }

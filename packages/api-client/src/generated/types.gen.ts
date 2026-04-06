@@ -4,139 +4,16 @@ export type ClientOptions = {
     baseUrl: 'http://localhost:8080' | (string & {});
 };
 
-export type CmsAuthor = {
-    avatar_url?: string | null;
-    bio?: string | null;
-    created_at: string;
-    id: string;
-    name: string;
-    slug: string;
-    social_links: {
-        [key: string]: unknown;
+export type HealthResponse = {
+    status: string;
+    checks?: {
+        [key: string]: string;
     };
-    updated_at: string;
+    timestamp: string;
 };
 
-export type CmsAuthorListResponse = {
-    items: Array<CmsAuthor>;
-};
-
-export type CmsCategory = {
-    created_at: string;
-    description?: string | null;
-    id: string;
-    name: string;
-    slug: string;
-    updated_at: string;
-};
-
-export type CmsCategoryListResponse = {
-    items: Array<CmsCategory>;
-};
-
-export type CmsContent = {
-    author?: CmsAuthor;
-    author_id?: string | null;
-    body?: string | null;
-    categories?: Array<CmsCategory>;
-    content_type: 'static_page' | 'blog_post' | 'flexible_page';
-    created_at: string;
-    excerpt?: string | null;
-    id: string;
-    meta_description?: string | null;
-    meta_title?: string | null;
-    og_image_url?: string | null;
-    page_type?: CmsPageType;
-    page_type_id?: string | null;
-    parent_id?: string | null;
-    publish_at?: string | null;
-    published_at?: string | null;
-    slug: string;
-    sort_order: number;
-    status: 'draft' | 'published' | 'scheduled';
-    tags?: Array<CmsTag>;
-    title: string;
-    updated_at: string;
-};
-
-/**
- * Content item for list views (excludes body, includes excerpt)
- */
-export type CmsContentListItem = {
-    author?: CmsAuthor;
-    author_id?: string | null;
-    categories?: Array<CmsCategory>;
-    content_type: 'static_page' | 'blog_post' | 'flexible_page';
-    created_at: string;
-    excerpt?: string | null;
-    id: string;
-    meta_description?: string | null;
-    meta_title?: string | null;
-    og_image_url?: string | null;
-    page_type?: CmsPageType;
-    page_type_id?: string | null;
-    parent_id?: string | null;
-    publish_at?: string | null;
-    published_at?: string | null;
-    slug: string;
-    sort_order: number;
-    status: 'draft' | 'published' | 'scheduled';
-    tags?: Array<CmsTag>;
-    title: string;
-    updated_at: string;
-};
-
-export type CmsContentListResponse = {
-    items: Array<CmsContentListItem>;
-    pagination: CmsPaginationMeta;
-};
-
-export type CmsCreateAuthorRequest = {
-    avatar_url?: string | null;
-    bio?: string | null;
-    name: string;
-    slug: string;
-    social_links?: {
-        [key: string]: unknown;
-    };
-};
-
-export type CmsCreateCategoryRequest = {
-    description?: string | null;
-    name: string;
-    slug: string;
-};
-
-export type CmsCreateContentRequest = {
-    author_id?: string | null;
-    body?: string | null;
-    category_ids?: Array<string>;
-    content_type: 'static_page' | 'blog_post' | 'flexible_page';
-    excerpt?: string | null;
-    meta_description?: string | null;
-    meta_title?: string | null;
-    og_image_url?: string | null;
-    page_type_id?: string | null;
-    parent_id?: string | null;
-    publish_at?: string | null;
-    slug: string;
-    sort_order?: number;
-    status?: 'draft' | 'published' | 'scheduled';
-    tag_ids?: Array<string>;
-    title: string;
-};
-
-export type CmsCreatePageTypeRequest = {
-    name: string;
-    slug: string;
-};
-
-export type CmsCreateTagRequest = {
-    name: string;
-    slug: string;
-};
-
-export type CmsError = {
+export type Error = {
+    message: string;
     code?: string;
     message: string;
 };
@@ -367,6 +244,11 @@ export type ScreeningEntity = {
 };
 
 export type ScreeningSearchResponse = {
+    /**
+     * Indicates query specificity. "broad" for single-word queries (higher threshold, treat results as suggestions). "specific" for multi-word queries (normal threshold, treat results as matches).
+     *
+     */
+    query_type: 'broad' | 'specific';
     items: Array<ScreeningSearchResult>;
     pagination: PaginationMeta;
     /**
@@ -406,6 +288,438 @@ export type ScreeningSearchResult = {
 export type ScreeningSourcesResponse = {
     sources: Array<SanctionsList>;
 };
+
+export type AdminListAuthorsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/admin/cms/authors';
+};
+
+export type RegisterRequest = {
+    email: string;
+    password: string;
+    name?: string;
+};
+
+export type LoginRequest = {
+    email: string;
+    password: string;
+};
+
+export type RefreshRequest = {
+    refresh_token: string;
+};
+
+export type LogoutRequest = {
+    refresh_token?: string;
+};
+
+export type ForgotPasswordRequest = {
+    email: string;
+};
+
+export type ResetPasswordRequest = {
+    flow_token: string;
+    new_password: string;
+};
+
+export type TokenPair = {
+    /**
+     * Short-lived JWT access token (15 minutes)
+     */
+    access_token: string;
+    /**
+     * Long-lived refresh token (30 days, rotated on use)
+     */
+    refresh_token: string;
+    /**
+     * OIDC ID token with user claims
+     */
+    id_token?: string;
+};
+
+export type MessageResponse = {
+    message: string;
+};
+
+export type AuthError = {
+    message: string;
+    code: 'BAD_REQUEST' | 'INVALID_CREDENTIALS' | 'ACCOUNT_NOT_VERIFIED' | 'TOKEN_INVALID' | 'AUTH_SERVICE_UNAVAILABLE' | 'AUTH_ERROR' | 'INTERNAL_ERROR' | 'UNAUTHORIZED' | 'FORBIDDEN';
+};
+
+export type CmsError = {
+    message: string;
+    code?: string;
+};
+
+export type CmsPaginationMeta = {
+    /**
+     * Opaque cursor token for the next page
+     */
+    next_cursor?: string | null;
+    /**
+     * Whether additional pages of results exist
+     */
+    has_more: boolean;
+};
+
+export type CmsContent = {
+    id: string;
+    content_type: 'static_page' | 'blog_post' | 'flexible_page';
+    title: string;
+    slug: string;
+    body?: string | null;
+    excerpt?: string | null;
+    status: 'draft' | 'published' | 'scheduled';
+    publish_at?: string | null;
+    published_at?: string | null;
+    meta_title?: string | null;
+    meta_description?: string | null;
+    og_image_url?: string | null;
+    parent_id?: string | null;
+    sort_order: number;
+    author_id?: string | null;
+    author?: CmsAuthor;
+    page_type_id?: string | null;
+    page_type?: CmsPageType;
+    tags?: Array<CmsTag>;
+    categories?: Array<CmsCategory>;
+    created_at: string;
+    updated_at: string;
+};
+
+/**
+ * Content item for list views (excludes body, includes excerpt)
+ */
+export type CmsContentListItem = {
+    id: string;
+    content_type: 'static_page' | 'blog_post' | 'flexible_page';
+    title: string;
+    slug: string;
+    excerpt?: string | null;
+    status: 'draft' | 'published' | 'scheduled';
+    publish_at?: string | null;
+    published_at?: string | null;
+    meta_title?: string | null;
+    meta_description?: string | null;
+    og_image_url?: string | null;
+    parent_id?: string | null;
+    sort_order: number;
+    author_id?: string | null;
+    author?: CmsAuthor;
+    page_type_id?: string | null;
+    page_type?: CmsPageType;
+    tags?: Array<CmsTag>;
+    categories?: Array<CmsCategory>;
+    created_at: string;
+    updated_at: string;
+};
+
+export type CmsContentListResponse = {
+    items: Array<CmsContentListItem>;
+    pagination: CmsPaginationMeta;
+};
+
+export type CmsCreateContentRequest = {
+    content_type: 'static_page' | 'blog_post' | 'flexible_page';
+    title: string;
+    slug: string;
+    body?: string | null;
+    excerpt?: string | null;
+    status?: 'draft' | 'published' | 'scheduled';
+    publish_at?: string | null;
+    meta_title?: string | null;
+    meta_description?: string | null;
+    og_image_url?: string | null;
+    parent_id?: string | null;
+    sort_order?: number;
+    author_id?: string | null;
+    page_type_id?: string | null;
+    tag_ids?: Array<string>;
+    category_ids?: Array<string>;
+};
+
+export type CmsUpdateContentRequest = {
+    title: string;
+    slug: string;
+    body?: string | null;
+    excerpt?: string | null;
+    status?: 'draft' | 'published' | 'scheduled';
+    publish_at?: string | null;
+    meta_title?: string | null;
+    meta_description?: string | null;
+    og_image_url?: string | null;
+    parent_id?: string | null;
+    sort_order?: number;
+    author_id?: string | null;
+    page_type_id?: string | null;
+    tag_ids?: Array<string>;
+    category_ids?: Array<string>;
+};
+
+export type CmsAuthor = {
+    id: string;
+    name: string;
+    slug: string;
+    bio?: string | null;
+    avatar_url?: string | null;
+    social_links: {
+        [key: string]: unknown;
+    };
+    created_at: string;
+    updated_at: string;
+};
+
+export type CmsAuthorListResponse = {
+    items: Array<CmsAuthor>;
+};
+
+export type CmsCreateAuthorRequest = {
+    name: string;
+    slug: string;
+    bio?: string | null;
+    avatar_url?: string | null;
+    social_links?: {
+        [key: string]: unknown;
+    };
+};
+
+export type CmsUpdateAuthorRequest = {
+    name: string;
+    slug: string;
+    bio?: string | null;
+    avatar_url?: string | null;
+    social_links?: {
+        [key: string]: unknown;
+    };
+};
+
+export type CmsCategory = {
+    id: string;
+    name: string;
+    slug: string;
+    description?: string | null;
+    created_at: string;
+    updated_at: string;
+};
+
+export type CmsCategoryListResponse = {
+    items: Array<CmsCategory>;
+};
+
+export type CmsCreateCategoryRequest = {
+    name: string;
+    slug: string;
+    description?: string | null;
+};
+
+export type CmsUpdateCategoryRequest = {
+    name: string;
+    slug: string;
+    description?: string | null;
+};
+
+export type CmsTag = {
+    id: string;
+    name: string;
+    slug: string;
+    created_at: string;
+    updated_at: string;
+};
+
+export type CmsTagListResponse = {
+    items: Array<CmsTag>;
+};
+
+export type CmsCreateTagRequest = {
+    name: string;
+    slug: string;
+};
+
+export type CmsPageType = {
+    id: string;
+    name: string;
+    slug: string;
+    created_at: string;
+    updated_at: string;
+};
+
+export type CmsPageTypeListResponse = {
+    items: Array<CmsPageType>;
+};
+
+export type CmsCreatePageTypeRequest = {
+    name: string;
+    slug: string;
+};
+
+export type CmsUpload = {
+    id: string;
+    filename: string;
+    content_type: string;
+    size_bytes?: number | null;
+    storage_key: string;
+    public_url: string;
+    upload_type: 'image' | 'document';
+    status: 'pending' | 'confirmed';
+    created_at: string;
+    updated_at: string;
+};
+
+export type CmsUploadListResponse = {
+    items: Array<CmsUpload>;
+};
+
+export type CmsUploadPresignRequest = {
+    filename: string;
+    /**
+     * MIME type (e.g., image/jpeg, application/pdf)
+     */
+    content_type: string;
+    upload_type: 'image' | 'document';
+    /**
+     * File size in bytes. Validated against per-type limits (images 10MB, documents 50MB).
+     */
+    size_bytes: number;
+};
+
+export type CmsUploadPresignResponse = {
+    upload_id: string;
+    /**
+     * Presigned URL for uploading the file
+     */
+    upload_url: string;
+    /**
+     * Stable public URL for accessing the file after upload
+     */
+    public_url: string;
+    /**
+     * When the presigned upload URL expires
+     */
+    expires_at: string;
+};
+
+export type CmsReorderPagesRequest = {
+    /**
+     * Parent page ID whose children are being reordered. Null or omitted for root-level pages.
+     */
+    parent_id?: string | null;
+    /**
+     * Array of content IDs in desired sort order
+     */
+    content_ids: Array<string>;
+};
+
+export type CmsNavigationNode = {
+    id: string;
+    title: string;
+    slug: string;
+    parent_id?: string | null;
+    sort_order: number;
+    children: Array<CmsNavigationNode>;
+};
+
+export type CmsPageTreeResponse = {
+    items: Array<CmsNavigationNode>;
+};
+
+export type CmsUploadUrlResponse = {
+    /**
+     * Presigned GET URL for downloading the file (time-limited)
+     */
+    download_url: string;
+    /**
+     * When the presigned download URL expires
+     */
+    expires_at: string;
+};
+
+export type AdminAuthLoginData = {
+    body: LoginRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/admin/auth/login';
+};
+
+export type AdminAuthLoginErrors = {
+    /**
+     * Invalid request body
+     */
+    400: AuthError;
+    /**
+     * Invalid credentials
+     */
+    401: AuthError;
+    /**
+     * Account not verified or insufficient permissions
+     */
+    403: AuthError;
+    /**
+     * Authentication service unavailable
+     */
+    502: AuthError;
+};
+
+export type AdminAuthLoginError = AdminAuthLoginErrors[keyof AdminAuthLoginErrors];
+
+export type AdminAuthLoginResponses = {
+    /**
+     * Authentication successful
+     */
+    200: TokenPair;
+};
+
+export type AdminAuthLoginResponse = AdminAuthLoginResponses[keyof AdminAuthLoginResponses];
+
+export type AdminAuthLogoutData = {
+    body: LogoutRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/admin/auth/logout';
+};
+
+export type AdminAuthLogoutResponses = {
+    /**
+     * Logout accepted
+     */
+    204: void;
+};
+
+export type AdminAuthLogoutResponse = AdminAuthLogoutResponses[keyof AdminAuthLogoutResponses];
+
+export type AdminAuthRefreshData = {
+    body: RefreshRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/admin/auth/refresh';
+};
+
+export type AdminAuthRefreshErrors = {
+    /**
+     * Invalid request body
+     */
+    400: AuthError;
+    /**
+     * Invalid or expired refresh token
+     */
+    401: AuthError;
+    /**
+     * Authentication service unavailable
+     */
+    502: AuthError;
+};
+
+export type AdminAuthRefreshError = AdminAuthRefreshErrors[keyof AdminAuthRefreshErrors];
+
+export type AdminAuthRefreshResponses = {
+    /**
+     * Token refreshed
+     */
+    200: TokenPair;
+};
+
+export type AdminAuthRefreshResponse = AdminAuthRefreshResponses[keyof AdminAuthRefreshResponses];
 
 export type AdminListAuthorsData = {
     body?: never;
@@ -987,6 +1301,31 @@ export type AdminListUploadsResponses = {
 
 export type AdminListUploadsResponse = AdminListUploadsResponses[keyof AdminListUploadsResponses];
 
+export type AdminPresignUploadData = {
+    body: CmsUploadPresignRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/admin/cms/uploads/presign';
+};
+
+export type AdminPresignUploadErrors = {
+    /**
+     * Invalid request
+     */
+    400: CmsError;
+};
+
+export type AdminPresignUploadError = AdminPresignUploadErrors[keyof AdminPresignUploadErrors];
+
+export type AdminPresignUploadResponses = {
+    /**
+     * Presigned URL generated
+     */
+    201: CmsUploadPresignResponse;
+};
+
+export type AdminPresignUploadResponse = AdminPresignUploadResponses[keyof AdminPresignUploadResponses];
+
 export type AdminDeleteUploadData = {
     body?: never;
     path: {
@@ -1045,30 +1384,161 @@ export type AdminConfirmUploadResponses = {
 
 export type AdminConfirmUploadResponse = AdminConfirmUploadResponses[keyof AdminConfirmUploadResponses];
 
-export type AdminPresignUploadData = {
-    body: CmsUploadPresignRequest;
+export type AuthForgotPasswordData = {
+    body: ForgotPasswordRequest;
     path?: never;
     query?: never;
-    url: '/api/v1/admin/cms/uploads/presign';
+    url: '/api/v1/auth/forgot-password';
 };
 
-export type AdminPresignUploadErrors = {
+export type AuthForgotPasswordResponses = {
     /**
-     * Invalid request
+     * Reset request accepted
      */
-    400: CmsError;
+    202: MessageResponse;
 };
 
-export type AdminPresignUploadError = AdminPresignUploadErrors[keyof AdminPresignUploadErrors];
+export type AuthForgotPasswordResponse = AuthForgotPasswordResponses[keyof AuthForgotPasswordResponses];
 
-export type AdminPresignUploadResponses = {
+export type AuthLoginData = {
+    body: LoginRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/login';
+};
+
+export type AuthLoginErrors = {
     /**
-     * Presigned URL generated
+     * Invalid request body
      */
-    201: CmsUploadPresignResponse;
+    400: AuthError;
+    /**
+     * Invalid credentials
+     */
+    401: AuthError;
+    /**
+     * Account not verified
+     */
+    403: AuthError;
+    /**
+     * Authentication service unavailable
+     */
+    502: AuthError;
 };
 
-export type AdminPresignUploadResponse = AdminPresignUploadResponses[keyof AdminPresignUploadResponses];
+export type AuthLoginError = AuthLoginErrors[keyof AuthLoginErrors];
+
+export type AuthLoginResponses = {
+    /**
+     * Authentication successful
+     */
+    200: TokenPair;
+};
+
+export type AuthLoginResponse = AuthLoginResponses[keyof AuthLoginResponses];
+
+export type AuthLogoutData = {
+    body: LogoutRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/logout';
+};
+
+export type AuthLogoutResponses = {
+    /**
+     * Logout accepted
+     */
+    204: void;
+};
+
+export type AuthLogoutResponse = AuthLogoutResponses[keyof AuthLogoutResponses];
+
+export type AuthRefreshData = {
+    body: RefreshRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/refresh';
+};
+
+export type AuthRefreshErrors = {
+    /**
+     * Invalid request body
+     */
+    400: AuthError;
+    /**
+     * Invalid or expired refresh token
+     */
+    401: AuthError;
+    /**
+     * Authentication service unavailable
+     */
+    502: AuthError;
+};
+
+export type AuthRefreshError = AuthRefreshErrors[keyof AuthRefreshErrors];
+
+export type AuthRefreshResponses = {
+    /**
+     * Token refreshed
+     */
+    200: TokenPair;
+};
+
+export type AuthRefreshResponse = AuthRefreshResponses[keyof AuthRefreshResponses];
+
+export type AuthRegisterData = {
+    body: RegisterRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/register';
+};
+
+export type AuthRegisterErrors = {
+    /**
+     * Invalid request body
+     */
+    400: AuthError;
+};
+
+export type AuthRegisterError = AuthRegisterErrors[keyof AuthRegisterErrors];
+
+export type AuthRegisterResponses = {
+    /**
+     * Registration accepted
+     */
+    201: MessageResponse;
+};
+
+export type AuthRegisterResponse = AuthRegisterResponses[keyof AuthRegisterResponses];
+
+export type AuthResetPasswordData = {
+    body: ResetPasswordRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/reset-password';
+};
+
+export type AuthResetPasswordErrors = {
+    /**
+     * Invalid request body or flow token
+     */
+    400: AuthError;
+    /**
+     * Authentication service unavailable
+     */
+    502: AuthError;
+};
+
+export type AuthResetPasswordError = AuthResetPasswordErrors[keyof AuthResetPasswordErrors];
+
+export type AuthResetPasswordResponses = {
+    /**
+     * Password reset successful
+     */
+    200: MessageResponse;
+};
+
+export type AuthResetPasswordResponse = AuthResetPasswordResponses[keyof AuthResetPasswordResponses];
 
 export type PublicGetAuthorBySlugData = {
     body?: never;
