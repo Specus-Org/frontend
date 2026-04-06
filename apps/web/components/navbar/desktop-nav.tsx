@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import React from 'react';
 import { NavItem } from '@/components/navbar/nav-items';
+import UserMenu from '@/components/navbar/user-menu';
 
 interface DesktopNavProps {
   items: NavItem[];
@@ -9,7 +10,7 @@ interface DesktopNavProps {
 
 export default function DesktopNav({ items, currentPath }: DesktopNavProps): React.ReactNode {
   return (
-    <div className="hidden md:flex flex-row items-center">
+    <div className="hidden md:flex flex-row items-center gap-2">
       {items.map((navigation, index) => (
         <div key={index} className="inline-flex flex-col gap-3">
           <Link
@@ -27,6 +28,10 @@ export default function DesktopNav({ items, currentPath }: DesktopNavProps): Rea
           />
         </div>
       ))}
+      <div className="ml-2 inline-flex flex-col gap-3">
+        <UserMenu />
+        <div className="h-0.5 w-full" aria-hidden="true" />
+      </div>
     </div>
   );
 }

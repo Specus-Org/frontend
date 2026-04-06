@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { CreateUserData, CreateUserErrors, CreateUserResponses, DeleteUserData, DeleteUserErrors, DeleteUserResponses, GetScreeningEntityData, GetScreeningEntityErrors, GetScreeningEntityResponses, GetUserData, GetUserErrors, GetUserResponses, HealthLiveData, HealthLiveResponses, HealthReadyData, HealthReadyErrors, HealthReadyResponses, ListScreeningSourcesData, ListScreeningSourcesResponses, ListUsersData, ListUsersResponses, ScreeningSearchData, ScreeningSearchErrors, ScreeningSearchResponses, UpdateUserData, UpdateUserErrors, UpdateUserResponses } from './types.gen';
+import type { AdminConfirmUploadData, AdminConfirmUploadErrors, AdminConfirmUploadResponses, AdminCreateAuthorData, AdminCreateAuthorErrors, AdminCreateAuthorResponses, AdminCreateCategoryData, AdminCreateCategoryErrors, AdminCreateCategoryResponses, AdminCreateContentData, AdminCreateContentErrors, AdminCreateContentResponses, AdminCreatePageTypeData, AdminCreatePageTypeErrors, AdminCreatePageTypeResponses, AdminCreateTagData, AdminCreateTagErrors, AdminCreateTagResponses, AdminDeleteAuthorData, AdminDeleteAuthorErrors, AdminDeleteAuthorResponses, AdminDeleteCategoryData, AdminDeleteCategoryErrors, AdminDeleteCategoryResponses, AdminDeleteContentData, AdminDeleteContentErrors, AdminDeleteContentResponses, AdminDeletePageTypeData, AdminDeletePageTypeErrors, AdminDeletePageTypeResponses, AdminDeleteTagData, AdminDeleteTagErrors, AdminDeleteTagResponses, AdminDeleteUploadData, AdminDeleteUploadErrors, AdminDeleteUploadResponses, AdminGetAuthorData, AdminGetAuthorErrors, AdminGetAuthorResponses, AdminGetContentData, AdminGetContentErrors, AdminGetContentResponses, AdminListAuthorsData, AdminListAuthorsResponses, AdminListCategoriesData, AdminListCategoriesResponses, AdminListContentsData, AdminListContentsErrors, AdminListContentsResponses, AdminListPageTypesData, AdminListPageTypesResponses, AdminListTagsData, AdminListTagsResponses, AdminListUploadsData, AdminListUploadsResponses, AdminPresignUploadData, AdminPresignUploadErrors, AdminPresignUploadResponses, AdminReorderPagesData, AdminReorderPagesErrors, AdminReorderPagesResponses, AdminUpdateAuthorData, AdminUpdateAuthorErrors, AdminUpdateAuthorResponses, AdminUpdateCategoryData, AdminUpdateCategoryErrors, AdminUpdateCategoryResponses, AdminUpdateContentData, AdminUpdateContentErrors, AdminUpdateContentResponses, GetScreeningEntityData, GetScreeningEntityErrors, GetScreeningEntityResponses, HealthLiveData, HealthLiveResponses, HealthReadyData, HealthReadyErrors, HealthReadyResponses, ListScreeningSourcesData, ListScreeningSourcesResponses, PublicGetAuthorBySlugData, PublicGetAuthorBySlugErrors, PublicGetAuthorBySlugResponses, PublicGetContentByTypeAndSlugData, PublicGetContentByTypeAndSlugErrors, PublicGetContentByTypeAndSlugResponses, PublicGetPageTreeData, PublicGetPageTreeResponses, PublicGetUploadUrlData, PublicGetUploadUrlErrors, PublicGetUploadUrlResponses, PublicListCategoriesData, PublicListCategoriesResponses, PublicListContentsData, PublicListContentsErrors, PublicListContentsResponses, PublicListTagsData, PublicListTagsResponses, PublicResolvePagePathData, PublicResolvePagePathErrors, PublicResolvePagePathResponses, ScreeningSearchData, ScreeningSearchErrors, ScreeningSearchResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -19,29 +19,15 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
 };
 
 /**
- * Liveness probe
- *
- * Returns 200 if the server is running
+ * List authors
  */
-export const healthLive = <ThrowOnError extends boolean = false>(options?: Options<HealthLiveData, ThrowOnError>) => (options?.client ?? client).get<HealthLiveResponses, unknown, ThrowOnError>({ url: '/health/live', ...options });
+export const adminListAuthors = <ThrowOnError extends boolean = false>(options?: Options<AdminListAuthorsData, ThrowOnError>) => (options?.client ?? client).get<AdminListAuthorsResponses, unknown, ThrowOnError>({ url: '/api/v1/admin/cms/authors', ...options });
 
 /**
- * Readiness probe
- *
- * Returns 200 if the server is ready to accept traffic
+ * Create author
  */
-export const healthReady = <ThrowOnError extends boolean = false>(options?: Options<HealthReadyData, ThrowOnError>) => (options?.client ?? client).get<HealthReadyResponses, HealthReadyErrors, ThrowOnError>({ url: '/health/ready', ...options });
-
-/**
- * List users
- */
-export const listUsers = <ThrowOnError extends boolean = false>(options?: Options<ListUsersData, ThrowOnError>) => (options?.client ?? client).get<ListUsersResponses, unknown, ThrowOnError>({ url: '/users', ...options });
-
-/**
- * Create a user
- */
-export const createUser = <ThrowOnError extends boolean = false>(options: Options<CreateUserData, ThrowOnError>) => (options.client ?? client).post<CreateUserResponses, CreateUserErrors, ThrowOnError>({
-    url: '/users',
+export const adminCreateAuthor = <ThrowOnError extends boolean = false>(options: Options<AdminCreateAuthorData, ThrowOnError>) => (options.client ?? client).post<AdminCreateAuthorResponses, AdminCreateAuthorErrors, ThrowOnError>({
+    url: '/api/v1/admin/cms/authors',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -50,26 +36,254 @@ export const createUser = <ThrowOnError extends boolean = false>(options: Option
 });
 
 /**
- * Delete a user
+ * Delete author
  */
-export const deleteUser = <ThrowOnError extends boolean = false>(options: Options<DeleteUserData, ThrowOnError>) => (options.client ?? client).delete<DeleteUserResponses, DeleteUserErrors, ThrowOnError>({ url: '/users/{id}', ...options });
+export const adminDeleteAuthor = <ThrowOnError extends boolean = false>(options: Options<AdminDeleteAuthorData, ThrowOnError>) => (options.client ?? client).delete<AdminDeleteAuthorResponses, AdminDeleteAuthorErrors, ThrowOnError>({ url: '/api/v1/admin/cms/authors/{id}', ...options });
 
 /**
- * Get a user by ID
+ * Get author by ID
  */
-export const getUser = <ThrowOnError extends boolean = false>(options: Options<GetUserData, ThrowOnError>) => (options.client ?? client).get<GetUserResponses, GetUserErrors, ThrowOnError>({ url: '/users/{id}', ...options });
+export const adminGetAuthor = <ThrowOnError extends boolean = false>(options: Options<AdminGetAuthorData, ThrowOnError>) => (options.client ?? client).get<AdminGetAuthorResponses, AdminGetAuthorErrors, ThrowOnError>({ url: '/api/v1/admin/cms/authors/{id}', ...options });
 
 /**
- * Update a user
+ * Update author
  */
-export const updateUser = <ThrowOnError extends boolean = false>(options: Options<UpdateUserData, ThrowOnError>) => (options.client ?? client).put<UpdateUserResponses, UpdateUserErrors, ThrowOnError>({
-    url: '/users/{id}',
+export const adminUpdateAuthor = <ThrowOnError extends boolean = false>(options: Options<AdminUpdateAuthorData, ThrowOnError>) => (options.client ?? client).put<AdminUpdateAuthorResponses, AdminUpdateAuthorErrors, ThrowOnError>({
+    url: '/api/v1/admin/cms/authors/{id}',
     ...options,
     headers: {
         'Content-Type': 'application/json',
         ...options.headers
     }
 });
+
+/**
+ * List categories
+ */
+export const adminListCategories = <ThrowOnError extends boolean = false>(options?: Options<AdminListCategoriesData, ThrowOnError>) => (options?.client ?? client).get<AdminListCategoriesResponses, unknown, ThrowOnError>({ url: '/api/v1/admin/cms/categories', ...options });
+
+/**
+ * Create category
+ */
+export const adminCreateCategory = <ThrowOnError extends boolean = false>(options: Options<AdminCreateCategoryData, ThrowOnError>) => (options.client ?? client).post<AdminCreateCategoryResponses, AdminCreateCategoryErrors, ThrowOnError>({
+    url: '/api/v1/admin/cms/categories',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Delete category
+ */
+export const adminDeleteCategory = <ThrowOnError extends boolean = false>(options: Options<AdminDeleteCategoryData, ThrowOnError>) => (options.client ?? client).delete<AdminDeleteCategoryResponses, AdminDeleteCategoryErrors, ThrowOnError>({ url: '/api/v1/admin/cms/categories/{id}', ...options });
+
+/**
+ * Update category
+ */
+export const adminUpdateCategory = <ThrowOnError extends boolean = false>(options: Options<AdminUpdateCategoryData, ThrowOnError>) => (options.client ?? client).put<AdminUpdateCategoryResponses, AdminUpdateCategoryErrors, ThrowOnError>({
+    url: '/api/v1/admin/cms/categories/{id}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * List all content (all statuses)
+ *
+ * Admin listing with filtering and cursor pagination. Includes all statuses.
+ */
+export const adminListContents = <ThrowOnError extends boolean = false>(options?: Options<AdminListContentsData, ThrowOnError>) => (options?.client ?? client).get<AdminListContentsResponses, AdminListContentsErrors, ThrowOnError>({ url: '/api/v1/admin/cms/contents', ...options });
+
+/**
+ * Create content
+ */
+export const adminCreateContent = <ThrowOnError extends boolean = false>(options: Options<AdminCreateContentData, ThrowOnError>) => (options.client ?? client).post<AdminCreateContentResponses, AdminCreateContentErrors, ThrowOnError>({
+    url: '/api/v1/admin/cms/contents',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Delete content
+ */
+export const adminDeleteContent = <ThrowOnError extends boolean = false>(options: Options<AdminDeleteContentData, ThrowOnError>) => (options.client ?? client).delete<AdminDeleteContentResponses, AdminDeleteContentErrors, ThrowOnError>({ url: '/api/v1/admin/cms/contents/{id}', ...options });
+
+/**
+ * Get content by ID
+ */
+export const adminGetContent = <ThrowOnError extends boolean = false>(options: Options<AdminGetContentData, ThrowOnError>) => (options.client ?? client).get<AdminGetContentResponses, AdminGetContentErrors, ThrowOnError>({ url: '/api/v1/admin/cms/contents/{id}', ...options });
+
+/**
+ * Update content
+ */
+export const adminUpdateContent = <ThrowOnError extends boolean = false>(options: Options<AdminUpdateContentData, ThrowOnError>) => (options.client ?? client).put<AdminUpdateContentResponses, AdminUpdateContentErrors, ThrowOnError>({
+    url: '/api/v1/admin/cms/contents/{id}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * List page types
+ */
+export const adminListPageTypes = <ThrowOnError extends boolean = false>(options?: Options<AdminListPageTypesData, ThrowOnError>) => (options?.client ?? client).get<AdminListPageTypesResponses, unknown, ThrowOnError>({ url: '/api/v1/admin/cms/page-types', ...options });
+
+/**
+ * Create page type
+ */
+export const adminCreatePageType = <ThrowOnError extends boolean = false>(options: Options<AdminCreatePageTypeData, ThrowOnError>) => (options.client ?? client).post<AdminCreatePageTypeResponses, AdminCreatePageTypeErrors, ThrowOnError>({
+    url: '/api/v1/admin/cms/page-types',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Delete page type
+ */
+export const adminDeletePageType = <ThrowOnError extends boolean = false>(options: Options<AdminDeletePageTypeData, ThrowOnError>) => (options.client ?? client).delete<AdminDeletePageTypeResponses, AdminDeletePageTypeErrors, ThrowOnError>({ url: '/api/v1/admin/cms/page-types/{id}', ...options });
+
+/**
+ * Reorder sibling static pages
+ *
+ * Sets the sort order for a list of sibling static page IDs.
+ */
+export const adminReorderPages = <ThrowOnError extends boolean = false>(options: Options<AdminReorderPagesData, ThrowOnError>) => (options.client ?? client).put<AdminReorderPagesResponses, AdminReorderPagesErrors, ThrowOnError>({
+    url: '/api/v1/admin/cms/pages/reorder',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * List tags
+ */
+export const adminListTags = <ThrowOnError extends boolean = false>(options?: Options<AdminListTagsData, ThrowOnError>) => (options?.client ?? client).get<AdminListTagsResponses, unknown, ThrowOnError>({ url: '/api/v1/admin/cms/tags', ...options });
+
+/**
+ * Create or get-or-create tag
+ */
+export const adminCreateTag = <ThrowOnError extends boolean = false>(options: Options<AdminCreateTagData, ThrowOnError>) => (options.client ?? client).post<AdminCreateTagResponses, AdminCreateTagErrors, ThrowOnError>({
+    url: '/api/v1/admin/cms/tags',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Delete tag
+ */
+export const adminDeleteTag = <ThrowOnError extends boolean = false>(options: Options<AdminDeleteTagData, ThrowOnError>) => (options.client ?? client).delete<AdminDeleteTagResponses, AdminDeleteTagErrors, ThrowOnError>({ url: '/api/v1/admin/cms/tags/{id}', ...options });
+
+/**
+ * List uploads
+ */
+export const adminListUploads = <ThrowOnError extends boolean = false>(options?: Options<AdminListUploadsData, ThrowOnError>) => (options?.client ?? client).get<AdminListUploadsResponses, unknown, ThrowOnError>({ url: '/api/v1/admin/cms/uploads', ...options });
+
+/**
+ * Delete upload
+ */
+export const adminDeleteUpload = <ThrowOnError extends boolean = false>(options: Options<AdminDeleteUploadData, ThrowOnError>) => (options.client ?? client).delete<AdminDeleteUploadResponses, AdminDeleteUploadErrors, ThrowOnError>({ url: '/api/v1/admin/cms/uploads/{id}', ...options });
+
+/**
+ * Confirm upload
+ *
+ * Confirms that the file was successfully uploaded to storage.
+ */
+export const adminConfirmUpload = <ThrowOnError extends boolean = false>(options: Options<AdminConfirmUploadData, ThrowOnError>) => (options.client ?? client).post<AdminConfirmUploadResponses, AdminConfirmUploadErrors, ThrowOnError>({ url: '/api/v1/admin/cms/uploads/{id}/confirm', ...options });
+
+/**
+ * Request presigned upload URL
+ */
+export const adminPresignUpload = <ThrowOnError extends boolean = false>(options: Options<AdminPresignUploadData, ThrowOnError>) => (options.client ?? client).post<AdminPresignUploadResponses, AdminPresignUploadErrors, ThrowOnError>({
+    url: '/api/v1/admin/cms/uploads/presign',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Get author profile by slug
+ */
+export const publicGetAuthorBySlug = <ThrowOnError extends boolean = false>(options: Options<PublicGetAuthorBySlugData, ThrowOnError>) => (options.client ?? client).get<PublicGetAuthorBySlugResponses, PublicGetAuthorBySlugErrors, ThrowOnError>({ url: '/api/v1/cms/authors/{slug}', ...options });
+
+/**
+ * List all categories
+ */
+export const publicListCategories = <ThrowOnError extends boolean = false>(options?: Options<PublicListCategoriesData, ThrowOnError>) => (options?.client ?? client).get<PublicListCategoriesResponses, unknown, ThrowOnError>({ url: '/api/v1/cms/categories', ...options });
+
+/**
+ * List published content
+ *
+ * Returns published content with cursor pagination. Returns excerpt, not body.
+ * Filterable by content_type, tag, category, and page_type.
+ *
+ */
+export const publicListContents = <ThrowOnError extends boolean = false>(options?: Options<PublicListContentsData, ThrowOnError>) => (options?.client ?? client).get<PublicListContentsResponses, PublicListContentsErrors, ThrowOnError>({ url: '/api/v1/cms/contents', ...options });
+
+/**
+ * Get single published content by type and slug
+ *
+ * Returns the full content including markdown body.
+ */
+export const publicGetContentByTypeAndSlug = <ThrowOnError extends boolean = false>(options: Options<PublicGetContentByTypeAndSlugData, ThrowOnError>) => (options.client ?? client).get<PublicGetContentByTypeAndSlugResponses, PublicGetContentByTypeAndSlugErrors, ThrowOnError>({ url: '/api/v1/cms/contents/{content_type}/{slug}', ...options });
+
+/**
+ * Resolve URL path to static page
+ *
+ * Resolves a URL path (e.g., /about/team) to a published static page.
+ * Walks the page hierarchy to find the matching content.
+ *
+ */
+export const publicResolvePagePath = <ThrowOnError extends boolean = false>(options: Options<PublicResolvePagePathData, ThrowOnError>) => (options.client ?? client).get<PublicResolvePagePathResponses, PublicResolvePagePathErrors, ThrowOnError>({ url: '/api/v1/cms/pages/resolve', ...options });
+
+/**
+ * Navigation tree of published static pages
+ *
+ * Returns a nested tree of published static pages for navigation.
+ */
+export const publicGetPageTree = <ThrowOnError extends boolean = false>(options?: Options<PublicGetPageTreeData, ThrowOnError>) => (options?.client ?? client).get<PublicGetPageTreeResponses, unknown, ThrowOnError>({ url: '/api/v1/cms/pages/tree', ...options });
+
+/**
+ * List all tags
+ */
+export const publicListTags = <ThrowOnError extends boolean = false>(options?: Options<PublicListTagsData, ThrowOnError>) => (options?.client ?? client).get<PublicListTagsResponses, unknown, ThrowOnError>({ url: '/api/v1/cms/tags', ...options });
+
+/**
+ * Get a presigned download URL for an upload
+ *
+ * Returns a short-lived presigned GET URL for downloading the file.
+ * Only works for confirmed uploads. The URL expires after the configured
+ * presign expiry (default 15 minutes).
+ *
+ */
+export const publicGetUploadUrl = <ThrowOnError extends boolean = false>(options: Options<PublicGetUploadUrlData, ThrowOnError>) => (options.client ?? client).get<PublicGetUploadUrlResponses, PublicGetUploadUrlErrors, ThrowOnError>({ url: '/api/v1/cms/uploads/{id}/url', ...options });
+
+/**
+ * Get full entity details
+ *
+ * Retrieve detailed information about a sanctioned entity, including
+ * all known names, sanctions list appearances, and type-specific fields.
+ *
+ */
+export const getScreeningEntity = <ThrowOnError extends boolean = false>(options: Options<GetScreeningEntityData, ThrowOnError>) => (options.client ?? client).get<GetScreeningEntityResponses, GetScreeningEntityErrors, ThrowOnError>({ url: '/api/v1/screening/entities/{id}', ...options });
 
 /**
  * Search entities against sanctions lists
@@ -82,17 +296,22 @@ export const updateUser = <ThrowOnError extends boolean = false>(options: Option
 export const screeningSearch = <ThrowOnError extends boolean = false>(options: Options<ScreeningSearchData, ThrowOnError>) => (options.client ?? client).get<ScreeningSearchResponses, ScreeningSearchErrors, ThrowOnError>({ url: '/api/v1/screening/search', ...options });
 
 /**
- * Get full entity details
- *
- * Retrieve detailed information about a sanctioned entity, including
- * all known names, sanctions list appearances, and type-specific fields.
- *
- */
-export const getScreeningEntity = <ThrowOnError extends boolean = false>(options: Options<GetScreeningEntityData, ThrowOnError>) => (options.client ?? client).get<GetScreeningEntityResponses, GetScreeningEntityErrors, ThrowOnError>({ url: '/api/v1/screening/entities/{id}', ...options });
-
-/**
  * List available sanctions sources
  *
  * Returns the list of sanctions databases being screened.
  */
 export const listScreeningSources = <ThrowOnError extends boolean = false>(options?: Options<ListScreeningSourcesData, ThrowOnError>) => (options?.client ?? client).get<ListScreeningSourcesResponses, unknown, ThrowOnError>({ url: '/api/v1/screening/sources', ...options });
+
+/**
+ * Liveness probe
+ *
+ * Returns 200 if the server is running
+ */
+export const healthLive = <ThrowOnError extends boolean = false>(options?: Options<HealthLiveData, ThrowOnError>) => (options?.client ?? client).get<HealthLiveResponses, unknown, ThrowOnError>({ url: '/health/live', ...options });
+
+/**
+ * Readiness probe
+ *
+ * Returns 200 if the server is ready to accept traffic
+ */
+export const healthReady = <ThrowOnError extends boolean = false>(options?: Options<HealthReadyData, ThrowOnError>) => (options?.client ?? client).get<HealthReadyResponses, HealthReadyErrors, ThrowOnError>({ url: '/health/ready', ...options });
