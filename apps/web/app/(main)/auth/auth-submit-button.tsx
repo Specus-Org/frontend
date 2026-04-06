@@ -4,7 +4,12 @@ import { useFormStatus } from 'react-dom';
 import { Button } from '@specus/ui/components/button';
 import { Loader2 } from 'lucide-react';
 
-export function ResetPasswordButton() {
+interface AuthSubmitButtonProps {
+  idleLabel: string;
+  pendingLabel: string;
+}
+
+export function AuthSubmitButton({ idleLabel, pendingLabel }: AuthSubmitButtonProps) {
   const { pending } = useFormStatus();
 
   return (
@@ -12,10 +17,10 @@ export function ResetPasswordButton() {
       {pending ? (
         <>
           <Loader2 className="size-4 animate-spin" />
-          Resetting…
+          {pendingLabel}
         </>
       ) : (
-        'Reset password'
+        idleLabel
       )}
     </Button>
   );

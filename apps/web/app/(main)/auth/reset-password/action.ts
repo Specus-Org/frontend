@@ -1,6 +1,7 @@
 'use server';
 
 import { redirect } from 'next/navigation';
+import { getApiBaseUrl } from '@/lib/api';
 
 interface ResetPasswordState {
   error?: string;
@@ -26,13 +27,12 @@ export async function resetPassword(
     return { error: 'Passwords do not match.' };
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:8080';
-
   try {
-    const res = await fetch(`${baseUrl}/api/v1/auth/reset-password`, {
+    const res = await fetch(`${getApiBaseUrl()}/api/v1/auth/reset-password`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ flow_token: flowToken, new_password: newPassword }),
+      signal: AbortSignal.timeout(10000),
     });
 
     if (!res.ok) {

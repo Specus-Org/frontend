@@ -3,8 +3,8 @@
 import { useActionState } from 'react';
 import { Input } from '@specus/ui/components/input';
 import { Label } from '@specus/ui/components/label';
-import { AlertCircle } from 'lucide-react';
-import { ResetPasswordButton } from './submit-button';
+import { AuthSubmitButton } from '../auth-submit-button';
+import { FormErrorAlert } from '../form-error-alert';
 import { resetPassword } from './action';
 
 export function ResetPasswordForm({ token }: { token: string }) {
@@ -12,15 +12,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
 
   return (
     <>
-      {state?.error && (
-        <div
-          role="alert"
-          className="flex items-start gap-3 rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm text-destructive"
-        >
-          <AlertCircle className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
-          <span>{state.error}</span>
-        </div>
-      )}
+      <FormErrorAlert message={state?.error} />
 
       <form action={formAction} className="flex flex-col gap-5" aria-label="Reset password form">
         <input type="hidden" name="flow_token" value={token} />
@@ -51,7 +43,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
           />
         </div>
 
-        <ResetPasswordButton />
+        <AuthSubmitButton idleLabel="Reset password" pendingLabel="Resetting…" />
       </form>
     </>
   );

@@ -1,6 +1,7 @@
 'use server';
 
 import { redirect } from 'next/navigation';
+import { getApiBaseUrl } from '@/lib/api';
 
 interface RegisterState {
   error?: string;
@@ -35,13 +36,12 @@ export async function register(
     return { error: 'Passwords do not match.', values };
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:8080';
-
   try {
-    const res = await fetch(`${baseUrl}/api/v1/auth/register`, {
+    const res = await fetch(`${getApiBaseUrl()}/api/v1/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password, name }),
+      signal: AbortSignal.timeout(10000),
     });
 
     if (!res.ok) {

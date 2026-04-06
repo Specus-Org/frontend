@@ -1,6 +1,7 @@
 'use server';
 
 import { redirect } from 'next/navigation';
+import { getApiBaseUrl } from '@/lib/api';
 
 interface ForgotPasswordState {
   error?: string;
@@ -15,13 +16,12 @@ export async function forgotPassword(
     return { error: 'Email is required.' };
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:8080';
-
   try {
-    const res = await fetch(`${baseUrl}/api/v1/auth/forgot-password`, {
+    const res = await fetch(`${getApiBaseUrl()}/api/v1/auth/forgot-password`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email }),
+      signal: AbortSignal.timeout(10000),
     });
 
     if (!res.ok) {

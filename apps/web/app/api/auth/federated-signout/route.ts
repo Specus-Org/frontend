@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@specus/auth';
+import { getToken } from 'next-auth/jwt';
 
 async function clearSessionCookies() {
   const cookieStore = await cookies();
@@ -18,14 +18,16 @@ export async function POST(request: NextRequest) {
   // CSRF protection: verify the request Origin matches the app host
   const origin = request.headers.get('origin');
   const host = request.headers.get('host');
-  if (origin && host && !origin.endsWith(host)) {
+  if (!origin || !host) {
+    return NextResponse.json({ error: 'CSRF validation failed' }, { status: 403 });
+  }
+  if (new URL(origin).host !== host) {
     return NextResponse.json({ error: 'CSRF validation failed' }, { status: 403 });
   }
 
-  // Get the session to retrieve the refresh token
-  const session = await auth();
-  const token = (session as unknown as { user?: Record<string, unknown> })?.user;
-  const refreshToken = (token as Record<string, unknown>)?.refresh_token as string | undefined;
+  // Get the raw JWT to retrieve the refresh token (auth() session doesn't include it)
+  const token = await getToken({ req: request });
+  const refreshToken = token?.refresh_token as string | undefined;
 
   // Revoke the refresh token via the backend
   if (refreshToken) {
@@ -35,6 +37,7 @@ export async function POST(request: NextRequest) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ refresh_token: refreshToken }),
+        signal: AbortSignal.timeout(5000),
       });
     } catch {
       // Best-effort — proceed with logout even if backend revocation fails

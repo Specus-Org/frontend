@@ -19,7 +19,9 @@ async function getOidcConfig(): Promise<OidcConfig> {
   if (cachedOidcConfig) return cachedOidcConfig;
 
   const issuer = process.env.AUTH_AUTHENTIK_ISSUER!;
-  const res = await fetch(`${issuer}/.well-known/openid-configuration`);
+  const res = await fetch(`${issuer}/.well-known/openid-configuration`, {
+    signal: AbortSignal.timeout(5000),
+  });
   if (!res.ok) {
     throw new Error(`OIDC discovery failed: ${res.status}`);
   }
@@ -45,7 +47,8 @@ const config: NextAuthConfig = {
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        const { email, password } = credentials as { email: string; password: string };
+        const email = typeof credentials?.email === 'string' ? credentials.email : '';
+        const password = typeof credentials?.password === 'string' ? credentials.password : '';
 
         if (!email || !password) return null;
 
@@ -56,6 +59,7 @@ const config: NextAuthConfig = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password }),
+            signal: AbortSignal.timeout(10000),
           });
 
           if (!loginRes.ok) return null;
@@ -70,6 +74,7 @@ const config: NextAuthConfig = {
           const oidcConfig = await getOidcConfig();
           const userInfoRes = await fetch(oidcConfig.userinfo_endpoint, {
             headers: { Authorization: `Bearer ${tokens.access_token}` },
+            signal: AbortSignal.timeout(5000),
           });
 
           if (!userInfoRes.ok) return null;
@@ -122,18 +127,12 @@ const config: NextAuthConfig = {
     async jwt({ token, user }) {
       // Initial sign-in: persist Authentik tokens from the user object
       if (user) {
-        const u = user as typeof user & {
-          accessToken?: string;
-          idToken?: string;
-          refreshToken?: string;
-          expiresAt?: number;
-        };
         return {
           ...token,
-          access_token: u.accessToken,
-          id_token: u.idToken,
-          expires_at: u.expiresAt,
-          refresh_token: u.refreshToken,
+          access_token: user.accessToken,
+          id_token: user.idToken,
+          expires_at: user.expiresAt,
+          refresh_token: user.refreshToken,
         };
       }
 
@@ -159,6 +158,7 @@ const config: NextAuthConfig = {
             grant_type: 'refresh_token',
             refresh_token: token.refresh_token,
           }),
+          signal: AbortSignal.timeout(5000),
         });
 
         const tokensOrError = await response.json();

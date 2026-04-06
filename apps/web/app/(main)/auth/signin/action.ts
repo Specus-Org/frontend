@@ -15,7 +15,18 @@ export async function signInAction(
 ): Promise<SignInState> {
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
-  const callbackUrl = (formData.get('callbackUrl') as string) || '/profile';
+  const rawCallbackUrl = (formData.get('callbackUrl') as string) || '/profile';
+
+  // Validate callbackUrl is a relative path to prevent open redirects
+  let callbackUrl = '/profile';
+  try {
+    const url = new URL(rawCallbackUrl, 'http://localhost');
+    if (url.origin === 'http://localhost') {
+      callbackUrl = url.pathname + url.search + url.hash;
+    }
+  } catch {
+    // Invalid URL — fall back to default
+  }
 
   try {
     await signIn('authentik-credentials', {

@@ -4,8 +4,8 @@ import { useActionState, useEffect } from 'react';
 import Link from 'next/link';
 import { Input } from '@specus/ui/components/input';
 import { Label } from '@specus/ui/components/label';
-import { AlertCircle } from 'lucide-react';
-import { SubmitButton } from './submit-button';
+import { AuthSubmitButton } from '../auth-submit-button';
+import { FormErrorAlert } from '../form-error-alert';
 import { signInAction } from './action';
 
 export function SignInForm({ callbackUrl }: { callbackUrl?: string }) {
@@ -13,22 +13,13 @@ export function SignInForm({ callbackUrl }: { callbackUrl?: string }) {
 
   useEffect(() => {
     if (state?.success) {
-      // Full page redirect so the root layout re-runs with the fresh session
       window.location.href = state.redirectTo ?? '/profile';
     }
   }, [state]);
 
   return (
     <>
-      {state?.error && (
-        <div
-          role="alert"
-          className="flex items-start gap-3 rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm text-destructive"
-        >
-          <AlertCircle className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
-          <span>{state.error}</span>
-        </div>
-      )}
+      <FormErrorAlert message={state?.error} />
 
       <form action={formAction} className="flex flex-col gap-5" aria-label="Sign in form">
         <input type="hidden" name="callbackUrl" value={callbackUrl ?? '/profile'} />
@@ -67,7 +58,7 @@ export function SignInForm({ callbackUrl }: { callbackUrl?: string }) {
           />
         </div>
 
-        <SubmitButton />
+        <AuthSubmitButton idleLabel="Sign in" pendingLabel="Signing in…" />
       </form>
 
       <p className="text-center text-sm text-muted-foreground">
