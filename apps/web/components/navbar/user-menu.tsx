@@ -1,7 +1,8 @@
 'use client';
 
+import { useEffect } from 'react';
 import Link from 'next/link';
-import { useSession, signIn } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import { LogOut, User } from 'lucide-react';
 import { Button } from '@specus/ui/components/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@specus/ui/components/avatar';
@@ -26,10 +27,11 @@ export default function UserMenu(): React.ReactNode {
   const { data: session, status } = useSession();
 
   // Handle refresh token errors by forcing re-authentication
-  if (session?.error === 'RefreshTokenError') {
-    signIn('authentik');
-    return null;
-  }
+  useEffect(() => {
+    if (session?.error === 'RefreshTokenError') {
+      window.location.href = '/auth/signin';
+    }
+  }, [session?.error]);
 
   // Loading state — fixed-size skeleton to prevent layout shift
   if (status === 'loading') {
