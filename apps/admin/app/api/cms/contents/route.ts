@@ -26,3 +26,28 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+
+/**
+ * POST /api/cms/contents — Create a content item.
+ */
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const response = await fetchWithAuth('/api/v1/admin/cms/contents', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    });
+    const data = await response.json();
+
+    if (!response.ok) {
+      return NextResponse.json(data, { status: response.status });
+    }
+
+    return NextResponse.json(data, { status: 201 });
+  } catch {
+    return NextResponse.json(
+      { message: 'Failed to create content' },
+      { status: 502 },
+    );
+  }
+}

@@ -29,6 +29,33 @@ export async function GET(_request: NextRequest, context: RouteContext) {
 }
 
 /**
+ * Proxy: PUT (update) content by ID.
+ */
+export async function PUT(request: NextRequest, context: RouteContext) {
+  const { id } = await context.params;
+
+  try {
+    const body = await request.json();
+    const response = await fetchWithAuth(`/api/v1/admin/cms/contents/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(body),
+    });
+    const data = await response.json();
+
+    if (!response.ok) {
+      return NextResponse.json(data, { status: response.status });
+    }
+
+    return NextResponse.json(data);
+  } catch {
+    return NextResponse.json(
+      { message: 'Failed to update content' },
+      { status: 502 },
+    );
+  }
+}
+
+/**
  * Proxy: DELETE content by ID.
  */
 export async function DELETE(_request: NextRequest, context: RouteContext) {
