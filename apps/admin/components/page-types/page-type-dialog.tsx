@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -12,7 +12,7 @@ import { Input } from '@specus/ui/components/input';
 import { Label } from '@specus/ui/components/label';
 import { Button } from '@specus/ui/components/button';
 import { toast } from 'sonner';
-import { slugify } from '@/lib/slugify';
+import { slugify, SLUG_PATTERN } from '@/lib/slugify';
 
 interface PageTypeDialogProps {
   open: boolean;
@@ -25,20 +25,12 @@ export function PageTypeDialog({
   onOpenChange,
   onSuccess,
 }: PageTypeDialogProps) {
+  // State starts fresh — parent uses `key` to force remount on each open
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
   const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-
-  useEffect(() => {
-    if (open) {
-      setName('');
-      setSlug('');
-      setSlugManuallyEdited(false);
-      setErrors({});
-    }
-  }, [open]);
 
   function handleNameChange(value: string) {
     setName(value);
@@ -61,7 +53,7 @@ export function PageTypeDialog({
 
     if (!slug.trim()) {
       newErrors.slug = 'Slug is required';
-    } else if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
+    } else if (!SLUG_PATTERN.test(slug)) {
       newErrors.slug = 'Slug must be lowercase alphanumeric with hyphens';
     }
 

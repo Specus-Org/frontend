@@ -1,9 +1,10 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState, useTransition } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FileText, Loader2, Plus } from 'lucide-react';
+import useSWR from 'swr';
 import { Button } from '@specus/ui/components/button';
 import {
   Select,
@@ -19,6 +20,7 @@ import type {
 import { DataTable } from '@/components/contents/data-table';
 import { getColumns } from '@/components/contents/columns';
 import { EmptyState } from '@/components/empty-state';
+import { fetcher } from '@/lib/fetcher';
 
 const PAGE_SIZE = 20;
 
@@ -36,108 +38,107 @@ const STATUS_OPTIONS = [
   { value: 'scheduled', label: 'Scheduled' },
 ] as const;
 
+function buildQuery(contentType: string, status: string) {
+  const params = new URLSearchParams();
+  params.set('page_size', String(PAGE_SIZE));
+  if (contentType !== 'all') params.set('content_type', contentType);
+  if (status !== 'all') params.set('status', status);
+  return params.toString();
+}
+
 export default function ContentsPage() {
   const router = useRouter();
+  const [isFilterPending, startFilterTransition] = useTransition();
 
   // Filter state
   const [contentType, setContentType] = useState('all');
   const [status, setStatus] = useState('all');
 
-  // Data state
-  const [items, setItems] = useState<CmsContentListItem[]>([]);
+  // Load-more state
+  const [extraItems, setExtraItems] = useState<CmsContentListItem[]>([]);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
-  const [hasMore, setHasMore] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [extraHasMore, setExtraHasMore] = useState(false);
+  const [isLoadingMore, startLoadMoreTransition] = useTransition();
+  const prevFilterRef = useRef(`${contentType}:${status}`);
 
-  // Build the query string for the proxy route
-  const buildQuery = useCallback(
-    (cursor?: string | null) => {
-      const params = new URLSearchParams();
-      params.set('page_size', String(PAGE_SIZE));
-      if (contentType !== 'all') params.set('content_type', contentType);
-      if (status !== 'all') params.set('status', status);
-      if (cursor) params.set('cursor', cursor);
-      return params.toString();
-    },
-    [contentType, status],
-  );
-
-  // Fetch contents from the proxy route
-  const fetchContents = useCallback(
-    async (cursor?: string | null) => {
-      const query = buildQuery(cursor);
-      const response = await fetch(`/api/cms/contents?${query}`);
-      if (!response.ok) {
-        const data = await response.json().catch(() => null);
-        throw new Error(data?.message ?? 'Failed to fetch contents');
-      }
-      return (await response.json()) as CmsContentListResponse;
-    },
-    [buildQuery],
-  );
-
-  // Initial fetch and re-fetch on filter change
-  useEffect(() => {
-    let cancelled = false;
-
-    async function load() {
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        const data = await fetchContents();
-        if (!cancelled) {
-          setItems(data.items);
-          setNextCursor(data.pagination.next_cursor ?? null);
-          setHasMore(data.pagination.has_more);
-        }
-      } catch (err) {
-        if (!cancelled) {
-          setError(
-            err instanceof Error ? err.message : 'An unexpected error occurred',
-          );
-        }
-      } finally {
-        if (!cancelled) {
-          setIsLoading(false);
-        }
-      }
-    }
-
-    load();
-    return () => {
-      cancelled = true;
-    };
-  }, [fetchContents]);
-
-  // Load more handler for cursor pagination
-  async function handleLoadMore() {
-    if (!nextCursor || isLoadingMore) return;
-    setIsLoadingMore(true);
-
-    try {
-      const data = await fetchContents(nextCursor);
-      setItems((prev) => [...prev, ...data.items]);
-      setNextCursor(data.pagination.next_cursor ?? null);
-      setHasMore(data.pagination.has_more);
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : 'Failed to load more content',
-      );
-    } finally {
-      setIsLoadingMore(false);
-    }
+  // Reset extra items when filters change
+  const filterKey = `${contentType}:${status}`;
+  if (prevFilterRef.current !== filterKey) {
+    prevFilterRef.current = filterKey;
+    setExtraItems([]);
+    setNextCursor(null);
+    setExtraHasMore(false);
   }
 
-  // Remove a row after deletion
-  const handleDeleted = useCallback((id: string) => {
-    setItems((prev) => prev.filter((item) => item.id !== id));
-  }, []);
+  const query = buildQuery(contentType, status);
+  const { data, error, isLoading, mutate } = useSWR<CmsContentListResponse>(
+    `/api/cms/contents?${query}`,
+    fetcher,
+  );
 
-  // Memoize columns so TanStack Table doesn't re-render on every state update
+  const baseItems = data?.items ?? [];
+  const allItems = useMemo(
+    () => [...baseItems, ...extraItems],
+    [baseItems, extraItems],
+  );
+  const hasMore = extraHasMore || (data?.pagination.has_more ?? false);
+  const effectiveCursor = nextCursor ?? data?.pagination.next_cursor ?? null;
+
+  // Remove a row after deletion (optimistic update)
+  const handleDeleted = useCallback(
+    (id: string) => {
+      mutate(
+        (current) =>
+          current
+            ? {
+                ...current,
+                items: current.items.filter((item) => item.id !== id),
+              }
+            : current,
+        false,
+      );
+      setExtraItems((prev) => prev.filter((item) => item.id !== id));
+    },
+    [mutate],
+  );
+
   const columns = useMemo(() => getColumns(handleDeleted), [handleDeleted]);
+
+  function handleLoadMore() {
+    if (!effectiveCursor || isLoadingMore) return;
+
+    startLoadMoreTransition(async () => {
+      try {
+        const params = new URLSearchParams();
+        params.set('page_size', String(PAGE_SIZE));
+        if (contentType !== 'all') params.set('content_type', contentType);
+        if (status !== 'all') params.set('status', status);
+        params.set('cursor', effectiveCursor);
+
+        const res = await fetch(`/api/cms/contents?${params.toString()}`);
+        if (!res.ok) throw new Error('Failed to load more content');
+        const result: CmsContentListResponse = await res.json();
+
+        setExtraItems((prev) => [...prev, ...result.items]);
+        setNextCursor(result.pagination.next_cursor ?? null);
+        setExtraHasMore(result.pagination.has_more);
+      } catch {
+        // Silently fail — user can retry
+      }
+    });
+  }
+
+  function handleContentTypeChange(value: string) {
+    startFilterTransition(() => {
+      setContentType(value);
+    });
+  }
+
+  function handleStatusChange(value: string) {
+    startFilterTransition(() => {
+      setStatus(value);
+    });
+  }
 
   return (
     <div className="flex flex-1 flex-col gap-6">
@@ -159,7 +160,7 @@ export default function ContentsPage() {
 
       {/* Filter toolbar */}
       <div className="flex flex-wrap items-center gap-3">
-        <Select value={contentType} onValueChange={setContentType}>
+        <Select value={contentType} onValueChange={handleContentTypeChange}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Content type" />
           </SelectTrigger>
@@ -172,7 +173,7 @@ export default function ContentsPage() {
           </SelectContent>
         </Select>
 
-        <Select value={status} onValueChange={setStatus}>
+        <Select value={status} onValueChange={handleStatusChange}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
@@ -184,6 +185,10 @@ export default function ContentsPage() {
             ))}
           </SelectContent>
         </Select>
+
+        {isFilterPending && (
+          <Loader2 className="size-4 animate-spin text-muted-foreground" />
+        )}
       </div>
 
       {/* Content area */}
@@ -193,32 +198,14 @@ export default function ContentsPage() {
         </div>
       ) : error ? (
         <div className="flex min-h-[400px] flex-col items-center justify-center gap-4 rounded-lg border border-dashed p-8 text-center">
-          <p className="text-sm text-destructive">{error}</p>
-          <Button
-            variant="outline"
-            onClick={() => {
-              setError(null);
-              setIsLoading(true);
-              fetchContents()
-                .then((data) => {
-                  setItems(data.items);
-                  setNextCursor(data.pagination.next_cursor ?? null);
-                  setHasMore(data.pagination.has_more);
-                })
-                .catch((err) =>
-                  setError(
-                    err instanceof Error
-                      ? err.message
-                      : 'An unexpected error occurred',
-                  ),
-                )
-                .finally(() => setIsLoading(false));
-            }}
-          >
+          <p className="text-sm text-destructive">
+            {error instanceof Error ? error.message : 'An unexpected error occurred'}
+          </p>
+          <Button variant="outline" onClick={() => mutate()}>
             Try again
           </Button>
         </div>
-      ) : items.length === 0 ? (
+      ) : allItems.length === 0 ? (
         <EmptyState
           icon={FileText}
           title="No content yet"
@@ -229,13 +216,12 @@ export default function ContentsPage() {
         <>
           <DataTable
             columns={columns}
-            data={items}
+            data={allItems}
             onRowClick={(row) =>
               router.push(`/contents/${(row as CmsContentListItem).id}`)
             }
           />
 
-          {/* Load More */}
           {hasMore && (
             <div className="flex justify-center pb-4">
               <Button

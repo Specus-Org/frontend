@@ -45,15 +45,15 @@ export function BlogLoadMore({ initialCursor, hasMore }: BlogLoadMoreProps) {
 
   return (
     <>
-      {posts.length > 0 && (
+      {posts.length > 0 ? (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {posts.map((post) => (
             <BlogCard key={post.id} post={post} />
           ))}
         </div>
-      )}
+      ) : null}
 
-      {canLoadMore && (
+      {canLoadMore ? (
         <div className="flex justify-center pt-8">
           <Button
             variant="outline"
@@ -65,7 +65,7 @@ export function BlogLoadMore({ initialCursor, hasMore }: BlogLoadMoreProps) {
             {isPending ? 'Loading...' : 'Load More'}
           </Button>
         </div>
-      )}
+      ) : null}
     </>
   );
 }

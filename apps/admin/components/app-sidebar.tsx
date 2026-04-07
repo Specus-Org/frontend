@@ -1,6 +1,6 @@
 'use client';
 
-import * as React from 'react';
+import { useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
@@ -8,6 +8,7 @@ import {
   LogOut,
   ChevronsUpDown,
 } from 'lucide-react';
+import useSWR from 'swr';
 import {
   Sidebar,
   SidebarContent,
@@ -35,6 +36,7 @@ import {
   AvatarFallback,
 } from '@specus/ui/components/avatar';
 import { navigation } from '@/lib/navigation';
+import { fetcher } from '@/lib/fetcher';
 
 interface UserInfo {
   sub: string;
@@ -43,8 +45,6 @@ interface UserInfo {
 }
 
 function SidebarBrand() {
-  const { state } = useSidebar();
-
   return (
     <SidebarHeader>
       <SidebarMenu>
@@ -110,24 +110,9 @@ function SidebarNav() {
 function SidebarUser() {
   const { isMobile } = useSidebar();
   const router = useRouter();
-  const [user, setUser] = React.useState<UserInfo | null>(null);
+  const { data: user } = useSWR<UserInfo>('/api/auth/me', fetcher);
 
-  React.useEffect(() => {
-    async function fetchUser() {
-      try {
-        const res = await fetch('/api/auth/me');
-        if (res.ok) {
-          const data = (await res.json()) as UserInfo;
-          setUser(data);
-        }
-      } catch {
-        // Silently fail — user info is non-critical for layout
-      }
-    }
-    fetchUser();
-  }, []);
-
-  const handleSignOut = React.useCallback(async () => {
+  const handleSignOut = useCallback(async () => {
     try {
       await fetch('/api/auth/logout', { method: 'POST' });
     } catch {

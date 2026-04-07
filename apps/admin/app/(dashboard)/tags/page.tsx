@@ -1,8 +1,9 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Plus, Tag, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
+import useSWR from 'swr';
 import { Button } from '@specus/ui/components/button';
 import { Badge } from '@specus/ui/components/badge';
 import {
@@ -16,38 +17,31 @@ import {
   AlertDialogTitle,
 } from '@specus/ui/components/alert-dialog';
 import type { CmsTag } from '@specus/api-client';
-import { TagDialog } from '@/components/tags/tag-dialog';
+import dynamic from 'next/dynamic';
+import { fetcher } from '@/lib/fetcher';
+
+const TagDialog = dynamic(
+  () => import('@/components/tags/tag-dialog').then((m) => m.TagDialog),
+);
+
+interface TagsResponse {
+  items: CmsTag[];
+}
 
 export default function TagsPage() {
-  const [tags, setTags] = useState<CmsTag[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data, isLoading, mutate } = useSWR<TagsResponse>(
+    '/api/cms/tags',
+    fetcher,
+  );
+  const tags = data?.items ?? [];
 
-  // Dialog state
+  // Dialog state — dialogKey forces fresh mount on each open
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogKey, setDialogKey] = useState(0);
 
   // Delete confirmation state
   const [deleteTarget, setDeleteTarget] = useState<CmsTag | null>(null);
   const [deleting, setDeleting] = useState(false);
-
-  const fetchTags = useCallback(async () => {
-    try {
-      const response = await fetch('/api/cms/tags');
-      if (!response.ok) {
-        toast.error('Failed to load tags');
-        return;
-      }
-      const data = await response.json();
-      setTags(data.items ?? []);
-    } catch {
-      toast.error('Failed to load tags');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchTags();
-  }, [fetchTags]);
 
   async function handleDelete() {
     if (!deleteTarget) return;
@@ -61,12 +55,12 @@ export default function TagsPage() {
 
       if (response.status === 204) {
         toast.success('Tag deleted');
-        fetchTags();
+        mutate();
       } else if (response.status === 409) {
         toast.error('Cannot delete -- tag is referenced by content');
       } else if (response.status === 404) {
         toast.info('Tag was already deleted');
-        fetchTags();
+        mutate();
       } else {
         const data = await response.json();
         toast.error(data.message ?? 'Failed to delete tag');
@@ -86,22 +80,22 @@ export default function TagsPage() {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-2xl font-semibold tracking-tight">Tags</h1>
-            {!loading && (
+            {!isLoading ? (
               <Badge variant="secondary">
                 {tags.length}
               </Badge>
-            )}
+            ) : null}
           </div>
           <p className="mt-1 text-sm text-muted-foreground">Label and organize content with tags.</p>
         </div>
-        <Button onClick={() => setDialogOpen(true)} size="sm">
+        <Button onClick={() => { setDialogKey((k) => k + 1); setDialogOpen(true); }} size="sm">
           <Plus className="size-4" />
           Add Tag
         </Button>
       </div>
 
       {/* Tags grid */}
-      {loading ? (
+      {isLoading ? (
         <div className="flex h-24 items-center justify-center text-muted-foreground">
           Loading...
         </div>
@@ -138,9 +132,10 @@ export default function TagsPage() {
 
       {/* Create dialog */}
       <TagDialog
+        key={dialogKey}
         open={dialogOpen}
         onOpenChange={setDialogOpen}
-        onSuccess={fetchTags}
+        onSuccess={() => mutate()}
       />
 
       {/* Delete confirmation */}

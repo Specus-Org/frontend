@@ -1,4 +1,9 @@
 /**
+ * Regex for validating slugs: lowercase alphanumeric with hyphens.
+ */
+export const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+/**
  * Converts a human-readable string into a URL-friendly slug.
  *
  * Examples:

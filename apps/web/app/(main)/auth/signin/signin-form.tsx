@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useEffect } from 'react';
+import { useActionState } from 'react';
 import Link from 'next/link';
 import { Input } from '@specus/ui/components/input';
 import { Label } from '@specus/ui/components/label';
@@ -9,13 +9,9 @@ import { FormErrorAlert } from '../form-error-alert';
 import { signInAction } from './action';
 
 export function SignInForm({ callbackUrl }: { callbackUrl?: string }) {
+  // On success, the server action calls redirect() — no client-side
+  // useEffect needed. Only error states are returned to this component.
   const [state, formAction] = useActionState(signInAction, null);
-
-  useEffect(() => {
-    if (state?.success) {
-      window.location.href = state.redirectTo ?? '/profile';
-    }
-  }, [state]);
 
   return (
     <>

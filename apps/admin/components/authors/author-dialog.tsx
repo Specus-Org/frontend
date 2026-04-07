@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -14,7 +14,7 @@ import { Textarea } from '@specus/ui/components/textarea';
 import { Button } from '@specus/ui/components/button';
 import { toast } from 'sonner';
 import type { CmsAuthor } from '@specus/api-client';
-import { slugify } from '@/lib/slugify';
+import { slugify, SLUG_PATTERN } from '@/lib/slugify';
 
 interface AuthorDialogProps {
   open: boolean;
@@ -31,31 +31,19 @@ export function AuthorDialog({
 }: AuthorDialogProps) {
   const isEditing = !!author;
 
-  const [name, setName] = useState('');
-  const [slug, setSlug] = useState('');
-  const [bio, setBio] = useState('');
-  const [avatarUrl, setAvatarUrl] = useState('');
-  const [socialLinks, setSocialLinks] = useState('{}');
-  const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
+  // State initialized from props — parent uses `key` to force fresh mount
+  const [name, setName] = useState(author?.name ?? '');
+  const [slug, setSlug] = useState(author?.slug ?? '');
+  const [bio, setBio] = useState(author?.bio ?? '');
+  const [avatarUrl, setAvatarUrl] = useState(author?.avatar_url ?? '');
+  const [socialLinks, setSocialLinks] = useState(
+    author?.social_links
+      ? JSON.stringify(author.social_links, null, 2)
+      : '{}',
+  );
+  const [slugManuallyEdited, setSlugManuallyEdited] = useState(isEditing);
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-
-  // Reset form when dialog opens/closes or author changes
-  useEffect(() => {
-    if (open) {
-      setName(author?.name ?? '');
-      setSlug(author?.slug ?? '');
-      setBio(author?.bio ?? '');
-      setAvatarUrl(author?.avatar_url ?? '');
-      setSocialLinks(
-        author?.social_links
-          ? JSON.stringify(author.social_links, null, 2)
-          : '{}',
-      );
-      setSlugManuallyEdited(!!author);
-      setErrors({});
-    }
-  }, [open, author]);
 
   function handleNameChange(value: string) {
     setName(value);
@@ -78,7 +66,7 @@ export function AuthorDialog({
 
     if (!slug.trim()) {
       newErrors.slug = 'Slug is required';
-    } else if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
+    } else if (!SLUG_PATTERN.test(slug)) {
       newErrors.slug = 'Slug must be lowercase alphanumeric with hyphens';
     }
 

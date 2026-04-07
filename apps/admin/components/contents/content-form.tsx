@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Loader2 } from 'lucide-react';
+import useSWR from 'swr';
 import { Input } from '@specus/ui/components/input';
 import { Label } from '@specus/ui/components/label';
 import { Textarea } from '@specus/ui/components/textarea';
@@ -30,7 +31,8 @@ import type {
   CmsPageType,
   CmsContentListItem,
 } from '@specus/api-client';
-import { slugify } from '@/lib/slugify';
+import { slugify, SLUG_PATTERN } from '@/lib/slugify';
+import { fetcher } from '@/lib/fetcher';
 
 // ---------------------------------------------------------------------------
 // Zod schema
@@ -41,10 +43,7 @@ const contentFormSchema = z.object({
   slug: z
     .string()
     .min(1, 'Slug is required')
-    .regex(
-      /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
-      'Slug must be lowercase alphanumeric with hyphens',
-    ),
+    .regex(SLUG_PATTERN, 'Slug must be lowercase alphanumeric with hyphens'),
   content_type: z.enum(['static_page', 'blog_post', 'flexible_page']),
   body: z.string().nullable().optional(),
   excerpt: z.string().nullable().optional(),
@@ -62,6 +61,49 @@ const contentFormSchema = z.object({
 });
 
 export type ContentFormValues = z.infer<typeof contentFormSchema>;
+
+// ---------------------------------------------------------------------------
+// Taxonomy SWR hooks
+// ---------------------------------------------------------------------------
+
+interface ListResponse<T> {
+  items: T[];
+}
+
+function useTaxonomy() {
+  const { data: authorsData } = useSWR<ListResponse<CmsAuthor>>(
+    '/api/cms/authors',
+    fetcher,
+  );
+  const { data: categoriesData } = useSWR<ListResponse<CmsCategory>>(
+    '/api/cms/categories',
+    fetcher,
+  );
+  const { data: tagsData } = useSWR<ListResponse<CmsTag>>(
+    '/api/cms/tags',
+    fetcher,
+  );
+  const { data: pageTypesData } = useSWR<ListResponse<CmsPageType>>(
+    '/api/cms/page-types',
+    fetcher,
+  );
+  const { data: pagesData } = useSWR<ListResponse<CmsContentListItem>>(
+    '/api/cms/contents?content_type=static_page&page_size=100',
+    fetcher,
+  );
+
+  const loading =
+    !authorsData || !categoriesData || !tagsData || !pageTypesData || !pagesData;
+
+  return {
+    authors: authorsData?.items ?? [],
+    categories: categoriesData?.items ?? [],
+    tags: tagsData?.items ?? [],
+    pageTypes: pageTypesData?.items ?? [],
+    staticPages: pagesData?.items ?? [],
+    loading,
+  };
+}
 
 // ---------------------------------------------------------------------------
 // Props
@@ -87,56 +129,9 @@ export function ContentForm({
   // Track whether the user has manually edited the slug
   const slugManuallyEdited = useRef(mode === 'edit');
 
-  // Taxonomy data
-  const [authors, setAuthors] = useState<CmsAuthor[]>([]);
-  const [categories, setCategories] = useState<CmsCategory[]>([]);
-  const [tags, setTags] = useState<CmsTag[]>([]);
-  const [pageTypes, setPageTypes] = useState<CmsPageType[]>([]);
-  const [staticPages, setStaticPages] = useState<CmsContentListItem[]>([]);
-  const [taxonomyLoading, setTaxonomyLoading] = useState(true);
-
-  // Fetch taxonomy data on mount
-  useEffect(() => {
-    async function fetchTaxonomyData() {
-      try {
-        const [authorsRes, categoriesRes, tagsRes, pageTypesRes, pagesRes] =
-          await Promise.all([
-            fetch('/api/cms/authors'),
-            fetch('/api/cms/categories'),
-            fetch('/api/cms/tags'),
-            fetch('/api/cms/page-types'),
-            fetch('/api/cms/contents?content_type=static_page&page_size=100'),
-          ]);
-
-        if (authorsRes.ok) {
-          const data = await authorsRes.json();
-          setAuthors(data.items ?? []);
-        }
-        if (categoriesRes.ok) {
-          const data = await categoriesRes.json();
-          setCategories(data.items ?? []);
-        }
-        if (tagsRes.ok) {
-          const data = await tagsRes.json();
-          setTags(data.items ?? []);
-        }
-        if (pageTypesRes.ok) {
-          const data = await pageTypesRes.json();
-          setPageTypes(data.items ?? []);
-        }
-        if (pagesRes.ok) {
-          const data = await pagesRes.json();
-          setStaticPages(data.items ?? []);
-        }
-      } catch {
-        // Silently fail — dropdowns will just be empty
-      } finally {
-        setTaxonomyLoading(false);
-      }
-    }
-
-    fetchTaxonomyData();
-  }, []);
+  // Taxonomy data via SWR (cached across create/edit pages)
+  const { authors, categories, tags, pageTypes, staticPages, loading: taxonomyLoading } =
+    useTaxonomy();
 
   const {
     register,

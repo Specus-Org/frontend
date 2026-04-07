@@ -1,12 +1,11 @@
 'use server';
 
 import { signIn } from '@specus/auth';
+import { redirect } from 'next/navigation';
 import { AuthError } from 'next-auth';
 
 interface SignInState {
   error?: string;
-  success?: boolean;
-  redirectTo?: string;
 }
 
 export async function signInAction(
@@ -34,12 +33,13 @@ export async function signInAction(
       password,
       redirect: false,
     });
-
-    return { success: true, redirectTo: callbackUrl };
   } catch (error) {
     if (error instanceof AuthError) {
       return { error: 'Invalid email or password. Please try again.' };
     }
     throw error;
   }
+
+  // redirect() throws a special Next.js error — must be called outside try/catch
+  redirect(callbackUrl);
 }

@@ -6,10 +6,12 @@ import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@specus/ui/components/button';
-import {
-  ContentForm,
-  type ContentFormValues,
-} from '@/components/contents/content-form';
+import dynamic from 'next/dynamic';
+import type { ContentFormValues } from '@/components/contents/content-form';
+
+const ContentForm = dynamic(
+  () => import('@/components/contents/content-form').then((m) => m.ContentForm),
+);
 
 export default function NewContentPage() {
   const router = useRouter();

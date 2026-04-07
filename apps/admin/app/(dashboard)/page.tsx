@@ -1,6 +1,4 @@
-'use client';
-
-import { useEffect, useState } from 'react';
+import { Suspense } from 'react';
 import Link from 'next/link';
 import {
   Shield,
@@ -14,99 +12,94 @@ import {
 import { Card, CardContent } from '@specus/ui/components/card';
 
 import { MetricCard } from '@/components/metric-card';
+import { fetchWithAuth, fetchBackend } from '@/lib/api-client';
 
-// ---------- Sources metric ----------
-function useSourcesCount() {
-  const [count, setCount] = useState<number>(0);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+// ---------- Async server metric components ----------
 
-  useEffect(() => {
-    let cancelled = false;
-    async function load() {
-      try {
-        const res = await fetch('/api/screening/sources');
-        if (!res.ok) throw new Error('Failed to fetch');
-        const data = await res.json();
-        if (!cancelled) {
-          setCount(data?.sources?.length ?? 0);
-        }
-      } catch {
-        if (!cancelled) setError(true);
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    }
-    load();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  return { count, loading, error };
+async function SourcesMetric() {
+  try {
+    const res = await fetchBackend('/api/v1/screening/sources');
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    const count = data?.sources?.length ?? 0;
+    return (
+      <MetricCard
+        title="Sanctions Sources"
+        value={count}
+        description="Active screening databases"
+        icon={Shield}
+      />
+    );
+  } catch {
+    return (
+      <MetricCard
+        title="Sanctions Sources"
+        value={0}
+        description="Active screening databases"
+        icon={Shield}
+        error
+      />
+    );
+  }
 }
 
-// ---------- Health metric ----------
-function useHealthStatus() {
-  const [healthy, setHealthy] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  useEffect(() => {
-    let cancelled = false;
-    async function load() {
-      try {
-        const res = await fetch('/api/health?check=live');
-        if (!res.ok) throw new Error('Failed to fetch');
-        const data = await res.json();
-        if (!cancelled) {
-          setHealthy(data?.status === 'ok' || data?.status === 'healthy');
-        }
-      } catch {
-        if (!cancelled) setError(true);
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    }
-    load();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  return { healthy, loading, error };
+async function HealthMetric() {
+  try {
+    const res = await fetchBackend('/health/live');
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    const healthy = data?.status === 'ok' || data?.status === 'healthy';
+    return (
+      <MetricCard
+        title="System Health"
+        value={healthy ? 'Operational' : 'Unreachable'}
+        description="Backend API status"
+        icon={Activity}
+        href="/health"
+      />
+    );
+  } catch {
+    return (
+      <MetricCard
+        title="System Health"
+        value="Unreachable"
+        description="Backend API status"
+        icon={Activity}
+        error
+        href="/health"
+      />
+    );
+  }
 }
 
-// ---------- Content metric ----------
-function useContentStatus() {
-  const [hasContent, setHasContent] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  useEffect(() => {
-    let cancelled = false;
-    async function load() {
-      try {
-        const res = await fetch('/api/cms/contents?page_size=1');
-        if (!res.ok) throw new Error('Failed to fetch');
-        const data = await res.json();
-        if (!cancelled) {
-          const items = data?.items ?? [];
-          setHasContent(items.length > 0);
-        }
-      } catch {
-        if (!cancelled) setError(true);
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    }
-    load();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  return { hasContent, loading, error };
+async function ContentMetric() {
+  try {
+    const res = await fetchWithAuth('/api/v1/admin/cms/contents?page_size=1');
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    const items = data?.items ?? [];
+    const hasContent = items.length > 0;
+    return (
+      <MetricCard
+        title="Content"
+        value={hasContent ? 'Active' : 'Empty'}
+        description={hasContent ? 'Content entries created' : 'No content yet'}
+        icon={FileText}
+        href="/contents"
+      />
+    );
+  } catch {
+    return (
+      <MetricCard
+        title="Content"
+        value="—"
+        description="Failed to load"
+        icon={FileText}
+        error
+        href="/contents"
+      />
+    );
+  }
 }
 
 // ---------- Quick action ----------
@@ -138,12 +131,8 @@ function QuickAction({ title, description, href, icon: Icon }: QuickActionProps)
   );
 }
 
-// ---------- Dashboard page ----------
+// ---------- Dashboard page (Server Component) ----------
 export default function DashboardPage() {
-  const sources = useSourcesCount();
-  const health = useHealthStatus();
-  const content = useContentStatus();
-
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -154,50 +143,19 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      {/* Metric cards */}
+      {/* Metric cards — each streams independently via Suspense */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <MetricCard
-          title="Sanctions Sources"
-          value={sources.count}
-          description="Active screening databases"
-          icon={Shield}
-          loading={sources.loading}
-          error={sources.error}
-        />
+        <Suspense fallback={<MetricCard title="Sanctions Sources" value={0} description="Active screening databases" icon={Shield} loading />}>
+          <SourcesMetric />
+        </Suspense>
 
-        <MetricCard
-          title="System Health"
-          value={
-            health.loading
-              ? '...'
-              : health.error
-                ? '—'
-                : health.healthy
-                  ? 'Operational'
-                  : 'Unreachable'
-          }
-          description="Backend API status"
-          icon={Activity}
-          loading={health.loading}
-          error={health.error}
-          href="/health"
-        />
+        <Suspense fallback={<MetricCard title="System Health" value="..." description="Backend API status" icon={Activity} loading href="/health" />}>
+          <HealthMetric />
+        </Suspense>
 
-        <MetricCard
-          title="Content"
-          value={
-            content.hasContent ? 'Active' : 'Empty'
-          }
-          description={
-            content.hasContent
-              ? 'Content entries created'
-              : 'No content yet'
-          }
-          icon={FileText}
-          loading={content.loading}
-          error={content.error}
-          href="/contents"
-        />
+        <Suspense fallback={<MetricCard title="Content" value="..." description="Loading..." icon={FileText} loading href="/contents" />}>
+          <ContentMetric />
+        </Suspense>
       </div>
 
       {/* Quick actions */}

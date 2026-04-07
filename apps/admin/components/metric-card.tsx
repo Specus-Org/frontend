@@ -46,9 +46,9 @@ export function MetricCard({
         ) : (
           <div className="text-2xl font-semibold tracking-tight">{value}</div>
         )}
-        {description && !loading && !error && (
+        {description && !loading && !error ? (
           <p className="mt-1 text-xs text-muted-foreground">{description}</p>
-        )}
+        ) : null}
       </CardContent>
     </Card>
   );

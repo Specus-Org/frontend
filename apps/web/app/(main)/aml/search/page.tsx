@@ -1,7 +1,6 @@
 'use client';
 
 import { BiographySection } from '@/components/aml/biography-section';
-import { DocumentsSection } from '@/components/aml/documents-section';
 import { ListedInSection } from '@/components/aml/listed-in-section';
 import { NoMatchesSection } from '@/components/aml/no-matches-section';
 import { SearchResultHeader } from '@/components/aml/search-result-header';
@@ -11,45 +10,31 @@ import { screeningSearch } from '@specus/api-client';
 import type { ScreeningSearchResult } from '@specus/api-client';
 import { Search } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import useSWR from 'swr';
+
+async function fetchResults(q: string): Promise<ScreeningSearchResult[]> {
+  const response = await screeningSearch({ query: { q } });
+  return response.data?.items ?? [];
+}
 
 export default function AMLSearchPage(): React.ReactElement {
   const searchParams = useSearchParams();
   const q = searchParams.get('q') ?? '';
   const [query, setQuery] = useState(q);
-  const [results, setResults] = useState<ScreeningSearchResult[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
+  // Derive query from URL params during render instead of syncing via state lag.
+  if (query !== q) {
     setQuery(q);
-  }, [q]);
+  }
 
-  useEffect(() => {
-    if (!q) return;
-
-    let cancelled = false;
-    setLoading(true);
-    setError(false);
-
-    screeningSearch({ query: { q } })
-      .then((response) => {
-        if (!cancelled) {
-          setResults(response.data?.items ?? []);
-        }
-      })
-      .catch(() => {
-        if (!cancelled) setError(true);
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [q]);
+  // SWR handles fetching, caching, and cancellation automatically.
+  // Passing `null` as key when `q` is empty disables the fetch.
+  const { data: results = [], error, isLoading } = useSWR(
+    q ? ['screening-search', q] : null,
+    ([, searchQuery]) => fetchResults(searchQuery),
+  );
 
   const handleSearch = () => {
     if (query.trim()) {
@@ -79,21 +64,15 @@ export default function AMLSearchPage(): React.ReactElement {
       </div>
 
       <div className="py-8 space-y-8 mb-40">
-        {loading && <SearchSkeleton />}
-
-        {error && (
+        {isLoading ? (
+          <SearchSkeleton />
+        ) : error ? (
           <p className="text-sm text-red-600">Failed to load results. Please try again.</p>
-        )}
-
-        {!loading && !error && results.length === 0 && (
+        ) : results.length === 0 ? (
           <NoMatchesSection name={q} />
-        )}
-
-        {!loading && !error && results.length === 1 && (
+        ) : results.length === 1 ? (
           <SingleResult result={results[0]} />
-        )}
-
-        {!loading && !error && results.length > 1 && (
+        ) : (
           <SearchResultList entities={results} />
         )}
       </div>
@@ -111,7 +90,7 @@ function SingleResult({ result }: { result: ScreeningSearchResult }) {
         entityType={result.entity_type}
         typeFields={result.type_fields}
       />
-      {sanctions.length > 0 && <ListedInSection items={sanctions} />}
+      {sanctions.length > 0 ? <ListedInSection items={sanctions} /> : null}
     </>
   );
 }

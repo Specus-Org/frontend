@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -14,7 +14,7 @@ import { Textarea } from '@specus/ui/components/textarea';
 import { Button } from '@specus/ui/components/button';
 import { toast } from 'sonner';
 import type { CmsCategory } from '@specus/api-client';
-import { slugify } from '@/lib/slugify';
+import { slugify, SLUG_PATTERN } from '@/lib/slugify';
 
 interface CategoryDialogProps {
   open: boolean;
@@ -31,22 +31,13 @@ export function CategoryDialog({
 }: CategoryDialogProps) {
   const isEditing = !!category;
 
-  const [name, setName] = useState('');
-  const [slug, setSlug] = useState('');
-  const [description, setDescription] = useState('');
-  const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
+  // State initialized from props — parent uses `key` to force fresh mount
+  const [name, setName] = useState(category?.name ?? '');
+  const [slug, setSlug] = useState(category?.slug ?? '');
+  const [description, setDescription] = useState(category?.description ?? '');
+  const [slugManuallyEdited, setSlugManuallyEdited] = useState(isEditing);
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-
-  useEffect(() => {
-    if (open) {
-      setName(category?.name ?? '');
-      setSlug(category?.slug ?? '');
-      setDescription(category?.description ?? '');
-      setSlugManuallyEdited(!!category);
-      setErrors({});
-    }
-  }, [open, category]);
 
   function handleNameChange(value: string) {
     setName(value);
@@ -69,7 +60,7 @@ export function CategoryDialog({
 
     if (!slug.trim()) {
       newErrors.slug = 'Slug is required';
-    } else if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
+    } else if (!SLUG_PATTERN.test(slug)) {
       newErrors.slug = 'Slug must be lowercase alphanumeric with hyphens';
     }
 

@@ -1,51 +1,41 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
+import useSWR from 'swr';
 import { Button } from '@specus/ui/components/button';
 import { Skeleton } from '@specus/ui/components/skeleton';
 import type { CmsContent } from '@specus/api-client';
-import {
-  ContentForm,
-  type ContentFormValues,
-} from '@/components/contents/content-form';
-import { DeleteContentDialog } from '@/components/contents/delete-content-dialog';
+import dynamic from 'next/dynamic';
+import type { ContentFormValues } from '@/components/contents/content-form';
+import { fetcher } from '@/lib/fetcher';
+
+const ContentForm = dynamic(
+  () => import('@/components/contents/content-form').then((m) => m.ContentForm),
+);
+const DeleteContentDialog = dynamic(
+  () =>
+    import('@/components/contents/delete-content-dialog').then(
+      (m) => m.DeleteContentDialog,
+    ),
+);
 
 export default function EditContentPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
 
-  const [content, setContent] = useState<CmsContent | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [notFound, setNotFound] = useState(false);
+  const { data: content, error, isLoading } = useSWR<CmsContent>(
+    `/api/cms/contents/${params.id}`,
+    fetcher,
+  );
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  const fetchContent = useCallback(async () => {
-    try {
-      const response = await fetch(`/api/cms/contents/${params.id}`);
-      if (response.status === 404) {
-        setNotFound(true);
-        return;
-      }
-      if (!response.ok) {
-        throw new Error('Failed to fetch content');
-      }
-      const data: CmsContent = await response.json();
-      setContent(data);
-    } catch {
-      toast.error('Failed to load content');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [params.id]);
-
-  useEffect(() => {
-    fetchContent();
-  }, [fetchContent]);
+  const notFound = error && 'message' in error && /404|not found/i.test(error.message);
 
   async function handleSubmit(values: ContentFormValues) {
     setIsSubmitting(true);
@@ -118,8 +108,8 @@ export default function EditContentPage() {
     );
   }
 
-  // Not found state
-  if (notFound || !content) {
+  // Not found or error state
+  if (notFound || (!content && error)) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-4">
         <p className="text-lg font-medium text-muted-foreground">
@@ -138,6 +128,8 @@ export default function EditContentPage() {
     );
   }
 
+  if (!content) return null;
+
   // Convert CmsContent to form default values
   const defaultValues: Partial<ContentFormValues> = {
     title: content.title,
@@ -147,7 +139,7 @@ export default function EditContentPage() {
     excerpt: content.excerpt ?? '',
     status: content.status,
     publish_at: content.publish_at
-      ? content.publish_at.slice(0, 16) // Format for datetime-local input
+      ? content.publish_at.slice(0, 16)
       : null,
     author_id: content.author_id ?? null,
     category_ids: content.categories?.map((c) => c.id) ?? [],

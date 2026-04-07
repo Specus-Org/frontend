@@ -1,8 +1,9 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
-import { FileType2, MoreHorizontal, Plus, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+import { MoreHorizontal, Plus, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
+import useSWR from 'swr';
 import { Button } from '@specus/ui/components/button';
 import {
   Table,
@@ -29,38 +30,34 @@ import {
   AlertDialogTitle,
 } from '@specus/ui/components/alert-dialog';
 import type { CmsPageType } from '@specus/api-client';
-import { PageTypeDialog } from '@/components/page-types/page-type-dialog';
+import dynamic from 'next/dynamic';
+import { fetcher } from '@/lib/fetcher';
+
+const PageTypeDialog = dynamic(
+  () =>
+    import('@/components/page-types/page-type-dialog').then(
+      (m) => m.PageTypeDialog,
+    ),
+);
+
+interface PageTypesResponse {
+  items: CmsPageType[];
+}
 
 export default function PageTypesPage() {
-  const [pageTypes, setPageTypes] = useState<CmsPageType[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data, isLoading, mutate } = useSWR<PageTypesResponse>(
+    '/api/cms/page-types',
+    fetcher,
+  );
+  const pageTypes = data?.items ?? [];
 
-  // Dialog state
+  // Dialog state — dialogKey forces fresh mount on each open
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogKey, setDialogKey] = useState(0);
 
   // Delete confirmation state
   const [deleteTarget, setDeleteTarget] = useState<CmsPageType | null>(null);
   const [deleting, setDeleting] = useState(false);
-
-  const fetchPageTypes = useCallback(async () => {
-    try {
-      const response = await fetch('/api/cms/page-types');
-      if (!response.ok) {
-        toast.error('Failed to load page types');
-        return;
-      }
-      const data = await response.json();
-      setPageTypes(data.items ?? []);
-    } catch {
-      toast.error('Failed to load page types');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchPageTypes();
-  }, [fetchPageTypes]);
 
   async function handleDelete() {
     if (!deleteTarget) return;
@@ -75,12 +72,12 @@ export default function PageTypesPage() {
 
       if (response.status === 204) {
         toast.success('Page type deleted');
-        fetchPageTypes();
+        mutate();
       } else if (response.status === 409) {
         toast.error('Cannot delete -- page type is referenced by content');
       } else if (response.status === 404) {
         toast.info('Page type was already deleted');
-        fetchPageTypes();
+        mutate();
       } else {
         const data = await response.json();
         toast.error(data.message ?? 'Failed to delete page type');
@@ -101,7 +98,7 @@ export default function PageTypesPage() {
           <h1 className="text-2xl font-semibold tracking-tight">Page Types</h1>
           <p className="mt-1 text-sm text-muted-foreground">Define page type templates for flexible pages.</p>
         </div>
-        <Button onClick={() => setDialogOpen(true)} size="sm">
+        <Button onClick={() => { setDialogKey((k) => k + 1); setDialogOpen(true); }} size="sm">
           <Plus className="size-4" />
           Add Page Type
         </Button>
@@ -121,7 +118,7 @@ export default function PageTypesPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {loading ? (
+            {isLoading ? (
               <TableRow>
                 <TableCell colSpan={4} className="h-24 text-center">
                   Loading...
@@ -176,9 +173,10 @@ export default function PageTypesPage() {
 
       {/* Create dialog */}
       <PageTypeDialog
+        key={dialogKey}
         open={dialogOpen}
         onOpenChange={setDialogOpen}
-        onSuccess={fetchPageTypes}
+        onSuccess={() => mutate()}
       />
 
       {/* Delete confirmation */}

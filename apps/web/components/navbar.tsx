@@ -1,9 +1,8 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 'use client';
 
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { navItems } from '@/components/navbar/nav-items';
 import DesktopNav from '@/components/navbar/desktop-nav';
 import MobileNav from '@/components/navbar/mobile-nav';
@@ -18,12 +17,13 @@ export default function Navbar(): React.ReactNode {
     setIsOpen(false);
   };
 
-  const [query, setQuery] = useState('');
+  const queryParam = param.get('query') ?? '';
+  const [query, setQuery] = useState(queryParam);
 
-  useEffect(() => {
-    const queryParam = param.get('query') ?? '';
+  // Sync query state from URL params during render instead of via useEffect.
+  if (query !== queryParam && queryParam !== '') {
     setQuery(queryParam);
-  }, [param]);
+  }
 
   const handleSearchClicked = (): void => {
     const newParams = new URLSearchParams(param);

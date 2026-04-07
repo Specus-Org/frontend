@@ -21,9 +21,9 @@ export function ContentHeader({
         {title}
       </h1>
 
-      {(publishedAt || author) && (
+      {(publishedAt || author) ? (
         <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-          {publishedAt && (
+          {publishedAt ? (
             <time dateTime={publishedAt}>
               {new Date(publishedAt).toLocaleDateString('en-US', {
                 year: 'numeric',
@@ -31,16 +31,16 @@ export function ContentHeader({
                 day: 'numeric',
               })}
             </time>
-          )}
-          {publishedAt && author && (
+          ) : null}
+          {publishedAt && author ? (
             <span aria-hidden="true">&middot;</span>
-          )}
-          {author && <span>{author.name}</span>}
+          ) : null}
+          {author ? <span>{author.name}</span> : null}
         </div>
-      )}
+      ) : null}
 
-      {((categories && categories.length > 0) ||
-        (tags && tags.length > 0)) && (
+      {(categories && categories.length > 0) ||
+        (tags && tags.length > 0) ? (
         <div className="flex flex-wrap gap-2">
           {categories?.map((category) => (
             <Badge key={category.slug} variant="secondary">
@@ -53,7 +53,7 @@ export function ContentHeader({
             </Badge>
           ))}
         </div>
-      )}
+      ) : null}
     </header>
   );
 }

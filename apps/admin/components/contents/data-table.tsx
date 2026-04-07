@@ -9,7 +9,6 @@ import {
   type SortingState,
 } from '@tanstack/react-table';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import {
   Table,
   TableBody,

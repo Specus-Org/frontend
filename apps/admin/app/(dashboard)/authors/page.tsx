@@ -1,8 +1,9 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
-import { MoreHorizontal, Pencil, Plus, Trash2, Users } from 'lucide-react';
+import { useState } from 'react';
+import { MoreHorizontal, Pencil, Plus, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
+import useSWR from 'swr';
 import { Button } from '@specus/ui/components/button';
 import {
   Table,
@@ -34,7 +35,12 @@ import {
   AlertDialogTitle,
 } from '@specus/ui/components/alert-dialog';
 import type { CmsAuthor } from '@specus/api-client';
-import { AuthorDialog } from '@/components/authors/author-dialog';
+import dynamic from 'next/dynamic';
+import { fetcher } from '@/lib/fetcher';
+
+const AuthorDialog = dynamic(
+  () => import('@/components/authors/author-dialog').then((m) => m.AuthorDialog),
+);
 
 function getInitials(name: string): string {
   return name
@@ -50,45 +56,35 @@ function truncate(text: string, max: number): string {
   return text.slice(0, max) + '...';
 }
 
-export default function AuthorsPage() {
-  const [authors, setAuthors] = useState<CmsAuthor[]>([]);
-  const [loading, setLoading] = useState(true);
+interface AuthorsResponse {
+  items: CmsAuthor[];
+}
 
-  // Dialog state
+export default function AuthorsPage() {
+  const { data, isLoading, mutate } = useSWR<AuthorsResponse>(
+    '/api/cms/authors',
+    fetcher,
+  );
+  const authors = data?.items ?? [];
+
+  // Dialog state — dialogKey forces fresh mount on each open
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingAuthor, setEditingAuthor] = useState<CmsAuthor | null>(null);
+  const [dialogKey, setDialogKey] = useState(0);
 
   // Delete confirmation state
   const [deleteTarget, setDeleteTarget] = useState<CmsAuthor | null>(null);
   const [deleting, setDeleting] = useState(false);
 
-  const fetchAuthors = useCallback(async () => {
-    try {
-      const response = await fetch('/api/cms/authors');
-      if (!response.ok) {
-        toast.error('Failed to load authors');
-        return;
-      }
-      const data = await response.json();
-      setAuthors(data.items ?? []);
-    } catch {
-      toast.error('Failed to load authors');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchAuthors();
-  }, [fetchAuthors]);
-
   function handleCreate() {
     setEditingAuthor(null);
+    setDialogKey((k) => k + 1);
     setDialogOpen(true);
   }
 
   function handleEdit(author: CmsAuthor) {
     setEditingAuthor(author);
+    setDialogKey((k) => k + 1);
     setDialogOpen(true);
   }
 
@@ -104,12 +100,12 @@ export default function AuthorsPage() {
 
       if (response.status === 204) {
         toast.success('Author deleted');
-        fetchAuthors();
+        mutate();
       } else if (response.status === 409) {
         toast.error('Cannot delete -- author is referenced by content');
       } else if (response.status === 404) {
         toast.info('Author was already deleted');
-        fetchAuthors();
+        mutate();
       } else {
         const data = await response.json();
         toast.error(data.message ?? 'Failed to delete author');
@@ -151,7 +147,7 @@ export default function AuthorsPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {loading ? (
+            {isLoading ? (
               <TableRow>
                 <TableCell colSpan={5} className="h-24 text-center">
                   Loading...
@@ -221,10 +217,11 @@ export default function AuthorsPage() {
 
       {/* Create / Edit dialog */}
       <AuthorDialog
+        key={dialogKey}
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         author={editingAuthor}
-        onSuccess={fetchAuthors}
+        onSuccess={() => mutate()}
       />
 
       {/* Delete confirmation */}

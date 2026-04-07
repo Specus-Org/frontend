@@ -1,8 +1,9 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
-import { FolderTree, MoreHorizontal, Pencil, Plus, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+import { MoreHorizontal, Pencil, Plus, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
+import useSWR from 'swr';
 import { Button } from '@specus/ui/components/button';
 import {
   Table,
@@ -29,54 +30,52 @@ import {
   AlertDialogTitle,
 } from '@specus/ui/components/alert-dialog';
 import type { CmsCategory } from '@specus/api-client';
-import { CategoryDialog } from '@/components/categories/category-dialog';
+import dynamic from 'next/dynamic';
+import { fetcher } from '@/lib/fetcher';
+
+const CategoryDialog = dynamic(
+  () =>
+    import('@/components/categories/category-dialog').then(
+      (m) => m.CategoryDialog,
+    ),
+);
 
 function truncate(text: string, max: number): string {
   if (text.length <= max) return text;
   return text.slice(0, max) + '...';
 }
 
-export default function CategoriesPage() {
-  const [categories, setCategories] = useState<CmsCategory[]>([]);
-  const [loading, setLoading] = useState(true);
+interface CategoriesResponse {
+  items: CmsCategory[];
+}
 
-  // Dialog state
+export default function CategoriesPage() {
+  const { data, isLoading, mutate } = useSWR<CategoriesResponse>(
+    '/api/cms/categories',
+    fetcher,
+  );
+  const categories = data?.items ?? [];
+
+  // Dialog state — dialogKey forces fresh mount on each open
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<CmsCategory | null>(
     null,
   );
+  const [dialogKey, setDialogKey] = useState(0);
 
   // Delete confirmation state
   const [deleteTarget, setDeleteTarget] = useState<CmsCategory | null>(null);
   const [deleting, setDeleting] = useState(false);
 
-  const fetchCategories = useCallback(async () => {
-    try {
-      const response = await fetch('/api/cms/categories');
-      if (!response.ok) {
-        toast.error('Failed to load categories');
-        return;
-      }
-      const data = await response.json();
-      setCategories(data.items ?? []);
-    } catch {
-      toast.error('Failed to load categories');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchCategories();
-  }, [fetchCategories]);
-
   function handleCreate() {
     setEditingCategory(null);
+    setDialogKey((k) => k + 1);
     setDialogOpen(true);
   }
 
   function handleEdit(category: CmsCategory) {
     setEditingCategory(category);
+    setDialogKey((k) => k + 1);
     setDialogOpen(true);
   }
 
@@ -93,12 +92,12 @@ export default function CategoriesPage() {
 
       if (response.status === 204) {
         toast.success('Category deleted');
-        fetchCategories();
+        mutate();
       } else if (response.status === 409) {
         toast.error('Cannot delete -- category is referenced by content');
       } else if (response.status === 404) {
         toast.info('Category was already deleted');
-        fetchCategories();
+        mutate();
       } else {
         const data = await response.json();
         toast.error(data.message ?? 'Failed to delete category');
@@ -141,7 +140,7 @@ export default function CategoriesPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {loading ? (
+            {isLoading ? (
               <TableRow>
                 <TableCell colSpan={4} className="h-24 text-center">
                   Loading...
@@ -204,10 +203,11 @@ export default function CategoriesPage() {
 
       {/* Create / Edit dialog */}
       <CategoryDialog
+        key={dialogKey}
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         category={editingCategory}
-        onSuccess={fetchCategories}
+        onSuccess={() => mutate()}
       />
 
       {/* Delete confirmation */}

@@ -20,6 +20,7 @@
     "react-dom": "catalog:",
     "react-hook-form": "catalog:",
     "sonner": "catalog:",
+    "swr": "^2.4.1",
     "zod": "catalog:"
   },
   "devDependencies": {

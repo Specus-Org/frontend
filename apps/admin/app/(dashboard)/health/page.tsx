@@ -1,8 +1,9 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { Activity, RefreshCw } from 'lucide-react';
+import { useCallback, useRef } from 'react';
+import { RefreshCw } from 'lucide-react';
 import { Button } from '@specus/ui/components/button';
+import useSWR from 'swr';
 import type { HealthResponse } from '@specus/api-client';
 import {
   HealthDetailCard,
@@ -16,82 +17,51 @@ interface EndpointState {
   data: HealthResponse | null;
 }
 
-const initialState: EndpointState = {
-  status: 'healthy',
-  data: null,
-};
+async function fetchEndpoint(
+  check: 'live' | 'ready',
+): Promise<EndpointState> {
+  try {
+    const res = await fetch(`/api/health?check=${check}`);
+    const data = (await res.json()) as HealthResponse;
+
+    if (res.ok) {
+      return { status: 'healthy', data };
+    }
+    if (res.status === 503 && check === 'ready') {
+      return { status: 'degraded', data };
+    }
+    return { status: 'unreachable', data: null };
+  } catch {
+    return { status: 'unreachable', data: null };
+  }
+}
+
+interface HealthData {
+  liveness: EndpointState;
+  readiness: EndpointState;
+  lastChecked: Date;
+}
+
+async function fetchHealth(): Promise<HealthData> {
+  const [liveness, readiness] = await Promise.all([
+    fetchEndpoint('live'),
+    fetchEndpoint('ready'),
+  ]);
+  return { liveness, readiness, lastChecked: new Date() };
+}
 
 export default function HealthPage() {
-  const [liveness, setLiveness] = useState<EndpointState>(initialState);
-  const [readiness, setReadiness] = useState<EndpointState>(initialState);
-  const [lastChecked, setLastChecked] = useState<Date | null>(null);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [initialLoading, setInitialLoading] = useState(true);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const { data, isLoading, isValidating, mutate } = useSWR<HealthData>(
+    'health-status',
+    fetchHealth,
+    { refreshInterval: POLL_INTERVAL },
+  );
 
-  const fetchEndpoint = async (
-    check: 'live' | 'ready',
-  ): Promise<{ status: HealthStatus; data: HealthResponse | null }> => {
-    try {
-      const res = await fetch(`/api/health?check=${check}`);
-      const data = (await res.json()) as HealthResponse;
+  const handleManualRefresh = useCallback(() => {
+    mutate();
+  }, [mutate]);
 
-      if (res.ok) {
-        return { status: 'healthy', data };
-      }
-      // 503 from readiness means degraded (still reachable)
-      if (res.status === 503 && check === 'ready') {
-        return { status: 'degraded', data };
-      }
-      return { status: 'unreachable', data: null };
-    } catch {
-      return { status: 'unreachable', data: null };
-    }
-  };
-
-  const fetchHealth = useCallback(async (isInitial = false) => {
-    if (!isInitial) {
-      setIsRefreshing(true);
-    }
-
-    const [liveResult, readyResult] = await Promise.all([
-      fetchEndpoint('live'),
-      fetchEndpoint('ready'),
-    ]);
-
-    setLiveness(liveResult);
-    setReadiness(readyResult);
-    setLastChecked(new Date());
-    setIsRefreshing(false);
-    if (isInitial) {
-      setInitialLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchHealth(true);
-
-    intervalRef.current = setInterval(() => {
-      fetchHealth(false);
-    }, POLL_INTERVAL);
-
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, [fetchHealth]);
-
-  const handleManualRefresh = () => {
-    // Reset the interval so the next auto-poll is a full 30s from now
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-    }
-    fetchHealth(false);
-    intervalRef.current = setInterval(() => {
-      fetchHealth(false);
-    }, POLL_INTERVAL);
-  };
+  const isRefreshing = isValidating && !isLoading;
 
   return (
     <div className="flex flex-1 flex-col gap-6">
@@ -106,10 +76,10 @@ export default function HealthPage() {
               <RefreshCw className="size-3.5 animate-spin text-muted-foreground" />
             )}
           </div>
-          {lastChecked && (
+          {data?.lastChecked && (
             <p className="text-sm text-muted-foreground">
               Last checked:{' '}
-              {lastChecked.toLocaleString(undefined, {
+              {data.lastChecked.toLocaleString(undefined, {
                 dateStyle: 'medium',
                 timeStyle: 'medium',
               })}
@@ -134,16 +104,16 @@ export default function HealthPage() {
       <div className="grid gap-6 md:grid-cols-2">
         <HealthDetailCard
           title="Liveness"
-          status={liveness.status}
-          timestamp={liveness.data?.timestamp}
-          loading={initialLoading}
+          status={data?.liveness.status ?? 'healthy'}
+          timestamp={data?.liveness.data?.timestamp}
+          loading={isLoading}
         />
         <HealthDetailCard
           title="Readiness"
-          status={readiness.status}
-          timestamp={readiness.data?.timestamp}
-          checks={readiness.data?.checks ?? undefined}
-          loading={initialLoading}
+          status={data?.readiness.status ?? 'healthy'}
+          timestamp={data?.readiness.data?.timestamp}
+          checks={data?.readiness.data?.checks ?? undefined}
+          loading={isLoading}
         />
       </div>
     </div>

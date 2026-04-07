@@ -1,41 +1,30 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
+import dynamic from 'next/dynamic';
 import { Loader2, Upload } from 'lucide-react';
 import { Button } from '@specus/ui/components/button';
 import { toast } from 'sonner';
+import useSWR from 'swr';
 import type { CmsUpload, CmsUploadListResponse } from '@specus/api-client';
 import { UploadList } from '@/components/uploads/upload-list';
-import { UploadDialog } from '@/components/uploads/upload-dialog';
+import { fetcher } from '@/lib/fetcher';
+
+const UploadDialog = dynamic(
+  () =>
+    import('@/components/uploads/upload-dialog').then((m) => ({
+      default: m.UploadDialog,
+    })),
+  { ssr: false },
+);
 
 export default function UploadsPage() {
-  const [uploads, setUploads] = useState<CmsUpload[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data, error, isLoading, mutate } = useSWR<CmsUploadListResponse>(
+    '/api/cms/uploads',
+    fetcher,
+  );
+  const uploads = data?.items ?? [];
   const [dialogOpen, setDialogOpen] = useState(false);
-
-  const fetchUploads = useCallback(async () => {
-    try {
-      const res = await fetch('/api/cms/uploads');
-      if (!res.ok) {
-        const data = await res.json().catch(() => null);
-        throw new Error(data?.message ?? 'Failed to fetch uploads');
-      }
-      const data: CmsUploadListResponse = await res.json();
-      setUploads(data.items);
-      setError(null);
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : 'An unexpected error occurred',
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchUploads();
-  }, [fetchUploads]);
 
   async function handleDelete(id: string) {
     const res = await fetch(`/api/cms/uploads/${id}`, {
@@ -47,11 +36,13 @@ export default function UploadsPage() {
       throw new Error(data?.message ?? 'Failed to delete upload');
     }
 
-    setUploads((prev) => prev.filter((u) => u.id !== id));
-  }
-
-  function handleUploadComplete() {
-    fetchUploads();
+    mutate(
+      (current) =>
+        current
+          ? { ...current, items: current.items.filter((u) => u.id !== id) }
+          : current,
+      false,
+    );
   }
 
   return (
@@ -77,15 +68,10 @@ export default function UploadsPage() {
         </div>
       ) : error ? (
         <div className="flex min-h-[400px] flex-col items-center justify-center gap-4 rounded-lg border border-dashed p-8 text-center">
-          <p className="text-sm text-destructive">{error}</p>
-          <Button
-            variant="outline"
-            onClick={() => {
-              setError(null);
-              setIsLoading(true);
-              fetchUploads();
-            }}
-          >
+          <p className="text-sm text-destructive">
+            {error instanceof Error ? error.message : 'An unexpected error occurred'}
+          </p>
+          <Button variant="outline" onClick={() => mutate()}>
             Try again
           </Button>
         </div>
@@ -93,12 +79,14 @@ export default function UploadsPage() {
         <UploadList uploads={uploads} onDelete={handleDelete} />
       )}
 
-      {/* Upload dialog */}
-      <UploadDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-        onUploadComplete={handleUploadComplete}
-      />
+      {/* Upload dialog (dynamically imported) */}
+      {dialogOpen && (
+        <UploadDialog
+          open={dialogOpen}
+          onOpenChange={setDialogOpen}
+          onUploadComplete={() => mutate()}
+        />
+      )}
     </div>
   );
 }
