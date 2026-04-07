@@ -13,11 +13,13 @@
     "@specus/auth": "workspace:*",
     "@specus/ui": "workspace:*",
     "lucide-react": "catalog:",
+    "mermaid": "^11.14.0",
     "next": "catalog:",
     "next-auth": "catalog:",
     "next-themes": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
+    "shiki": "^4.0.2",
     "swr": "^2.4.1"
   },
   "devDependencies": {

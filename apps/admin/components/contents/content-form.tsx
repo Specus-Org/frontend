@@ -31,6 +31,7 @@ import type {
   CmsPageType,
   CmsContentListItem,
 } from '@specus/api-client';
+import { ContentEditor } from '@/components/editor/content-editor';
 import { slugify, SLUG_PATTERN } from '@/lib/slugify';
 import { fetcher } from '@/lib/fetcher';
 
@@ -192,7 +193,7 @@ export function ContentForm({
         {/* ---------------------------------------------------------------- */}
         {/* Main tab                                                          */}
         {/* ---------------------------------------------------------------- */}
-        <TabsContent value="main" className="space-y-4 pt-4">
+        <TabsContent value="main" className="space-y-4 pt-4 data-[state=inactive]:hidden" forceMount>
           {/* Title */}
           <div className="grid gap-2">
             <Label htmlFor="content-title">Title *</Label>
@@ -261,12 +262,15 @@ export function ContentForm({
           {/* Body */}
           <div className="grid gap-2">
             <Label htmlFor="content-body">Body</Label>
-            <Textarea
-              id="content-body"
-              {...register('body')}
-              placeholder="Write your content here (plain text / markdown)..."
-              rows={12}
-              className="font-mono text-sm"
+            <Controller
+              name="body"
+              control={control}
+              render={({ field }) => (
+                <ContentEditor
+                  value={field.value ?? null}
+                  onChange={(val) => field.onChange(val)}
+                />
+              )}
             />
             {errors.body && (
               <p className="text-sm text-destructive">{errors.body.message}</p>
