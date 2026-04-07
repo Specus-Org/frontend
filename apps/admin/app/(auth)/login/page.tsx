@@ -91,15 +91,15 @@ export default function LoginPage() {
           )}
 
           <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">Email or Username</Label>
             <Input
               id="email"
-              type="email"
+              type="text"
               placeholder="admin@specus.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              autoComplete="email"
+              autoComplete="username"
               autoFocus
               disabled={isLoading}
             />

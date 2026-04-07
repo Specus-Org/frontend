@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
+import { adminAuthLogin } from '@specus/api-client';
 import { setTokenCookies, decodeJwtPayload } from '@/lib/auth';
-import { fetchBackend } from '@/lib/api-client';
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,17 +14,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const backendResponse = await fetchBackend('/api/v1/admin/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({ email, password }),
+    const { data, error, response } = await adminAuthLogin({
+      body: { email, password },
     });
 
-    if (!backendResponse.ok) {
-      const error = await backendResponse.json().catch(() => ({
-        message: 'Authentication failed',
-        code: 'AUTH_ERROR',
-      }));
-
+    if (error) {
       const statusMap: Record<string, number> = {
         INVALID_CREDENTIALS: 401,
         ACCOUNT_NOT_VERIFIED: 403,
@@ -34,30 +28,36 @@ export async function POST(request: NextRequest) {
         INTERNAL_ERROR: 500,
       };
 
-      const status = statusMap[error.code] ?? backendResponse.status;
+      const authError = error as { message?: string; code?: string };
+      const status = statusMap[authError.code ?? ''] ?? response.status;
 
       return NextResponse.json(
-        { message: error.message, code: error.code },
+        { message: authError.message ?? 'Authentication failed', code: authError.code ?? 'AUTH_ERROR' },
         { status },
       );
     }
 
-    const tokens = await backendResponse.json();
-    const { access_token, refresh_token, id_token } = tokens;
+    if (!data) {
+      return NextResponse.json(
+        { message: 'Authentication failed', code: 'AUTH_ERROR' },
+        { status: 500 },
+      );
+    }
+
+    const { access_token, refresh_token, id_token } = data;
 
     // Decode id_token to extract user info
-    const idPayload = decodeJwtPayload(id_token);
+    const idPayload = id_token ? decodeJwtPayload(id_token) : null;
     const user = {
       sub: idPayload?.sub ?? '',
       name: idPayload?.name ?? '',
       email: idPayload?.email ?? email,
     };
 
-    const response = NextResponse.json({ user }, { status: 200 });
+    const res = NextResponse.json({ user }, { status: 200 });
+    setTokenCookies(res, { access_token, refresh_token, id_token: id_token ?? '' });
 
-    setTokenCookies(response, { access_token, refresh_token, id_token });
-
-    return response;
+    return res;
   } catch {
     return NextResponse.json(
       { message: 'An unexpected error occurred', code: 'INTERNAL_ERROR' },

@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
+import { adminAuthRefresh } from '@specus/api-client';
 import { getRefreshToken, setTokenCookies, clearTokenCookies } from '@/lib/auth';
-import { fetchBackend } from '@/lib/api-client';
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,12 +15,11 @@ export async function POST(request: NextRequest) {
       return response;
     }
 
-    const backendResponse = await fetchBackend('/api/v1/admin/auth/refresh', {
-      method: 'POST',
-      body: JSON.stringify({ refresh_token: refreshToken }),
+    const { data, error } = await adminAuthRefresh({
+      body: { refresh_token: refreshToken },
     });
 
-    if (!backendResponse.ok) {
+    if (error || !data) {
       const response = NextResponse.json(
         { message: 'Token refresh failed', code: 'UNAUTHORIZED' },
         { status: 401 },
@@ -29,11 +28,10 @@ export async function POST(request: NextRequest) {
       return response;
     }
 
-    const tokens = await backendResponse.json();
-    const { access_token, refresh_token, id_token } = tokens;
+    const { access_token, refresh_token, id_token } = data;
 
     const response = NextResponse.json({ success: true }, { status: 200 });
-    setTokenCookies(response, { access_token, refresh_token, id_token });
+    setTokenCookies(response, { access_token, refresh_token, id_token: id_token ?? '' });
 
     return response;
   } catch {

@@ -32,22 +32,4 @@ export async function fetchWithAuth(
   });
 }
 
-/**
- * Plain fetch to the backend without auth (for login, public endpoints).
- */
-export function fetchBackend(
-  path: string,
-  options: RequestInit = {},
-): Promise<Response> {
-  const headers = new Headers(options.headers);
-  if (!headers.has('Content-Type')) {
-    headers.set('Content-Type', 'application/json');
-  }
-
-  return fetch(`${API_BASE_URL}${path}`, {
-    ...options,
-    headers,
-  });
-}
-
 export { API_BASE_URL };
