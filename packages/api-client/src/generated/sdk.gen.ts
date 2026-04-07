@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { AdminConfirmUploadData, AdminConfirmUploadErrors, AdminConfirmUploadResponses, AdminCreateAuthorData, AdminCreateAuthorErrors, AdminCreateAuthorResponses, AdminCreateCategoryData, AdminCreateCategoryErrors, AdminCreateCategoryResponses, AdminCreateContentData, AdminCreateContentErrors, AdminCreateContentResponses, AdminCreatePageTypeData, AdminCreatePageTypeErrors, AdminCreatePageTypeResponses, AdminCreateTagData, AdminCreateTagErrors, AdminCreateTagResponses, AdminDeleteAuthorData, AdminDeleteAuthorErrors, AdminDeleteAuthorResponses, AdminDeleteCategoryData, AdminDeleteCategoryErrors, AdminDeleteCategoryResponses, AdminDeleteContentData, AdminDeleteContentErrors, AdminDeleteContentResponses, AdminDeletePageTypeData, AdminDeletePageTypeErrors, AdminDeletePageTypeResponses, AdminDeleteTagData, AdminDeleteTagErrors, AdminDeleteTagResponses, AdminDeleteUploadData, AdminDeleteUploadErrors, AdminDeleteUploadResponses, AdminGetAuthorData, AdminGetAuthorErrors, AdminGetAuthorResponses, AdminGetContentData, AdminGetContentErrors, AdminGetContentResponses, AdminListAuthorsData, AdminListAuthorsResponses, AdminListCategoriesData, AdminListCategoriesResponses, AdminListContentsData, AdminListContentsErrors, AdminListContentsResponses, AdminListPageTypesData, AdminListPageTypesResponses, AdminListTagsData, AdminListTagsResponses, AdminListUploadsData, AdminListUploadsResponses, AdminPresignUploadData, AdminPresignUploadErrors, AdminPresignUploadResponses, AdminReorderPagesData, AdminReorderPagesErrors, AdminReorderPagesResponses, AdminUpdateAuthorData, AdminUpdateAuthorErrors, AdminUpdateAuthorResponses, AdminUpdateCategoryData, AdminUpdateCategoryErrors, AdminUpdateCategoryResponses, AdminUpdateContentData, AdminUpdateContentErrors, AdminUpdateContentResponses, GetScreeningEntityData, GetScreeningEntityErrors, GetScreeningEntityResponses, HealthLiveData, HealthLiveResponses, HealthReadyData, HealthReadyErrors, HealthReadyResponses, ListScreeningSourcesData, ListScreeningSourcesResponses, PublicGetAuthorBySlugData, PublicGetAuthorBySlugErrors, PublicGetAuthorBySlugResponses, PublicGetContentByTypeAndSlugData, PublicGetContentByTypeAndSlugErrors, PublicGetContentByTypeAndSlugResponses, PublicGetPageTreeData, PublicGetPageTreeResponses, PublicGetUploadUrlData, PublicGetUploadUrlErrors, PublicGetUploadUrlResponses, PublicListCategoriesData, PublicListCategoriesResponses, PublicListContentsData, PublicListContentsErrors, PublicListContentsResponses, PublicListTagsData, PublicListTagsResponses, PublicResolvePagePathData, PublicResolvePagePathErrors, PublicResolvePagePathResponses, ScreeningSearchData, ScreeningSearchErrors, ScreeningSearchResponses } from './types.gen';
+import type { AdminAuthLoginData, AdminAuthLoginErrors, AdminAuthLoginResponses, AdminAuthLogoutData, AdminAuthLogoutResponses, AdminAuthRefreshData, AdminAuthRefreshErrors, AdminAuthRefreshResponses, AdminConfirmUploadData, AdminConfirmUploadErrors, AdminConfirmUploadResponses, AdminCreateAuthorData, AdminCreateAuthorErrors, AdminCreateAuthorResponses, AdminCreateCategoryData, AdminCreateCategoryErrors, AdminCreateCategoryResponses, AdminCreateContentData, AdminCreateContentErrors, AdminCreateContentResponses, AdminCreatePageTypeData, AdminCreatePageTypeErrors, AdminCreatePageTypeResponses, AdminCreateTagData, AdminCreateTagErrors, AdminCreateTagResponses, AdminDeleteAuthorData, AdminDeleteAuthorErrors, AdminDeleteAuthorResponses, AdminDeleteCategoryData, AdminDeleteCategoryErrors, AdminDeleteCategoryResponses, AdminDeleteContentData, AdminDeleteContentErrors, AdminDeleteContentResponses, AdminDeletePageTypeData, AdminDeletePageTypeErrors, AdminDeletePageTypeResponses, AdminDeleteTagData, AdminDeleteTagErrors, AdminDeleteTagResponses, AdminDeleteUploadData, AdminDeleteUploadErrors, AdminDeleteUploadResponses, AdminGetAuthorData, AdminGetAuthorErrors, AdminGetAuthorResponses, AdminGetContentData, AdminGetContentErrors, AdminGetContentResponses, AdminListAuthorsData, AdminListAuthorsResponses, AdminListCategoriesData, AdminListCategoriesResponses, AdminListContentsData, AdminListContentsErrors, AdminListContentsResponses, AdminListPageTypesData, AdminListPageTypesResponses, AdminListTagsData, AdminListTagsResponses, AdminListUploadsData, AdminListUploadsResponses, AdminPresignUploadData, AdminPresignUploadErrors, AdminPresignUploadResponses, AdminReorderPagesData, AdminReorderPagesErrors, AdminReorderPagesResponses, AdminUpdateAuthorData, AdminUpdateAuthorErrors, AdminUpdateAuthorResponses, AdminUpdateCategoryData, AdminUpdateCategoryErrors, AdminUpdateCategoryResponses, AdminUpdateContentData, AdminUpdateContentErrors, AdminUpdateContentResponses, GetScreeningEntityData, GetScreeningEntityErrors, GetScreeningEntityResponses, HealthLiveData, HealthLiveResponses, HealthReadyData, HealthReadyErrors, HealthReadyResponses, ListScreeningSourcesData, ListScreeningSourcesResponses, PublicGetAuthorBySlugData, PublicGetAuthorBySlugErrors, PublicGetAuthorBySlugResponses, PublicGetContentByTypeAndSlugData, PublicGetContentByTypeAndSlugErrors, PublicGetContentByTypeAndSlugResponses, PublicGetPageTreeData, PublicGetPageTreeResponses, PublicGetUploadUrlData, PublicGetUploadUrlErrors, PublicGetUploadUrlResponses, PublicListCategoriesData, PublicListCategoriesResponses, PublicListContentsData, PublicListContentsErrors, PublicListContentsResponses, PublicListTagsData, PublicListTagsResponses, PublicResolvePagePathData, PublicResolvePagePathErrors, PublicResolvePagePathResponses, ScreeningSearchData, ScreeningSearchErrors, ScreeningSearchResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -17,6 +17,54 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
      */
     meta?: Record<string, unknown>;
 };
+
+/**
+ * Admin login with email and password
+ *
+ * Authenticates an admin user via Authentik Flow Executor. Returns access
+ * token, refresh token, and ID token.
+ *
+ */
+export const adminAuthLogin = <ThrowOnError extends boolean = false>(options: Options<AdminAuthLoginData, ThrowOnError>) => (options.client ?? client).post<AdminAuthLoginResponses, AdminAuthLoginErrors, ThrowOnError>({
+    url: '/api/v1/admin/auth/login',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Admin logout and revoke refresh token
+ *
+ * Revokes the refresh token at Authentik. Always returns 204 even if
+ * revocation fails (the client should discard tokens regardless).
+ *
+ */
+export const adminAuthLogout = <ThrowOnError extends boolean = false>(options: Options<AdminAuthLogoutData, ThrowOnError>) => (options.client ?? client).post<AdminAuthLogoutResponses, unknown, ThrowOnError>({
+    url: '/api/v1/admin/auth/logout',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Refresh admin access token
+ *
+ * Exchanges a valid refresh token for a new access token and rotated
+ * refresh token.
+ *
+ */
+export const adminAuthRefresh = <ThrowOnError extends boolean = false>(options: Options<AdminAuthRefreshData, ThrowOnError>) => (options.client ?? client).post<AdminAuthRefreshResponses, AdminAuthRefreshErrors, ThrowOnError>({
+    url: '/api/v1/admin/auth/refresh',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * List authors

@@ -4,6 +4,39 @@ export type ClientOptions = {
     baseUrl: 'http://localhost:8080' | (string & {});
 };
 
+export type AdminAuthError = {
+    code: 'BAD_REQUEST' | 'INVALID_CREDENTIALS' | 'ACCOUNT_NOT_VERIFIED' | 'TOKEN_INVALID' | 'AUTH_SERVICE_UNAVAILABLE' | 'AUTH_ERROR' | 'INTERNAL_ERROR';
+    message: string;
+};
+
+export type AdminAuthLoginRequest = {
+    email: string;
+    password: string;
+};
+
+export type AdminAuthLogoutRequest = {
+    refresh_token?: string;
+};
+
+export type AdminAuthRefreshRequest = {
+    refresh_token: string;
+};
+
+export type AdminAuthTokenPair = {
+    /**
+     * Short-lived JWT access token (15 minutes)
+     */
+    access_token: string;
+    /**
+     * OIDC ID token with user claims
+     */
+    id_token?: string;
+    /**
+     * Long-lived refresh token (30 days, rotated on use)
+     */
+    refresh_token: string;
+};
+
 export type CmsAuthor = {
     avatar_url?: string | null;
     bio?: string | null;
@@ -406,6 +439,92 @@ export type ScreeningSearchResult = {
 export type ScreeningSourcesResponse = {
     sources: Array<SanctionsList>;
 };
+
+export type AdminAuthLoginData = {
+    body: AdminAuthLoginRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/admin/auth/login';
+};
+
+export type AdminAuthLoginErrors = {
+    /**
+     * Invalid request body
+     */
+    400: AdminAuthError;
+    /**
+     * Invalid credentials
+     */
+    401: AdminAuthError;
+    /**
+     * Account not verified
+     */
+    403: AdminAuthError;
+    /**
+     * Authentication service unavailable
+     */
+    502: AdminAuthError;
+};
+
+export type AdminAuthLoginError = AdminAuthLoginErrors[keyof AdminAuthLoginErrors];
+
+export type AdminAuthLoginResponses = {
+    /**
+     * Authentication successful
+     */
+    200: AdminAuthTokenPair;
+};
+
+export type AdminAuthLoginResponse = AdminAuthLoginResponses[keyof AdminAuthLoginResponses];
+
+export type AdminAuthLogoutData = {
+    body: AdminAuthLogoutRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/admin/auth/logout';
+};
+
+export type AdminAuthLogoutResponses = {
+    /**
+     * Logout accepted
+     */
+    204: void;
+};
+
+export type AdminAuthLogoutResponse = AdminAuthLogoutResponses[keyof AdminAuthLogoutResponses];
+
+export type AdminAuthRefreshData = {
+    body: AdminAuthRefreshRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/admin/auth/refresh';
+};
+
+export type AdminAuthRefreshErrors = {
+    /**
+     * Invalid request body
+     */
+    400: AdminAuthError;
+    /**
+     * Invalid or expired refresh token
+     */
+    401: AdminAuthError;
+    /**
+     * Authentication service unavailable
+     */
+    502: AdminAuthError;
+};
+
+export type AdminAuthRefreshError = AdminAuthRefreshErrors[keyof AdminAuthRefreshErrors];
+
+export type AdminAuthRefreshResponses = {
+    /**
+     * Token refreshed
+     */
+    200: AdminAuthTokenPair;
+};
+
+export type AdminAuthRefreshResponse = AdminAuthRefreshResponses[keyof AdminAuthRefreshResponses];
 
 export type AdminListAuthorsData = {
     body?: never;
