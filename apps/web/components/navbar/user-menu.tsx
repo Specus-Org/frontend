@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect } from 'react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { LogOut, User } from 'lucide-react';
@@ -26,12 +25,13 @@ function getInitials(name: string): string {
 export default function UserMenu(): React.ReactNode {
   const { data: session, status } = useSession();
 
-  // Handle refresh token errors by forcing re-authentication
-  useEffect(() => {
-    if (session?.error === 'RefreshTokenError') {
-      window.location.href = '/auth/signin';
-    }
-  }, [session?.error]);
+  // Handle refresh token errors by forcing re-authentication.
+  // Safe during render: only triggers once, stops further rendering,
+  // and doesn't run on the server (status is 'loading' during SSR).
+  if (session?.error === 'RefreshTokenError') {
+    window.location.href = '/auth/signin';
+    return null;
+  }
 
   // Loading state — fixed-size skeleton to prevent layout shift
   if (status === 'loading') {

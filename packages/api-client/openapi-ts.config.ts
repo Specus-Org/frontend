@@ -8,7 +8,7 @@ export default defineConfig({
   plugins: [
     {
       name: '@hey-api/client-next',
-      runtimeConfigPath: '../client.ts',
+      runtimeConfigPath: '../client',
     },
     '@hey-api/typescript',
     '@hey-api/sdk',

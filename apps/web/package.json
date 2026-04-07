@@ -17,7 +17,8 @@
     "next-auth": "catalog:",
     "next-themes": "catalog:",
     "react": "catalog:",
-    "react-dom": "catalog:"
+    "react-dom": "catalog:",
+    "swr": "^2.4.1"
   },
   "devDependencies": {
     "@specus/eslint-config": "workspace:*",

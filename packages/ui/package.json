@@ -5,6 +5,7 @@
   "type": "module",
   "exports": {
     "./components/*": "./src/components/*.tsx",
+    "./hooks/*": "./src/hooks/*.tsx",
     "./lib/*": "./src/lib/*.ts",
     "./styles/*": "./styles/*"
   },
@@ -13,13 +14,17 @@
     "@radix-ui/react-slot": "catalog:",
     "class-variance-authority": "catalog:",
     "clsx": "catalog:",
+    "cmdk": "catalog:",
     "lucide-react": "catalog:",
+    "next-themes": "catalog:",
     "radix-ui": "catalog:",
+    "sonner": "catalog:",
     "tailwind-merge": "catalog:",
     "tailwindcss": "catalog:",
     "tw-animate-css": "catalog:"
   },
   "peerDependencies": {
+    "next": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:"
   },

@@ -9,13 +9,19 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@hookform/resolvers": "catalog:",
     "@specus/api-client": "workspace:*",
     "@specus/ui": "workspace:*",
+    "@tanstack/react-table": "catalog:",
     "lucide-react": "catalog:",
     "next": "catalog:",
     "next-themes": "catalog:",
     "react": "catalog:",
-    "react-dom": "catalog:"
+    "react-dom": "catalog:",
+    "react-hook-form": "catalog:",
+    "sonner": "catalog:",
+    "swr": "^2.4.1",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@specus/eslint-config": "workspace:*",
