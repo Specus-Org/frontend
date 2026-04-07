@@ -32,4 +32,14 @@ export async function fetchWithAuth(
   });
 }
 
+/**
+ * Plain fetch to the backend without auth (for public endpoints like health, screening).
+ */
+export function fetchBackend(
+  path: string,
+  options: RequestInit = {},
+): Promise<Response> {
+  return fetch(`${API_BASE_URL}${path}`, options);
+}
+
 export { API_BASE_URL };

@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Activity, RefreshCw } from 'lucide-react';
 import { Button } from '@specus/ui/components/button';
-import { healthLive, healthReady } from '@specus/api-client';
 import type { HealthResponse } from '@specus/api-client';
 import {
   HealthDetailCard,
@@ -30,70 +29,38 @@ export default function HealthPage() {
   const [initialLoading, setInitialLoading] = useState(true);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  const fetchEndpoint = async (
+    check: 'live' | 'ready',
+  ): Promise<{ status: HealthStatus; data: HealthResponse | null }> => {
+    try {
+      const res = await fetch(`/api/health?check=${check}`);
+      const data = (await res.json()) as HealthResponse;
+
+      if (res.ok) {
+        return { status: 'healthy', data };
+      }
+      // 503 from readiness means degraded (still reachable)
+      if (res.status === 503 && check === 'ready') {
+        return { status: 'degraded', data };
+      }
+      return { status: 'unreachable', data: null };
+    } catch {
+      return { status: 'unreachable', data: null };
+    }
+  };
+
   const fetchHealth = useCallback(async (isInitial = false) => {
     if (!isInitial) {
       setIsRefreshing(true);
     }
 
-    const [liveResult, readyResult] = await Promise.allSettled([
-      healthLive(),
-      healthReady(),
+    const [liveResult, readyResult] = await Promise.all([
+      fetchEndpoint('live'),
+      fetchEndpoint('ready'),
     ]);
 
-    // Process liveness
-    if (liveResult.status === 'fulfilled') {
-      const response = liveResult.value;
-      if (response.data) {
-        setLiveness({
-          status: 'healthy',
-          data: response.data as HealthResponse,
-        });
-      } else if (response.error) {
-        setLiveness({
-          status: 'unreachable',
-          data: null,
-        });
-      } else {
-        setLiveness({
-          status: 'unreachable',
-          data: null,
-        });
-      }
-    } else {
-      setLiveness({
-        status: 'unreachable',
-        data: null,
-      });
-    }
-
-    // Process readiness
-    if (readyResult.status === 'fulfilled') {
-      const response = readyResult.value;
-      if (response.data) {
-        setReadiness({
-          status: 'healthy',
-          data: response.data as HealthResponse,
-        });
-      } else if (response.error) {
-        // 503 — degraded but reachable
-        const errorData = response.error as HealthResponse;
-        setReadiness({
-          status: 'degraded',
-          data: errorData,
-        });
-      } else {
-        setReadiness({
-          status: 'unreachable',
-          data: null,
-        });
-      }
-    } else {
-      setReadiness({
-        status: 'unreachable',
-        data: null,
-      });
-    }
-
+    setLiveness(liveResult);
+    setReadiness(readyResult);
     setLastChecked(new Date());
     setIsRefreshing(false);
     if (isInitial) {

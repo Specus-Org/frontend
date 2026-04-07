@@ -12,8 +12,7 @@ import {
   HeartPulse,
 } from 'lucide-react';
 import { Card, CardContent } from '@specus/ui/components/card';
-import { Badge } from '@specus/ui/components/badge';
-import { listScreeningSources, healthLive } from '@specus/api-client';
+
 import { MetricCard } from '@/components/metric-card';
 
 // ---------- Sources metric ----------
@@ -26,7 +25,9 @@ function useSourcesCount() {
     let cancelled = false;
     async function load() {
       try {
-        const { data } = await listScreeningSources();
+        const res = await fetch('/api/screening/sources');
+        if (!res.ok) throw new Error('Failed to fetch');
+        const data = await res.json();
         if (!cancelled) {
           setCount(data?.sources?.length ?? 0);
         }
@@ -55,7 +56,9 @@ function useHealthStatus() {
     let cancelled = false;
     async function load() {
       try {
-        const { data } = await healthLive();
+        const res = await fetch('/api/health?check=live');
+        if (!res.ok) throw new Error('Failed to fetch');
+        const data = await res.json();
         if (!cancelled) {
           setHealthy(data?.status === 'ok' || data?.status === 'healthy');
         }

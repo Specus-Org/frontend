@@ -77,11 +77,11 @@ export const config = {
     /*
      * Match all paths EXCEPT:
      * - /login (auth page)
-     * - /api/auth/* (auth API routes)
+     * - /api/* (all API routes — they handle their own auth)
      * - /_next/* (Next.js internals)
      * - /favicon* (favicon files)
      * - Static files with extensions (e.g. .png, .ico, .svg)
      */
-    '/((?!login|api/auth|_next|favicon|.*\\.[\\w]+$).*)',
+    '/((?!login|api/|_next|favicon|.*\\.[\\w]+$).*)',
   ],
 };
