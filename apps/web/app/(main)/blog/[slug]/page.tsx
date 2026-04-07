@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import Link from 'next/link';
@@ -12,7 +13,11 @@ interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
 }
 
-async function fetchBlogPost(slug: string): Promise<CmsContent | null> {
+/**
+ * Per-request cached blog post fetch. Ensures generateMetadata and
+ * the page component share a single API call per request.
+ */
+const fetchBlogPost = cache(async (slug: string): Promise<CmsContent | null> => {
   try {
     const response = await publicGetContentByTypeAndSlug({
       path: { content_type: 'blog_post', slug },
@@ -21,7 +26,7 @@ async function fetchBlogPost(slug: string): Promise<CmsContent | null> {
   } catch {
     return null;
   }
-}
+});
 
 export async function generateMetadata({
   params,

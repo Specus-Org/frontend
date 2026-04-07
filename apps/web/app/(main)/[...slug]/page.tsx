@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { publicResolvePagePath } from '@specus/api-client';
@@ -9,9 +10,13 @@ interface CmsPageProps {
   params: Promise<{ slug: string[] }>;
 }
 
-async function resolveContent(
+/**
+ * Per-request cached content resolution. Ensures generateMetadata and
+ * the page component share a single API call per request.
+ */
+const resolveContent = cache(async (
   slugSegments: string[],
-): Promise<CmsContent | null> {
+): Promise<CmsContent | null> => {
   const path = '/' + slugSegments.join('/');
 
   try {
@@ -20,7 +25,7 @@ async function resolveContent(
   } catch {
     return null;
   }
-}
+});
 
 export async function generateMetadata({
   params,

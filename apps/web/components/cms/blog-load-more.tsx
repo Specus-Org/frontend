@@ -4,7 +4,7 @@ import type { CmsContentListItem } from '@specus/api-client';
 import { publicListContents } from '@specus/api-client';
 import { Button } from '@specus/ui/components/button';
 import { Loader2 } from 'lucide-react';
-import { useState } from 'react';
+import { useRef, useState, useTransition } from 'react';
 import { BlogCard } from './blog-card';
 
 interface BlogLoadMoreProps {
@@ -14,35 +14,33 @@ interface BlogLoadMoreProps {
 
 export function BlogLoadMore({ initialCursor, hasMore }: BlogLoadMoreProps) {
   const [posts, setPosts] = useState<CmsContentListItem[]>([]);
-  const [cursor, setCursor] = useState<string | null>(initialCursor);
+  const cursorRef = useRef<string | null>(initialCursor);
   const [canLoadMore, setCanLoadMore] = useState(hasMore);
-  const [loading, setLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
-  const handleLoadMore = async () => {
-    if (!cursor || loading) return;
+  const handleLoadMore = () => {
+    if (!cursorRef.current || isPending) return;
 
-    setLoading(true);
+    startTransition(async () => {
+      try {
+        const response = await publicListContents({
+          query: {
+            content_type: 'blog_post',
+            page_size: 12,
+            cursor: cursorRef.current!,
+          },
+        });
 
-    try {
-      const response = await publicListContents({
-        query: {
-          content_type: 'blog_post',
-          page_size: 12,
-          cursor,
-        },
-      });
-
-      const data = response.data;
-      if (data) {
-        setPosts((prev) => [...prev, ...data.items]);
-        setCursor(data.pagination.next_cursor ?? null);
-        setCanLoadMore(data.pagination.has_more);
+        const data = response.data;
+        if (data) {
+          setPosts((prev) => [...prev, ...data.items]);
+          cursorRef.current = data.pagination.next_cursor ?? null;
+          setCanLoadMore(data.pagination.has_more);
+        }
+      } catch {
+        // Silently handle — the user can retry
       }
-    } catch {
-      // Silently handle — the user can retry
-    } finally {
-      setLoading(false);
-    }
+    });
   };
 
   return (
@@ -61,10 +59,10 @@ export function BlogLoadMore({ initialCursor, hasMore }: BlogLoadMoreProps) {
             variant="outline"
             size="lg"
             onClick={handleLoadMore}
-            disabled={loading}
+            disabled={isPending}
           >
-            {loading && <Loader2 className="mr-2 size-4 animate-spin" />}
-            {loading ? 'Loading...' : 'Load More'}
+            {isPending ? <Loader2 className="mr-2 size-4 animate-spin" /> : null}
+            {isPending ? 'Loading...' : 'Load More'}
           </Button>
         </div>
       )}
