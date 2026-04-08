@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { publicResolvePagePath } from '@specus/api-client';
 import type { CmsContent } from '@specus/api-client';
-import { ContentHeader } from '@/components/cms/content-header';
+import { PageHeader } from '@/components/cms/page-header';
 import { ContentBody } from '@/components/cms/content-body';
 
 interface CmsPageProps {
@@ -64,10 +64,8 @@ export default async function CmsPage({ params }: CmsPageProps) {
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 md:px-8 md:py-12">
       <article className="space-y-8">
-        <ContentHeader
+        <PageHeader
           title={content.title}
-          publishedAt={content.published_at}
-          author={content.author}
           categories={content.categories}
           tags={content.tags}
         />

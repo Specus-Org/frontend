@@ -31,6 +31,9 @@ import type {
   CmsPageType,
   CmsContentListItem,
 } from '@specus/api-client';
+import { ContentEditor } from '@/components/editor/content-editor';
+import type { ContentEditorHandle } from '@/components/editor/content-editor';
+import { ImportMarkdownDialog } from '@/components/editor/import-markdown-dialog';
 import { slugify, SLUG_PATTERN } from '@/lib/slugify';
 import { fetcher } from '@/lib/fetcher';
 
@@ -128,6 +131,7 @@ export function ContentForm({
 }: ContentFormProps) {
   // Track whether the user has manually edited the slug
   const slugManuallyEdited = useRef(mode === 'edit');
+  const editorRef = useRef<ContentEditorHandle>(null);
 
   // Taxonomy data via SWR (cached across create/edit pages)
   const { authors, categories, tags, pageTypes, staticPages, loading: taxonomyLoading } =
@@ -192,7 +196,7 @@ export function ContentForm({
         {/* ---------------------------------------------------------------- */}
         {/* Main tab                                                          */}
         {/* ---------------------------------------------------------------- */}
-        <TabsContent value="main" className="space-y-4 pt-4">
+        <TabsContent value="main" className="space-y-4 pt-4 data-[state=inactive]:hidden" forceMount>
           {/* Title */}
           <div className="grid gap-2">
             <Label htmlFor="content-title">Title *</Label>
@@ -260,13 +264,22 @@ export function ContentForm({
 
           {/* Body */}
           <div className="grid gap-2">
-            <Label htmlFor="content-body">Body</Label>
-            <Textarea
-              id="content-body"
-              {...register('body')}
-              placeholder="Write your content here (plain text / markdown)..."
-              rows={12}
-              className="font-mono text-sm"
+            <div className="flex items-center justify-between">
+              <Label htmlFor="content-body">Body</Label>
+              <ImportMarkdownDialog
+                onImport={(md) => editorRef.current?.importMarkdown(md)}
+              />
+            </div>
+            <Controller
+              name="body"
+              control={control}
+              render={({ field }) => (
+                <ContentEditor
+                  ref={editorRef}
+                  value={field.value ?? null}
+                  onChange={(val) => field.onChange(val)}
+                />
+              )}
             />
             {errors.body && (
               <p className="text-sm text-destructive">{errors.body.message}</p>
