@@ -53,37 +53,35 @@ export default function AMLEntityDetailPage(): React.ReactElement {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-4 md:px-8 md:py-8">
-      <div className="max-w-3xl">
-        <div className="relative rounded-xl border bg-white transition-all focus-within:ring">
-          <input
-            className="placeholder-muted-foreground w-full rounded-xl px-3 py-2.5 text-base font-normal outline-none sm:px-4 sm:py-3 sm:text-lg"
-            onInput={(e) => setQuery(e.currentTarget.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') handleSearch();
-            }}
-            value={query}
-            placeholder="Search individual or entity name…"
-          />
+      <div className="relative rounded-xl border bg-white transition-all focus-within:ring max-w-2xl">
+        <input
+          className="placeholder-muted-foreground w-full rounded-xl px-3 py-2.5 text-base font-normal outline-none sm:px-4 sm:py-3 sm:text-lg"
+          onInput={(e) => setQuery(e.currentTarget.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') handleSearch();
+          }}
+          value={query}
+          placeholder="Search individual or entity name…"
+        />
 
-          <Button
-            onClick={handleSearch}
-            className="bg-brand hover:bg-brand/90 absolute top-1/2 right-2 h-7 w-7 -translate-y-1/2 transition-all duration-200 sm:right-2.5 sm:h-8 sm:w-8"
-          >
-            <Search className="h-4 w-4" />
-          </Button>
-        </div>
+        <Button
+          onClick={handleSearch}
+          className="bg-brand hover:bg-brand/90 absolute top-1/2 right-2 h-7 w-7 -translate-y-1/2 transition-all duration-200 sm:right-2.5 sm:h-8 sm:w-8"
+        >
+          <Search className="h-4 w-4" />
+        </Button>
+      </div>
 
-        <div className="py-8 space-y-8 mb-40">
-          {loading && <DetailSkeleton />}
+      <div className="py-8 space-y-8 mb-40">
+        {loading && <DetailSkeleton />}
 
-          {!loading && (error || !entity) && (
-            <p className="text-sm text-red-600">
-              {error ? 'Failed to load entity details. Please try again.' : 'Entity not found.'}
-            </p>
-          )}
+        {!loading && (error || !entity) && (
+          <p className="text-sm text-red-600">
+            {error ? 'Failed to load entity details. Please try again.' : 'Entity not found.'}
+          </p>
+        )}
 
-          {!loading && !error && entity && <EntityDetail entity={entity} />}
-        </div>
+        {!loading && !error && entity && <EntityDetail entity={entity} />}
       </div>
     </div>
   );
