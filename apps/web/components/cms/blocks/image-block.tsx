@@ -8,7 +8,7 @@ interface ImageData {
 
 export function ImageBlock({ data }: { data: ImageData }) {
   const containerClasses = [
-    'my-4',
+    '',
     data.withBackground ? 'rounded-lg bg-muted p-4' : '',
     data.stretched ? 'w-full' : '',
   ]

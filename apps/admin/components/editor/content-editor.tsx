@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useImperativeHandle, forwardRef } from 'react';
 import { useEditor } from './use-editor';
 import { markdownToEditorJS } from '@/lib/markdown-to-editorjs';
 import type { OutputData } from '@editorjs/editorjs';
@@ -10,24 +10,37 @@ interface ContentEditorProps {
   onChange: (value: string) => void;
 }
 
-export function ContentEditor({ value, onChange }: ContentEditorProps) {
-  // Parse initial data once — memoize to avoid re-parsing on every render
-  const initialData = useMemo(() => parseBody(value), []);
-
-  const { holderRef } = useEditor({
-    initialData,
-    onChange: (data: OutputData) => {
-      onChange(JSON.stringify(data));
-    },
-  });
-
-  return (
-    <div
-      ref={holderRef}
-      className="min-h-[400px] rounded-lg border border-input bg-background"
-    />
-  );
+export interface ContentEditorHandle {
+  importMarkdown: (markdown: string) => Promise<void>;
 }
+
+export const ContentEditor = forwardRef<ContentEditorHandle, ContentEditorProps>(
+  function ContentEditor({ value, onChange }, ref) {
+    // Parse initial data once — memoize to avoid re-parsing on every render
+    const initialData = useMemo(() => parseBody(value), []);
+
+    const { holderRef, renderData } = useEditor({
+      initialData,
+      onChange: (data: OutputData) => {
+        onChange(JSON.stringify(data));
+      },
+    });
+
+    useImperativeHandle(ref, () => ({
+      async importMarkdown(markdown: string) {
+        const data = markdownToEditorJS(markdown);
+        await renderData(data);
+      },
+    }), [renderData]);
+
+    return (
+      <div
+        ref={holderRef}
+        className="min-h-[400px] max-h-[70vh] overflow-y-auto rounded-lg border border-input bg-background pl-10"
+      />
+    );
+  },
+);
 
 function parseBody(value: string | null): OutputData | undefined {
   if (!value) return undefined;

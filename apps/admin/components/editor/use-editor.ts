@@ -15,6 +15,16 @@ export function useEditor({ initialData, onChange, placeholder }: UseEditorOptio
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
 
+  /**
+   * Imperatively replace the editor contents. Used by the markdown import
+   * dialog to push new blocks without remounting the editor.
+   */
+  const renderData = useCallback(async (data: OutputData) => {
+    if (!editorRef.current) return;
+    await editorRef.current.render(data);
+    onChangeRef.current(data);
+  }, []);
+
   const isReadyRef = useRef(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
@@ -87,5 +97,5 @@ export function useEditor({ initialData, onChange, placeholder }: UseEditorOptio
     [],
   );
 
-  return { holderRef, editorRef };
+  return { holderRef, editorRef, renderData };
 }

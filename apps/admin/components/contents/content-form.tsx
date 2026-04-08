@@ -32,6 +32,8 @@ import type {
   CmsContentListItem,
 } from '@specus/api-client';
 import { ContentEditor } from '@/components/editor/content-editor';
+import type { ContentEditorHandle } from '@/components/editor/content-editor';
+import { ImportMarkdownDialog } from '@/components/editor/import-markdown-dialog';
 import { slugify, SLUG_PATTERN } from '@/lib/slugify';
 import { fetcher } from '@/lib/fetcher';
 
@@ -129,6 +131,7 @@ export function ContentForm({
 }: ContentFormProps) {
   // Track whether the user has manually edited the slug
   const slugManuallyEdited = useRef(mode === 'edit');
+  const editorRef = useRef<ContentEditorHandle>(null);
 
   // Taxonomy data via SWR (cached across create/edit pages)
   const { authors, categories, tags, pageTypes, staticPages, loading: taxonomyLoading } =
@@ -261,12 +264,18 @@ export function ContentForm({
 
           {/* Body */}
           <div className="grid gap-2">
-            <Label htmlFor="content-body">Body</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="content-body">Body</Label>
+              <ImportMarkdownDialog
+                onImport={(md) => editorRef.current?.importMarkdown(md)}
+              />
+            </div>
             <Controller
               name="body"
               control={control}
               render={({ field }) => (
                 <ContentEditor
+                  ref={editorRef}
                   value={field.value ?? null}
                   onChange={(val) => field.onChange(val)}
                 />

@@ -1,7 +1,63 @@
-import { marked } from 'marked';
+import { marked, type TokenizerExtension, type RendererExtension } from 'marked';
 import type { Token, Tokens, TokensList } from 'marked';
 import type { OutputData } from '@editorjs/editorjs';
 import { DEFAULT_LANGUAGE } from '@/components/editor/types';
+
+// ---------------------------------------------------------------------------
+// Custom marked extensions
+// ---------------------------------------------------------------------------
+
+/**
+ * Block-level math extension: tokenizes `$$...$$` blocks.
+ * These get handled by `convertToken` as `'math'` type.
+ */
+const mathBlockExtension: TokenizerExtension & RendererExtension = {
+  name: 'math',
+  level: 'block',
+  start(src: string) {
+    return src.match(/\$\$/)?.index;
+  },
+  tokenizer(src: string) {
+    const match = src.match(/^\$\$([\s\S]*?)\$\$/);
+    if (match) {
+      return { type: 'math', raw: match[0], text: match[1].trim() };
+    }
+    return undefined;
+  },
+  renderer() {
+    // Not used — we use marked.lexer() not marked.parse()
+    return '';
+  },
+};
+
+/**
+ * Inline math extension: tokenizes `$...$` (single dollar, no newlines).
+ * Rendered as `<code class="math">...</code>` in inline HTML.
+ */
+const inlineMathExtension: TokenizerExtension & RendererExtension = {
+  name: 'inlineMath',
+  level: 'inline',
+  start(src: string) {
+    return src.match(/\$/)?.index;
+  },
+  tokenizer(src: string) {
+    const match = src.match(/^\$([^\$\n]+?)\$/);
+    if (match) {
+      return { type: 'inlineMath', raw: match[0], text: match[1] };
+    }
+    return undefined;
+  },
+  renderer(token) {
+    return `<code class="math">${(token as unknown as { text: string }).text}</code>`;
+  },
+};
+
+// Register extensions once at module scope
+marked.use({ extensions: [mathBlockExtension, inlineMathExtension] });
+
+// ---------------------------------------------------------------------------
+// Language resolution
+// ---------------------------------------------------------------------------
 
 /**
  * Common language aliases mapped to their canonical names.
@@ -21,14 +77,149 @@ function resolveLanguage(lang: string | undefined): string {
   return LANGUAGE_ALIASES[lower] ?? lower;
 }
 
+// ---------------------------------------------------------------------------
+// Inline rendering
+// ---------------------------------------------------------------------------
+
 /**
  * Render inline markdown formatting to HTML suitable for Editor.js text fields.
  *
  * Converts `**bold**` to `<strong>bold</strong>`, `*italic*` to `<em>italic</em>`,
- * `` `code` `` to `<code>code</code>`, `[link](url)` to `<a href="url">link</a>`, etc.
+ * `` `code` `` to `<code>code</code>`, `[link](url)` to `<a href="url">link</a>`,
+ * `$math$` to `<code class="math">math</code>`, etc.
  */
 function renderInline(text: string): string {
   return marked.parseInline(text) as string;
+}
+
+// ---------------------------------------------------------------------------
+// Footnote pre-processing
+// ---------------------------------------------------------------------------
+
+interface FootnoteContext {
+  definitions: Map<string, string>;
+}
+
+/**
+ * Extract footnote definitions and replace inline references before lexing.
+ *
+ * Definitions:  `[^id]: Content text` (must be at line start)
+ * References:   `[^id]` anywhere in text → `<sup>[id]</sup>`
+ *
+ * Multi-line definitions are supported via 4-space indented continuation lines.
+ */
+function preprocessFootnotes(markdown: string): {
+  processed: string;
+  footnotes: FootnoteContext;
+} {
+  const definitions = new Map<string, string>();
+
+  // Extract multi-line footnote definitions.
+  // A definition starts with `[^id]:` at line start, content follows on the same
+  // line and continues on subsequent lines indented by 4+ spaces.
+  const processed = markdown.replace(
+    /^\[\^([^\]]+)\]:\s*([\s\S]*?)(?=\n(?!\s{4})|\n*$)/gm,
+    (_, id: string, content: string) => {
+      // Collapse continuation lines (strip leading 4-space indent)
+      const cleaned = content
+        .split('\n')
+        .map((line) => (line.startsWith('    ') ? line.slice(4) : line))
+        .join(' ')
+        .trim();
+      definitions.set(id, cleaned);
+      return '';
+    },
+  );
+
+  // Replace [^id] references with <sup> tags
+  let withRefs = processed;
+  if (definitions.size > 0) {
+    withRefs = processed.replace(/\[\^([^\]]+)\]/g, (match, id: string) => {
+      if (definitions.has(id)) {
+        return `<sup>${id}</sup>`;
+      }
+      return match; // Leave unresolved references as-is
+    });
+  }
+
+  return { processed: withRefs, footnotes: { definitions } };
+}
+
+/**
+ * Produce Editor.js blocks for footnote definitions: a delimiter followed
+ * by an ordered list of footnote texts.
+ */
+function buildFootnoteBlocks(
+  footnotes: FootnoteContext,
+  nextId: () => string,
+): EditorBlock[] {
+  if (footnotes.definitions.size === 0) return [];
+
+  const blocks: EditorBlock[] = [];
+
+  // Separator
+  blocks.push({ id: nextId(), type: 'delimiter', data: {} });
+
+  // Footnotes as an ordered list
+  const items: ListItem[] = [];
+  for (const [id, content] of footnotes.definitions) {
+    items.push({
+      content: `<strong>[${id}]</strong> ${renderInline(content)}`,
+      meta: {},
+      items: [],
+    });
+  }
+
+  blocks.push({
+    id: nextId(),
+    type: 'list',
+    data: { style: 'ordered', items },
+  });
+
+  return blocks;
+}
+
+// ---------------------------------------------------------------------------
+// Admonition detection (GitHub-style)
+// ---------------------------------------------------------------------------
+
+const ADMONITION_PATTERN = /^\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*/i;
+
+/**
+ * Attempt to convert a blockquote into an Editor.js Warning block if it
+ * matches the GitHub-style `> [!TYPE]` admonition syntax.
+ * Returns `null` if the blockquote is not an admonition.
+ */
+function tryConvertAdmonition(
+  token: Tokens.Blockquote,
+  nextId: () => string,
+): EditorBlock | null {
+  const paragraphs = token.tokens.filter(
+    (t): t is Tokens.Paragraph => t.type === 'paragraph',
+  );
+  if (paragraphs.length === 0) return null;
+
+  const firstText = paragraphs[0].text;
+  const match = firstText.match(ADMONITION_PATTERN);
+  if (!match) return null;
+
+  const type = match[1];
+  const title = type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
+
+  // Remaining text from the first paragraph (after the admonition marker)
+  const remainingFirst = firstText.slice(match[0].length).trim();
+  const restParagraphs = paragraphs
+    .slice(1)
+    .map((p) => renderInline(p.text));
+
+  const messageParts = [remainingFirst, ...restParagraphs].filter(Boolean);
+  const message = messageParts.join('<br>');
+
+  return {
+    id: nextId(),
+    type: 'warning',
+    data: { title, message },
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -108,6 +299,14 @@ interface EditorBlock {
  * produces the corresponding Editor.js block. This is a pure function with no
  * side effects or DOM access.
  *
+ * Supports:
+ * - All CommonMark + GFM syntax (headings, paragraphs, lists, code, tables, etc.)
+ * - Block math `$$...$$` → code block with language "latex"
+ * - Inline math `$...$` → `<code class="math">...</code>`
+ * - Footnotes `[^id]` / `[^id]: content` → superscript refs + appended list
+ * - GitHub admonitions `> [!NOTE]` etc. → warning blocks
+ * - Mermaid code blocks → mermaid blocks
+ *
  * @example
  * ```ts
  * const data = markdownToEditorJS('# Hello\n\nWorld');
@@ -125,7 +324,10 @@ export function markdownToEditorJS(markdown: string): OutputData {
   let counter = 0;
   const nextId = (): string => (++counter).toString(36);
 
-  const tokens: TokensList = marked.lexer(markdown);
+  // Pre-process footnotes before lexing
+  const { processed, footnotes } = preprocessFootnotes(markdown);
+
+  const tokens: TokensList = marked.lexer(processed);
   const blocks: EditorBlock[] = [];
 
   for (const token of tokens) {
@@ -138,6 +340,9 @@ export function markdownToEditorJS(markdown: string): OutputData {
       }
     }
   }
+
+  // Append footnote definitions at the end
+  blocks.push(...buildFootnoteBlocks(footnotes, nextId));
 
   return { time: Date.now(), version: '2.31.0', blocks };
 }
@@ -167,6 +372,9 @@ function convertToken(
       return { id: nextId(), type: 'delimiter', data: {} };
     case 'html':
       return convertHtml(token as Tokens.HTML, nextId);
+    case 'math':
+      return convertMath(token as Token & { text: string }, nextId);
+    case 'def':
     case 'space':
       return null;
     default:
@@ -241,6 +449,15 @@ function convertCode(
     };
   }
 
+  // Fenced code with language `math` or `latex` → code block with latex
+  if (token.lang === 'math' || token.lang === 'latex') {
+    return {
+      id: nextId(),
+      type: 'code',
+      data: { code: token.text, language: 'latex' },
+    };
+  }
+
   return {
     id: nextId(),
     type: 'code',
@@ -251,11 +468,33 @@ function convertCode(
   };
 }
 
+/**
+ * Convert a `$$...$$` math block to a code block with language "latex".
+ */
+function convertMath(
+  token: Token & { text: string },
+  nextId: () => string,
+): EditorBlock {
+  return {
+    id: nextId(),
+    type: 'code',
+    data: { code: token.text, language: 'latex' },
+  };
+}
+
+/**
+ * Convert a blockquote. Checks for GitHub-style admonitions first
+ * (`> [!NOTE]`, `> [!WARNING]`, etc.) and falls back to a quote block.
+ */
 function convertBlockquote(
   token: Tokens.Blockquote,
   nextId: () => string,
 ): EditorBlock {
-  // Extract paragraph tokens from the blockquote's children
+  // Check for admonition syntax first
+  const admonition = tryConvertAdmonition(token, nextId);
+  if (admonition) return admonition;
+
+  // Standard blockquote → quote block
   const paragraphs = token.tokens.filter(
     (t): t is Tokens.Paragraph => t.type === 'paragraph',
   );

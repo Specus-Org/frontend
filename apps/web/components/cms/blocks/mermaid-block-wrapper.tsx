@@ -7,7 +7,7 @@ const MermaidBlock = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="my-4 h-32 animate-pulse rounded-lg bg-muted" />
+      <div className="h-32 animate-pulse rounded-lg bg-muted" />
     ),
   },
 );

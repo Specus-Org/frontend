@@ -1,5 +1,6 @@
 import { cache } from 'react';
 import { codeToHtml } from 'shiki';
+import { CopyCodeButton } from './copy-code-button';
 
 interface CodeData {
   code: string;
@@ -23,14 +24,18 @@ export async function CodeBlock({ data }: { data: CodeData }) {
   const html = await highlight(data.code, lang);
 
   return (
-    <div className="my-4 overflow-hidden rounded-lg">
+    <div className="group/code relative overflow-hidden rounded-lg">
       {data.language ? (
         <div className="bg-zinc-800 px-4 py-2 text-xs text-zinc-400">
           {data.language}
         </div>
       ) : null}
+      <CopyCodeButton code={data.code} />
       {html ? (
-        <div dangerouslySetInnerHTML={{ __html: html }} />
+        <div
+          className="overflow-x-auto text-sm [&_pre]:p-4"
+          dangerouslySetInnerHTML={{ __html: html }}
+        />
       ) : (
         <pre className="overflow-x-auto bg-zinc-900 p-4 text-sm text-zinc-100">
           <code>{data.code}</code>

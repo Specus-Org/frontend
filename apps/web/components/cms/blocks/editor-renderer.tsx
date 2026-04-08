@@ -107,7 +107,7 @@ function renderBlock(block: Block): ReactNode | null {
       return (
         <Suspense
           fallback={
-            <div className="my-4 h-24 animate-pulse rounded-lg bg-muted" />
+            <div className="h-24 animate-pulse rounded-lg bg-muted" />
           }
         >
           <CodeBlock data={block.data} />
@@ -131,7 +131,7 @@ function renderBlock(block: Block): ReactNode | null {
 
 export async function EditorRenderer({ data }: { data: EditorData }) {
   return (
-    <div className="space-y-4 text-base leading-relaxed text-foreground">
+    <div className="space-y-6 text-base leading-relaxed text-foreground">
       {data.blocks.map((block, index) => {
         const content = renderBlock(block);
         if (!content) return null;

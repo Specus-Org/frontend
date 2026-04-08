@@ -7,7 +7,7 @@ interface WarningData {
 
 export function WarningBlock({ data }: { data: WarningData }) {
   return (
-    <div className="my-4 rounded-lg border border-amber-300/50 bg-amber-50 dark:border-amber-500/30 dark:bg-amber-950/20">
+    <div className="rounded-lg border border-amber-300/50 bg-amber-50 dark:border-amber-500/30 dark:bg-amber-950/20">
       <div className="flex items-start gap-3 p-4">
         <AlertTriangleIcon className="mt-0.5 size-5 flex-shrink-0 text-amber-600 dark:text-amber-400" />
         <div className="space-y-1">
