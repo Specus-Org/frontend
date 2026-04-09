@@ -1,9 +1,14 @@
 import { auth } from '@specus/auth';
 import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
-const PROTECTED_PATHS = ['/profile'];
+type AuthenticatedRequest = NextRequest & {
+  auth?: unknown;
+};
 
-export default auth((req) => {
+const PROTECTED_PATHS: readonly string[] = ['/profile'];
+
+export default auth((req: AuthenticatedRequest) => {
   const { pathname } = req.nextUrl;
   const isProtected = PROTECTED_PATHS.some((path) => pathname.startsWith(path));
 
@@ -18,4 +23,4 @@ export default auth((req) => {
 
 export const config = {
   matcher: ['/((?!api|auth|_next/static|_next/image|favicon.ico).*)'],
-};
+} satisfies { matcher: readonly string[] };
