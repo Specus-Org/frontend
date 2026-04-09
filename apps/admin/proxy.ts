@@ -1,11 +1,5 @@
 import { type NextRequest, NextResponse } from 'next/server';
-import {
-  getAccessToken,
-  getRefreshToken,
-  isTokenExpired,
-  setTokenCookies,
-  clearTokenCookies,
-} from '@/lib/auth';
+import { getAccessToken, getRefreshToken, isTokenExpired, clearTokenCookies } from '@/lib/auth';
 
 /**
  * Middleware that protects all routes except public ones.
@@ -14,7 +8,7 @@ import {
  * - If access_token is expired but refresh_token exists: attempt auto-refresh
  * - If refresh fails or no refresh_token: redirect to /login
  */
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const accessToken = getAccessToken(request);
