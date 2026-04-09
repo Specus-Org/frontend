@@ -5,32 +5,22 @@ import type { NextAuthConfig } from 'next-auth';
 import './types/next-auth';
 
 // ---------------------------------------------------------------------------
-// OIDC discovery cache (module-scoped)
+// Helpers
 // ---------------------------------------------------------------------------
 
-interface OidcConfig {
-  token_endpoint: string;
-  userinfo_endpoint: string;
+function getApiBaseUrl(): string {
+  return process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:8080';
 }
 
-let cachedOidcConfig: OidcConfig | null = null;
-
-async function getOidcConfig(): Promise<OidcConfig> {
-  if (cachedOidcConfig) return cachedOidcConfig;
-
-  const issuer = process.env.AUTH_AUTHENTIK_ISSUER!;
-  const res = await fetch(`${issuer}/.well-known/openid-configuration`, {
-    signal: AbortSignal.timeout(5000),
-  });
-  if (!res.ok) {
-    throw new Error(`OIDC discovery failed: ${res.status}`);
+/** Decode the payload of a JWT without verification (trusted backend token). */
+function decodeJwtPayload(jwt: string): Record<string, unknown> | null {
+  try {
+    const parts = jwt.split('.');
+    if (!parts[1]) return null;
+    return JSON.parse(Buffer.from(parts[1], 'base64').toString());
+  } catch {
+    return null;
   }
-  const config = (await res.json()) as Record<string, unknown>;
-  if (!config.token_endpoint || !config.userinfo_endpoint) {
-    throw new Error('OIDC discovery response missing required endpoints');
-  }
-  cachedOidcConfig = config as unknown as OidcConfig;
-  return cachedOidcConfig;
 }
 
 // ---------------------------------------------------------------------------
@@ -53,9 +43,7 @@ const config: NextAuthConfig = {
         if (!email || !password) return null;
 
         try {
-          // Authenticate via the backend API (which proxies to Authentik)
-          const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:8080';
-          const loginRes = await fetch(`${baseUrl}/api/v1/auth/login`, {
+          const loginRes = await fetch(`${getApiBaseUrl()}/api/v1/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password }),
@@ -70,41 +58,28 @@ const config: NextAuthConfig = {
             id_token?: string;
           };
 
-          // Fetch user profile from Authentik's userinfo endpoint
-          const oidcConfig = await getOidcConfig();
-          const userInfoRes = await fetch(oidcConfig.userinfo_endpoint, {
-            headers: { Authorization: `Bearer ${tokens.access_token}` },
-            signal: AbortSignal.timeout(5000),
-          });
+          // Extract user claims from the ID token (preferred) or access token
+          const idPayload = tokens.id_token
+            ? decodeJwtPayload(tokens.id_token)
+            : null;
+          const accessPayload = decodeJwtPayload(tokens.access_token);
 
-          if (!userInfoRes.ok) return null;
+          const sub = (idPayload?.sub ?? accessPayload?.sub) as string | undefined;
+          const name = (idPayload?.name ?? idPayload?.preferred_username) as string | undefined;
+          const userEmail = (idPayload?.email) as string | undefined;
+          const picture = (idPayload?.picture) as string | undefined;
 
-          const userInfo = (await userInfoRes.json()) as {
-            sub: string;
-            name?: string;
-            email?: string;
-            picture?: string;
-          };
-
-          // Decode expires_at from the JWT access token (with fallback)
+          // Derive expires_at from the access token
           let expiresAt = Math.floor(Date.now() / 1000 + 300); // default 5 min
-          try {
-            const parts = tokens.access_token.split('.');
-            if (parts[1]) {
-              const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString());
-              if (typeof payload.exp === 'number') {
-                expiresAt = payload.exp;
-              }
-            }
-          } catch {
-            // Non-JWT or malformed token — use default expiry
+          if (typeof accessPayload?.exp === 'number') {
+            expiresAt = accessPayload.exp;
           }
 
           return {
-            id: userInfo.sub,
-            name: userInfo.name ?? email,
-            email: userInfo.email ?? email,
-            image: userInfo.picture ?? null,
+            id: sub ?? email,
+            name: name ?? email,
+            email: userEmail ?? email,
+            image: picture ?? null,
             accessToken: tokens.access_token,
             idToken: tokens.id_token,
             refreshToken: tokens.refresh_token,
@@ -125,7 +100,7 @@ const config: NextAuthConfig = {
   },
   callbacks: {
     async jwt({ token, user }) {
-      // Initial sign-in: persist Authentik tokens from the user object
+      // Initial sign-in: persist tokens from the user object
       if (user) {
         return {
           ...token,
@@ -141,23 +116,16 @@ const config: NextAuthConfig = {
         return token;
       }
 
-      // Token expired — attempt refresh
+      // Token expired — attempt refresh via backend
       if (!token.refresh_token) {
         return { ...token, error: 'RefreshTokenError' as const };
       }
 
       try {
-        const oidcConfig = await getOidcConfig();
-
-        const response = await fetch(oidcConfig.token_endpoint, {
+        const response = await fetch(`${getApiBaseUrl()}/api/v1/auth/refresh`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: new URLSearchParams({
-            client_id: process.env.AUTH_AUTHENTIK_ID!,
-            client_secret: process.env.AUTH_AUTHENTIK_SECRET!,
-            grant_type: 'refresh_token',
-            refresh_token: token.refresh_token,
-          }),
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ refresh_token: token.refresh_token }),
           signal: AbortSignal.timeout(5000),
         });
 
@@ -170,15 +138,20 @@ const config: NextAuthConfig = {
         const newTokens = tokensOrError as {
           access_token: string;
           id_token?: string;
-          expires_in: number;
-          refresh_token?: string;
+          refresh_token: string;
         };
+
+        // Derive new expiry from the refreshed access token
+        const payload = decodeJwtPayload(newTokens.access_token);
+        const expiresAt = typeof payload?.exp === 'number'
+          ? payload.exp
+          : Math.floor(Date.now() / 1000 + 300);
 
         return {
           ...token,
           access_token: newTokens.access_token,
           id_token: newTokens.id_token ?? token.id_token,
-          expires_at: Math.floor(Date.now() / 1000 + newTokens.expires_in),
+          expires_at: expiresAt,
           refresh_token: newTokens.refresh_token ?? token.refresh_token,
           error: undefined,
         };
@@ -189,7 +162,6 @@ const config: NextAuthConfig = {
     },
 
     async session({ session, token }) {
-      // Populate user fields from JWT so useSession() has them on the client
       if (token.sub) {
         session.user.id = token.sub;
       }
