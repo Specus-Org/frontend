@@ -4,6 +4,9 @@ import { BlogLoadMore } from '@/components/cms/blog-load-more';
 import { FileText } from 'lucide-react';
 import type { Metadata } from 'next';
 
+// Blog content is managed in CMS and should reflect publishes without a redeploy.
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Blog',
   description: 'Latest articles and updates from Specus',

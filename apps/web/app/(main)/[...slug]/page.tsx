@@ -6,6 +6,9 @@ import type { CmsContent } from '@specus/api-client';
 import { PageHeader } from '@/components/cms/page-header';
 import { ContentBody } from '@/components/cms/content-body';
 
+// CMS pages are mutable content; avoid caching a stale 404 for newly published paths.
+export const dynamic = 'force-dynamic';
+
 interface CmsPageProps {
   params: Promise<{ slug: string[] }>;
 }

@@ -28,6 +28,9 @@ function decodeJwtPayload(jwt: string): Record<string, unknown> | null {
 // ---------------------------------------------------------------------------
 
 const config: NextAuthConfig = {
+  // Both apps run behind a reverse proxy in production, so Auth.js needs
+  // to trust the forwarded host headers to resolve its own callback/session URLs.
+  trustHost: true,
   providers: [
     Credentials({
       id: 'authentik-credentials',
