@@ -9,6 +9,9 @@ import { ContentHeader } from '@/components/cms/content-header';
 import { ContentBody } from '@/components/cms/content-body';
 import { Button } from '@specus/ui/components/button';
 
+// Blog posts are mutable CMS content; avoid serving cached misses after publish.
+export const dynamic = 'force-dynamic';
+
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
 }
