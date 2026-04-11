@@ -7,7 +7,7 @@ export async function publicListUploads(
   const searchParams = new URLSearchParams();
 
   if (params.cursor) searchParams.set('cursor', params.cursor);
-  if (params.page_size) {
+  if (params.page_size != null) {
     searchParams.set('page_size', String(params.page_size));
   }
   if (params.upload_type) {

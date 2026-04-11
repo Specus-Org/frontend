@@ -17,12 +17,13 @@ export async function PUT(request: NextRequest, context: RouteContext) {
       method: 'PUT',
       body: JSON.stringify(body),
     });
-    const data = await response.json();
 
     if (!response.ok) {
-      return NextResponse.json(data, { status: response.status });
+      const data = await response.json().catch(() => null);
+      return NextResponse.json(data ?? { message: 'Upstream error' }, { status: response.status });
     }
 
+    const data = await response.json();
     return NextResponse.json(data);
   } catch {
     return NextResponse.json({ message: 'Failed to update upload' }, { status: 502 });

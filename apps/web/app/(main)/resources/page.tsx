@@ -81,6 +81,7 @@ export default async function ResourcesPage({ searchParams }: ResourcesPageProps
           </div>
 
           <ResourcesLoadMore
+            key={normalizedUploadType ?? 'all'}
             initialCursor={pagination.next_cursor ?? null}
             hasMore={pagination.has_more}
             uploadType={normalizedUploadType}

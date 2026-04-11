@@ -143,11 +143,9 @@ export default function UploadsPage() {
 
     startLoadMoreTransition(async () => {
       try {
-        const params = new URLSearchParams();
-        params.set('page_size', String(PAGE_SIZE));
+        const query = buildQuery(uploadType, status);
+        const params = new URLSearchParams(query);
         params.set('cursor', effectiveCursor);
-        if (uploadType !== 'all') params.set('upload_type', uploadType);
-        if (status !== 'all') params.set('status', status);
 
         const res = await fetch(`/api/cms/uploads?${params.toString()}`);
         if (!res.ok) throw new Error('Failed to load more uploads');
