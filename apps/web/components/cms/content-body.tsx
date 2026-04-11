@@ -4,6 +4,17 @@ interface ContentBodyProps {
   body?: string | null;
 }
 
+interface ParsedEditorBlock {
+  id?: string;
+  type: string;
+  data: unknown;
+  tunes?: { textVariant?: string };
+}
+
+interface ParsedEditorData {
+  blocks: ParsedEditorBlock[];
+}
+
 export async function ContentBody({ body }: ContentBodyProps) {
   if (!body) {
     return (
@@ -11,14 +22,9 @@ export async function ContentBody({ body }: ContentBodyProps) {
     );
   }
 
-  // Try to parse as Editor.js JSON
-  try {
-    const parsed = JSON.parse(body);
-    if (parsed && Array.isArray(parsed.blocks)) {
-      return <EditorRenderer data={parsed} />;
-    }
-  } catch {
-    // Not JSON — fall through to plain text
+  const editorData = parseEditorData(body);
+  if (editorData) {
+    return <EditorRenderer data={editorData} />;
   }
 
   // Legacy plain text fallback
@@ -27,4 +33,17 @@ export async function ContentBody({ body }: ContentBodyProps) {
       {body}
     </div>
   );
+}
+
+function parseEditorData(body: string): ParsedEditorData | null {
+  try {
+    const parsed = JSON.parse(body);
+    if (parsed && Array.isArray(parsed.blocks)) {
+      return parsed as ParsedEditorData;
+    }
+  } catch {
+    // Not JSON — fall through to plain text
+  }
+
+  return null;
 }

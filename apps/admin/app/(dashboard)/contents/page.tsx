@@ -60,11 +60,13 @@ export default function ContentsPage() {
   const [extraHasMore, setExtraHasMore] = useState(false);
   const [isLoadingMore, startLoadMoreTransition] = useTransition();
   const prevFilterRef = useRef(`${contentType}:${status}`);
+  const filterEpochRef = useRef(0);
 
   // Reset extra items when filters change
   const filterKey = `${contentType}:${status}`;
   if (prevFilterRef.current !== filterKey) {
     prevFilterRef.current = filterKey;
+    filterEpochRef.current += 1;
     setExtraItems([]);
     setNextCursor(null);
     setExtraHasMore(false);
@@ -76,10 +78,9 @@ export default function ContentsPage() {
     fetcher,
   );
 
-  const baseItems = data?.items ?? [];
   const allItems = useMemo(
-    () => [...baseItems, ...extraItems],
-    [baseItems, extraItems],
+    () => [...(data?.items ?? []), ...extraItems],
+    [data?.items, extraItems],
   );
   const hasMore = extraHasMore || (data?.pagination.has_more ?? false);
   const effectiveCursor = nextCursor ?? data?.pagination.next_cursor ?? null;
@@ -107,17 +108,21 @@ export default function ContentsPage() {
   function handleLoadMore() {
     if (!effectiveCursor || isLoadingMore) return;
 
+    const requestEpoch = filterEpochRef.current;
+    const requestCursor = effectiveCursor;
+
     startLoadMoreTransition(async () => {
       try {
         const params = new URLSearchParams();
         params.set('page_size', String(PAGE_SIZE));
         if (contentType !== 'all') params.set('content_type', contentType);
         if (status !== 'all') params.set('status', status);
-        params.set('cursor', effectiveCursor);
+        params.set('cursor', requestCursor);
 
         const res = await fetch(`/api/cms/contents?${params.toString()}`);
         if (!res.ok) throw new Error('Failed to load more content');
         const result: CmsContentListResponse = await res.json();
+        if (filterEpochRef.current !== requestEpoch) return;
 
         setExtraItems((prev) => [...prev, ...result.items]);
         setNextCursor(result.pagination.next_cursor ?? null);

@@ -1,9 +1,7 @@
 import { getApiBaseUrl } from '@/lib/api';
 import type { CmsUploadPublicListResponse, PublicListUploadsParams } from '@/types/uploads';
 
-export async function publicListUploads(
-  params: PublicListUploadsParams = {},
-): Promise<CmsUploadPublicListResponse> {
+function buildPublicUploadsUrl(params: PublicListUploadsParams = {}) {
   const searchParams = new URLSearchParams();
 
   if (params.cursor) searchParams.set('cursor', params.cursor);
@@ -15,7 +13,16 @@ export async function publicListUploads(
   }
 
   const query = searchParams.toString();
-  const response = await fetch(`${getApiBaseUrl()}/api/v1/cms/uploads${query ? `?${query}` : ''}`, {
+  const path =
+    typeof window === 'undefined' ? `${getApiBaseUrl()}/api/v1/cms/uploads` : '/api/cms/uploads';
+
+  return `${path}${query ? `?${query}` : ''}`;
+}
+
+export async function publicListUploads(
+  params: PublicListUploadsParams = {},
+): Promise<CmsUploadPublicListResponse> {
+  const response = await fetch(buildPublicUploadsUrl(params), {
     cache: 'no-store',
   });
 

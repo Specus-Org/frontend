@@ -1,8 +1,30 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { fetchWithAuth } from '@/lib/api-client';
+import type { CmsUploadUpdateRequest } from '@/types/uploads';
 
 interface RouteContext {
   params: Promise<{ id: string }>;
+}
+
+function pickUploadUpdateBody(body: unknown): CmsUploadUpdateRequest {
+  if (!body || typeof body !== 'object') {
+    return {};
+  }
+
+  const source = body as Record<string, unknown>;
+  const payload: CmsUploadUpdateRequest = {};
+
+  if (typeof source.title === 'string' || source.title === null) {
+    payload.title = source.title;
+  }
+  if (typeof source.description === 'string' || source.description === null) {
+    payload.description = source.description;
+  }
+  if (typeof source.alt_text === 'string' || source.alt_text === null) {
+    payload.alt_text = source.alt_text;
+  }
+
+  return payload;
 }
 
 /**
@@ -12,7 +34,7 @@ export async function PUT(request: NextRequest, context: RouteContext) {
   const { id } = await context.params;
 
   try {
-    const body = await request.json();
+    const body = pickUploadUpdateBody(await request.json());
     const response = await fetchWithAuth(`/api/v1/admin/cms/uploads/${id}`, {
       method: 'PUT',
       body: JSON.stringify(body),

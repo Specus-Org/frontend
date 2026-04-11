@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Loader2 } from 'lucide-react';
@@ -141,7 +141,6 @@ export function ContentForm({
     register,
     handleSubmit,
     control,
-    watch,
     setValue,
     formState: { errors },
   } = useForm<ContentFormValues>({
@@ -167,8 +166,14 @@ export function ContentForm({
     },
   });
 
-  const watchedStatus = watch('status');
-  const watchedContentType = watch('content_type');
+  const watchedStatus = useWatch({
+    control,
+    name: 'status',
+  });
+  const watchedContentType = useWatch({
+    control,
+    name: 'content_type',
+  });
 
   function handleTitleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const newTitle = e.target.value;

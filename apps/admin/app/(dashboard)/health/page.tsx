@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useRef } from 'react';
+import { useCallback } from 'react';
 import { RefreshCw } from 'lucide-react';
 import { Button } from '@specus/ui/components/button';
 import useSWR from 'swr';

@@ -33,7 +33,7 @@ catalog:
   zod: "^3.24.4"
 
   # Linting
-  eslint: "^10.0.1"
+  eslint: "9.37.0"
   eslint-config-next: "16.1.6"
   eslint-config-prettier: "^10.1.8"
 

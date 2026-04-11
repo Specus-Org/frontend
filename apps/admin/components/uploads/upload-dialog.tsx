@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useRef, useState } from 'react';
-import { CheckCircle2, File, Image, Loader2, Upload, X } from 'lucide-react';
+import { CheckCircle2, File, Image as ImageIcon, Loader2, Upload, X } from 'lucide-react';
 import { Button } from '@specus/ui/components/button';
 import {
   Dialog,
@@ -386,7 +386,7 @@ export function UploadDialog({ open, onOpenChange, onUploadComplete }: UploadDia
                 ) : (
                   <div className="flex size-16 shrink-0 items-center justify-center rounded-md border bg-white">
                     {getUploadType(selectedFile.type) === 'image' ? (
-                      <Image className="size-8 text-muted-foreground" />
+                      <ImageIcon className="size-8 text-muted-foreground" />
                     ) : (
                       <File className="size-8 text-muted-foreground" />
                     )}

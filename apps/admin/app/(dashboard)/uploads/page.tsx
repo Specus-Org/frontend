@@ -63,10 +63,12 @@ export default function UploadsPage() {
   const [extraHasMore, setExtraHasMore] = useState(false);
   const [isLoadingMore, startLoadMoreTransition] = useTransition();
   const prevFilterRef = useRef(`${uploadType}:${status}`);
+  const filterEpochRef = useRef(0);
 
   const filterKey = `${uploadType}:${status}`;
   if (prevFilterRef.current !== filterKey) {
     prevFilterRef.current = filterKey;
+    filterEpochRef.current += 1;
     setExtraItems([]);
     setNextCursor(null);
     setExtraHasMore(false);
@@ -78,8 +80,7 @@ export default function UploadsPage() {
     fetcher,
   );
 
-  const baseItems = data?.items ?? [];
-  const uploads = useMemo(() => [...baseItems, ...extraItems], [baseItems, extraItems]);
+  const uploads = useMemo(() => [...(data?.items ?? []), ...extraItems], [data?.items, extraItems]);
   const hasMore = extraHasMore || (data?.pagination.has_more ?? false);
   const effectiveCursor = nextCursor ?? data?.pagination.next_cursor ?? null;
 
@@ -141,16 +142,21 @@ export default function UploadsPage() {
   function handleLoadMore() {
     if (!effectiveCursor || isLoadingMore) return;
 
+    const requestEpoch = filterEpochRef.current;
+    const requestCursor = effectiveCursor;
+
     startLoadMoreTransition(async () => {
       try {
         const query = buildQuery(uploadType, status);
         const params = new URLSearchParams(query);
-        params.set('cursor', effectiveCursor);
+        params.set('cursor', requestCursor);
 
         const res = await fetch(`/api/cms/uploads?${params.toString()}`);
         if (!res.ok) throw new Error('Failed to load more uploads');
 
         const result: CmsUploadListResponseExtended = await res.json();
+        if (filterEpochRef.current !== requestEpoch) return;
+
         setExtraItems((current) => [...current, ...result.items]);
         setNextCursor(result.pagination.next_cursor ?? null);
         setExtraHasMore(result.pagination.has_more);

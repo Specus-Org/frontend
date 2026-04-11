@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useImperativeHandle, forwardRef } from 'react';
+import { useImperativeHandle, useState, forwardRef } from 'react';
 import { useEditor } from './use-editor';
 import { markdownToEditorJS } from '@/lib/markdown-to-editorjs';
 import type { OutputData } from '@editorjs/editorjs';
@@ -16,8 +16,7 @@ export interface ContentEditorHandle {
 
 export const ContentEditor = forwardRef<ContentEditorHandle, ContentEditorProps>(
   function ContentEditor({ value, onChange }, ref) {
-    // Parse initial data once — memoize to avoid re-parsing on every render
-    const initialData = useMemo(() => parseBody(value), []);
+    const [initialData] = useState<OutputData | undefined>(() => parseBody(value));
 
     const { holderRef, renderData } = useEditor({
       initialData,

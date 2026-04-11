@@ -31,7 +31,7 @@ const config: NextAuthConfig = {
   // Keep local development usable even when AUTH_SECRET is not configured.
   secret:
     process.env.AUTH_SECRET ??
-    (process.env.NODE_ENV !== 'production' ? 'specus-dev-auth-secret' : undefined),
+    (process.env.NODE_ENV === 'development' ? 'specus-dev-auth-secret' : undefined),
   // Both apps run behind a reverse proxy in production, so Auth.js needs
   // to trust the forwarded host headers to resolve its own callback/session URLs.
   trustHost: true,

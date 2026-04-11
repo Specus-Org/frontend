@@ -1,9 +1,14 @@
-import type { EditorConfig } from '@editorjs/editorjs';
+import type { BlockToolConstructable, EditorConfig } from '@editorjs/editorjs';
 import { createImageUploader } from './image-uploader';
 import { CodeBlockTool } from './tools/code-block-tool';
 import { MermaidTool } from './tools/mermaid-tool';
 
 type ToolsConfig = NonNullable<EditorConfig['tools']>;
+type ToolClass = BlockToolConstructable;
+
+function asToolClass(tool: unknown): ToolClass {
+  return tool as ToolClass;
+}
 
 /**
  * Lazily imports and configures all Editor.js plugins.
@@ -50,7 +55,7 @@ export async function loadEditorTools(): Promise<{
   return {
     tools: {
       header: {
-        class: Header as any,
+        class: asToolClass(Header),
         inlineToolbar: true,
         config: {
           levels: [1, 2, 3, 4],
@@ -90,7 +95,7 @@ export async function loadEditorTools(): Promise<{
         inlineToolbar: true,
       },
       table: {
-        class: Table as any,
+        class: asToolClass(Table),
         inlineToolbar: true,
         config: {
           rows: 2,
@@ -138,10 +143,10 @@ export async function loadEditorTools(): Promise<{
         },
       },
       code: {
-        class: CodeBlockTool as any,
+        class: asToolClass(CodeBlockTool),
       },
       mermaid: {
-        class: MermaidTool as any,
+        class: asToolClass(MermaidTool),
       },
       textVariant: {
         class: TextVariantTune,
