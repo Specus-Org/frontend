@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useCallback } from 'react';
+import type EditorJS from '@editorjs/editorjs';
 import type { OutputData } from '@editorjs/editorjs';
 import { loadEditorTools } from './plugins';
 
@@ -11,9 +12,11 @@ interface UseEditorOptions {
 }
 
 export function useEditor({ initialData, onChange, placeholder }: UseEditorOptions) {
-  const editorRef = useRef<any>(null);
+  const editorRef = useRef<EditorJS | null>(null);
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
+  const initialDataRef = useRef(initialData);
+  const placeholderRef = useRef(placeholder ?? 'Start writing...');
 
   /**
    * Imperatively replace the editor contents. Used by the markdown import
@@ -49,8 +52,8 @@ export function useEditor({ initialData, onChange, placeholder }: UseEditorOptio
           holder: node,
           tools,
           tunes,
-          data: initialData,
-          placeholder: placeholder ?? 'Start writing...',
+          data: initialDataRef.current,
+          placeholder: placeholderRef.current,
           onChange: async (api) => {
             if (!isReadyRef.current) return;
             clearTimeout(debounceRef.current);
@@ -92,7 +95,7 @@ export function useEditor({ initialData, onChange, placeholder }: UseEditorOptio
         isReadyRef.current = false;
       };
     },
-    // Empty deps — initialData is captured once on first mount
+    // Empty deps — initial data and placeholder are captured once on first mount
     // Editor.js is uncontrolled; to reset, unmount and remount via key prop
     [],
   );

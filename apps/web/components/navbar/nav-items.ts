@@ -11,6 +11,11 @@ export const navItems: NavItem[] = [
     href: '/insight',
   },
   {
+    labelKey: 'Resources',
+    value: 'resources',
+    href: '/resources',
+  },
+  {
     labelKey: 'Profiling',
     value: 'profiling',
     href: '/profiling',
