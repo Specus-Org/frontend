@@ -28,6 +28,10 @@ function decodeJwtPayload(jwt: string): Record<string, unknown> | null {
 // ---------------------------------------------------------------------------
 
 const config: NextAuthConfig = {
+  // Keep local development usable even when AUTH_SECRET is not configured.
+  secret:
+    process.env.AUTH_SECRET ??
+    (process.env.NODE_ENV !== 'production' ? 'specus-dev-auth-secret' : undefined),
   // Both apps run behind a reverse proxy in production, so Auth.js needs
   // to trust the forwarded host headers to resolve its own callback/session URLs.
   trustHost: true,
@@ -62,15 +66,13 @@ const config: NextAuthConfig = {
           };
 
           // Extract user claims from the ID token (preferred) or access token
-          const idPayload = tokens.id_token
-            ? decodeJwtPayload(tokens.id_token)
-            : null;
+          const idPayload = tokens.id_token ? decodeJwtPayload(tokens.id_token) : null;
           const accessPayload = decodeJwtPayload(tokens.access_token);
 
           const sub = (idPayload?.sub ?? accessPayload?.sub) as string | undefined;
           const name = (idPayload?.name ?? idPayload?.preferred_username) as string | undefined;
-          const userEmail = (idPayload?.email) as string | undefined;
-          const picture = (idPayload?.picture) as string | undefined;
+          const userEmail = idPayload?.email as string | undefined;
+          const picture = idPayload?.picture as string | undefined;
 
           // Derive expires_at from the access token
           let expiresAt = Math.floor(Date.now() / 1000 + 300); // default 5 min
@@ -146,9 +148,8 @@ const config: NextAuthConfig = {
 
         // Derive new expiry from the refreshed access token
         const payload = decodeJwtPayload(newTokens.access_token);
-        const expiresAt = typeof payload?.exp === 'number'
-          ? payload.exp
-          : Math.floor(Date.now() / 1000 + 300);
+        const expiresAt =
+          typeof payload?.exp === 'number' ? payload.exp : Math.floor(Date.now() / 1000 + 300);
 
         return {
           ...token,

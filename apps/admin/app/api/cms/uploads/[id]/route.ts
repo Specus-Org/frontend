@@ -6,6 +6,30 @@ interface RouteContext {
 }
 
 /**
+ * Proxy: PUT (update) upload metadata by ID.
+ */
+export async function PUT(request: NextRequest, context: RouteContext) {
+  const { id } = await context.params;
+
+  try {
+    const body = await request.json();
+    const response = await fetchWithAuth(`/api/v1/admin/cms/uploads/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(body),
+    });
+    const data = await response.json();
+
+    if (!response.ok) {
+      return NextResponse.json(data, { status: response.status });
+    }
+
+    return NextResponse.json(data);
+  } catch {
+    return NextResponse.json({ message: 'Failed to update upload' }, { status: 502 });
+  }
+}
+
+/**
  * Proxy: DELETE an upload by ID.
  */
 export async function DELETE(_request: NextRequest, context: RouteContext) {
@@ -23,9 +47,6 @@ export async function DELETE(_request: NextRequest, context: RouteContext) {
 
     return new NextResponse(null, { status: 204 });
   } catch {
-    return NextResponse.json(
-      { message: 'Failed to delete upload' },
-      { status: 502 },
-    );
+    return NextResponse.json({ message: 'Failed to delete upload' }, { status: 502 });
   }
 }
