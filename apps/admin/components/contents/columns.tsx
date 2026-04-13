@@ -23,9 +23,7 @@ function formatDate(dateString: string): string {
   });
 }
 
-export function getColumns(
-  onDeleted: (id: string) => void,
-): ColumnDef<CmsContentListItem>[] {
+export function getColumns(onDeleted: (id: string) => void): ColumnDef<CmsContentListItem>[] {
   return [
     {
       accessorKey: 'title',
@@ -41,16 +39,11 @@ export function getColumns(
       ),
       cell: ({ row }) => (
         <div className="max-w-[300px]">
-          <Link
-            href={`/contents/${row.original.id}`}
-            className="font-medium hover:underline"
-          >
+          <Link href={`/contents/${row.original.id}`} className="font-medium hover:underline">
             {row.getValue('title')}
           </Link>
           {row.original.slug && (
-            <p className="truncate text-xs text-muted-foreground">
-              /{row.original.slug}
-            </p>
+            <p className="truncate text-xs text-muted-foreground">/{row.original.slug}</p>
           )}
         </div>
       ),
@@ -69,9 +62,7 @@ export function getColumns(
     {
       accessorKey: 'status',
       header: 'Status',
-      cell: ({ row }) => (
-        <StatusBadge status={row.getValue('status')} />
-      ),
+      cell: ({ row }) => <StatusBadge status={row.getValue('status')} />,
       filterFn: (row, id, value) => value === row.getValue(id),
     },
     {
@@ -79,11 +70,7 @@ export function getColumns(
       header: 'Author',
       cell: ({ row }) => {
         const author = row.original.author;
-        return (
-          <span className="text-sm text-muted-foreground">
-            {author?.name ?? '\u2014'}
-          </span>
-        );
+        return <span className="text-sm text-muted-foreground">{author?.name ?? '\u2014'}</span>;
       },
       enableSorting: false,
     },
@@ -107,9 +94,7 @@ export function getColumns(
     },
     {
       id: 'actions',
-      cell: ({ row }) => (
-        <DataTableRowActions row={row.original} onDeleted={onDeleted} />
-      ),
+      cell: ({ row }) => <DataTableRowActions row={row.original} onDeleted={onDeleted} />,
       enableSorting: false,
       enableHiding: false,
     },

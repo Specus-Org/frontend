@@ -41,8 +41,7 @@ export function DeleteContentDialog({
         const data = await response.json().catch(() => null);
         toast.error('Cannot delete content', {
           description:
-            data?.message ??
-            'This content has child pages. Remove or reassign them first.',
+            data?.message ?? 'This content has child pages. Remove or reassign them first.',
         });
         return;
       }
@@ -58,8 +57,7 @@ export function DeleteContentDialog({
       router.push('/contents');
     } catch (err) {
       toast.error('Delete failed', {
-        description:
-          err instanceof Error ? err.message : 'An unexpected error occurred.',
+        description: err instanceof Error ? err.message : 'An unexpected error occurred.',
       });
     } finally {
       setIsDeleting(false);
@@ -73,8 +71,8 @@ export function DeleteContentDialog({
         <AlertDialogHeader>
           <AlertDialogTitle>Delete content</AlertDialogTitle>
           <AlertDialogDescription>
-            Are you sure you want to delete &quot;{contentTitle}&quot;? This
-            action cannot be undone.
+            Are you sure you want to delete &quot;{contentTitle}&quot;? This action cannot be
+            undone.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

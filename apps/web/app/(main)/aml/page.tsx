@@ -20,7 +20,9 @@ export default function AMLPage(): React.ReactNode {
       <AmlSearchCard
         query={query}
         onQueryChange={setQuery}
-        onSearch={() => router.push(`/aml/search?q=${encodeURIComponent(query)}`)}
+        onSearch={() => {
+          if (query.trim()) router.push(`/aml/search?q=${encodeURIComponent(query.trim())}`);
+        }}
       />
     </div>
   );

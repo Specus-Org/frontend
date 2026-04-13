@@ -17,12 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@specus/ui/components/select';
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@specus/ui/components/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@specus/ui/components/tabs';
 import { Checkbox } from '@specus/ui/components/checkbox';
 import type {
   CmsAuthor,
@@ -74,29 +69,19 @@ interface ListResponse<T> {
 }
 
 function useTaxonomy() {
-  const { data: authorsData } = useSWR<ListResponse<CmsAuthor>>(
-    '/api/cms/authors',
-    fetcher,
-  );
+  const { data: authorsData } = useSWR<ListResponse<CmsAuthor>>('/api/cms/authors', fetcher);
   const { data: categoriesData } = useSWR<ListResponse<CmsCategory>>(
     '/api/cms/categories',
     fetcher,
   );
-  const { data: tagsData } = useSWR<ListResponse<CmsTag>>(
-    '/api/cms/tags',
-    fetcher,
-  );
-  const { data: pageTypesData } = useSWR<ListResponse<CmsPageType>>(
-    '/api/cms/page-types',
-    fetcher,
-  );
+  const { data: tagsData } = useSWR<ListResponse<CmsTag>>('/api/cms/tags', fetcher);
+  const { data: pageTypesData } = useSWR<ListResponse<CmsPageType>>('/api/cms/page-types', fetcher);
   const { data: pagesData } = useSWR<ListResponse<CmsContentListItem>>(
     '/api/cms/contents?content_type=static_page&page_size=100',
     fetcher,
   );
 
-  const loading =
-    !authorsData || !categoriesData || !tagsData || !pageTypesData || !pagesData;
+  const loading = !authorsData || !categoriesData || !tagsData || !pageTypesData || !pagesData;
 
   return {
     authors: authorsData?.items ?? [],
@@ -123,19 +108,20 @@ interface ContentFormProps {
 // Component
 // ---------------------------------------------------------------------------
 
-export function ContentForm({
-  mode,
-  defaultValues,
-  onSubmit,
-  isSubmitting,
-}: ContentFormProps) {
+export function ContentForm({ mode, defaultValues, onSubmit, isSubmitting }: ContentFormProps) {
   // Track whether the user has manually edited the slug
   const slugManuallyEdited = useRef(mode === 'edit');
   const editorRef = useRef<ContentEditorHandle>(null);
 
   // Taxonomy data via SWR (cached across create/edit pages)
-  const { authors, categories, tags, pageTypes, staticPages, loading: taxonomyLoading } =
-    useTaxonomy();
+  const {
+    authors,
+    categories,
+    tags,
+    pageTypes,
+    staticPages,
+    loading: taxonomyLoading,
+  } = useTaxonomy();
 
   const {
     register,
@@ -201,7 +187,11 @@ export function ContentForm({
         {/* ---------------------------------------------------------------- */}
         {/* Main tab                                                          */}
         {/* ---------------------------------------------------------------- */}
-        <TabsContent value="main" className="space-y-4 pt-4 data-[state=inactive]:hidden" forceMount>
+        <TabsContent
+          value="main"
+          className="space-y-4 pt-4 data-[state=inactive]:hidden"
+          forceMount
+        >
           {/* Title */}
           <div className="grid gap-2">
             <Label htmlFor="content-title">Title *</Label>
@@ -211,9 +201,7 @@ export function ContentForm({
               onChange={handleTitleChange}
               placeholder="Enter a title"
             />
-            {errors.title && (
-              <p className="text-sm text-destructive">{errors.title.message}</p>
-            )}
+            {errors.title && <p className="text-sm text-destructive">{errors.title.message}</p>}
           </div>
 
           {/* Slug */}
@@ -225,9 +213,7 @@ export function ContentForm({
               onChange={handleSlugChange}
               placeholder="url-friendly-slug"
             />
-            {errors.slug && (
-              <p className="text-sm text-destructive">{errors.slug.message}</p>
-            )}
+            {errors.slug && <p className="text-sm text-destructive">{errors.slug.message}</p>}
           </div>
 
           {/* Content Type */}
@@ -248,9 +234,7 @@ export function ContentForm({
                   <SelectContent>
                     <SelectItem value="static_page">Static Page</SelectItem>
                     <SelectItem value="blog_post">Blog Post</SelectItem>
-                    <SelectItem value="flexible_page">
-                      Flexible Page
-                    </SelectItem>
+                    <SelectItem value="flexible_page">Flexible Page</SelectItem>
                   </SelectContent>
                 </Select>
               )}
@@ -261,9 +245,7 @@ export function ContentForm({
               </p>
             )}
             {errors.content_type && (
-              <p className="text-sm text-destructive">
-                {errors.content_type.message}
-              </p>
+              <p className="text-sm text-destructive">{errors.content_type.message}</p>
             )}
           </div>
 
@@ -271,9 +253,7 @@ export function ContentForm({
           <div className="grid gap-2">
             <div className="flex items-center justify-between">
               <Label htmlFor="content-body">Body</Label>
-              <ImportMarkdownDialog
-                onImport={(md) => editorRef.current?.importMarkdown(md)}
-              />
+              <ImportMarkdownDialog onImport={(md) => editorRef.current?.importMarkdown(md)} />
             </div>
             <Controller
               name="body"
@@ -286,9 +266,7 @@ export function ContentForm({
                 />
               )}
             />
-            {errors.body && (
-              <p className="text-sm text-destructive">{errors.body.message}</p>
-            )}
+            {errors.body && <p className="text-sm text-destructive">{errors.body.message}</p>}
           </div>
 
           {/* Excerpt */}
@@ -300,11 +278,7 @@ export function ContentForm({
               placeholder="A short summary or excerpt..."
               rows={3}
             />
-            {errors.excerpt && (
-              <p className="text-sm text-destructive">
-                {errors.excerpt.message}
-              </p>
-            )}
+            {errors.excerpt && <p className="text-sm text-destructive">{errors.excerpt.message}</p>}
           </div>
 
           {/* Status */}
@@ -326,26 +300,16 @@ export function ContentForm({
                 </Select>
               )}
             />
-            {errors.status && (
-              <p className="text-sm text-destructive">
-                {errors.status.message}
-              </p>
-            )}
+            {errors.status && <p className="text-sm text-destructive">{errors.status.message}</p>}
           </div>
 
           {/* Publish At (only when scheduled) */}
           {watchedStatus === 'scheduled' && (
             <div className="grid gap-2">
               <Label htmlFor="content-publish-at">Publish At *</Label>
-              <Input
-                id="content-publish-at"
-                type="datetime-local"
-                {...register('publish_at')}
-              />
+              <Input id="content-publish-at" type="datetime-local" {...register('publish_at')} />
               {errors.publish_at && (
-                <p className="text-sm text-destructive">
-                  {errors.publish_at.message}
-                </p>
+                <p className="text-sm text-destructive">{errors.publish_at.message}</p>
               )}
             </div>
           )}
@@ -371,9 +335,7 @@ export function ContentForm({
                   render={({ field }) => (
                     <Select
                       value={field.value ?? '_none'}
-                      onValueChange={(v) =>
-                        field.onChange(v === '_none' ? null : v)
-                      }
+                      onValueChange={(v) => field.onChange(v === '_none' ? null : v)}
                     >
                       <SelectTrigger id="content-author">
                         <SelectValue placeholder="Select an author" />
@@ -395,9 +357,7 @@ export function ContentForm({
               <div className="grid gap-2">
                 <Label>Categories</Label>
                 {categories.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">
-                    No categories available.
-                  </p>
+                  <p className="text-sm text-muted-foreground">No categories available.</p>
                 ) : (
                   <Controller
                     name="category_ids"
@@ -405,14 +365,9 @@ export function ContentForm({
                     render={({ field }) => (
                       <div className="max-h-48 space-y-2 overflow-y-auto rounded-md border p-3">
                         {categories.map((category) => {
-                          const checked = (field.value ?? []).includes(
-                            category.id,
-                          );
+                          const checked = (field.value ?? []).includes(category.id);
                           return (
-                            <label
-                              key={category.id}
-                              className="flex items-center gap-2 text-sm"
-                            >
+                            <label key={category.id} className="flex items-center gap-2 text-sm">
                               <Checkbox
                                 checked={checked}
                                 onCheckedChange={(isChecked) => {
@@ -420,11 +375,7 @@ export function ContentForm({
                                   if (isChecked) {
                                     field.onChange([...current, category.id]);
                                   } else {
-                                    field.onChange(
-                                      current.filter(
-                                        (id) => id !== category.id,
-                                      ),
-                                    );
+                                    field.onChange(current.filter((id) => id !== category.id));
                                   }
                                 }}
                               />
@@ -442,9 +393,7 @@ export function ContentForm({
               <div className="grid gap-2">
                 <Label>Tags</Label>
                 {tags.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">
-                    No tags available.
-                  </p>
+                  <p className="text-sm text-muted-foreground">No tags available.</p>
                 ) : (
                   <Controller
                     name="tag_ids"
@@ -454,10 +403,7 @@ export function ContentForm({
                         {tags.map((tag) => {
                           const checked = (field.value ?? []).includes(tag.id);
                           return (
-                            <label
-                              key={tag.id}
-                              className="flex items-center gap-2 text-sm"
-                            >
+                            <label key={tag.id} className="flex items-center gap-2 text-sm">
                               <Checkbox
                                 checked={checked}
                                 onCheckedChange={(isChecked) => {
@@ -465,9 +411,7 @@ export function ContentForm({
                                   if (isChecked) {
                                     field.onChange([...current, tag.id]);
                                   } else {
-                                    field.onChange(
-                                      current.filter((id) => id !== tag.id),
-                                    );
+                                    field.onChange(current.filter((id) => id !== tag.id));
                                   }
                                 }}
                               />
@@ -491,9 +435,7 @@ export function ContentForm({
                     render={({ field }) => (
                       <Select
                         value={field.value ?? '_none'}
-                        onValueChange={(v) =>
-                          field.onChange(v === '_none' ? null : v)
-                        }
+                        onValueChange={(v) => field.onChange(v === '_none' ? null : v)}
                       >
                         <SelectTrigger id="content-page-type">
                           <SelectValue placeholder="Select a page type" />
@@ -527,9 +469,7 @@ export function ContentForm({
               {...register('meta_title')}
               placeholder="SEO title (defaults to content title)"
             />
-            <p className="text-xs text-muted-foreground">
-              Recommended: 50-60 characters.
-            </p>
+            <p className="text-xs text-muted-foreground">Recommended: 50-60 characters.</p>
           </div>
 
           {/* Meta Description */}
@@ -541,9 +481,7 @@ export function ContentForm({
               placeholder="SEO description..."
               rows={3}
             />
-            <p className="text-xs text-muted-foreground">
-              Recommended: 150-160 characters.
-            </p>
+            <p className="text-xs text-muted-foreground">Recommended: 150-160 characters.</p>
           </div>
 
           {/* OG Image URL */}
@@ -554,9 +492,7 @@ export function ContentForm({
               {...register('og_image_url')}
               placeholder="https://example.com/og-image.jpg"
             />
-            <p className="text-xs text-muted-foreground">
-              Recommended: 1200 x 630 pixels.
-            </p>
+            <p className="text-xs text-muted-foreground">Recommended: 1200 x 630 pixels.</p>
           </div>
         </TabsContent>
 
@@ -574,17 +510,13 @@ export function ContentForm({
                 render={({ field }) => {
                   // Filter out the current content from the parent list
                   const filteredPages = defaultValues?.slug
-                    ? staticPages.filter(
-                        (p) => p.slug !== defaultValues.slug,
-                      )
+                    ? staticPages.filter((p) => p.slug !== defaultValues.slug)
                     : staticPages;
 
                   return (
                     <Select
                       value={field.value ?? '_none'}
-                      onValueChange={(v) =>
-                        field.onChange(v === '_none' ? null : v)
-                      }
+                      onValueChange={(v) => field.onChange(v === '_none' ? null : v)}
                     >
                       <SelectTrigger id="content-parent">
                         <SelectValue placeholder="No parent" />

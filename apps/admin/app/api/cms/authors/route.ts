@@ -17,10 +17,7 @@ export async function GET() {
 
     return NextResponse.json(data);
   } catch {
-    return NextResponse.json(
-      { message: 'Failed to fetch authors' },
-      { status: 502 },
-    );
+    return NextResponse.json({ message: 'Failed to fetch authors' }, { status: 502 });
   }
 }
 
@@ -42,9 +39,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(data, { status: 201 });
   } catch {
-    return NextResponse.json(
-      { message: 'Failed to create author' },
-      { status: 502 },
-    );
+    return NextResponse.json({ message: 'Failed to create author' }, { status: 502 });
   }
 }

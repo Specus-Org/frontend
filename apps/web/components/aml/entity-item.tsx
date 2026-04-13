@@ -9,9 +9,7 @@ interface EntityItemProps {
 
 export function EntityItem({ entity }: EntityItemProps): React.ReactElement {
   const imageSrc =
-    entity.entity_type === 'person'
-      ? '/images/img_individual.webp'
-      : '/images/img_company.webp';
+    entity.entity_type === 'person' ? '/images/img_individual.webp' : '/images/img_company.webp';
 
   const typeFields = entity.type_fields ?? {};
   const subtitle = Object.values(typeFields)
@@ -28,10 +26,10 @@ export function EntityItem({ entity }: EntityItemProps): React.ReactElement {
       <Image src={imageSrc} alt={entity.caption} width={96} height={96} />
 
       <div className="mx-3 flex flex-col items-start">
-        <h3 className="text-foreground line-clamp-1 text-xl font-semibold">{entity.caption}</h3>
-        {subtitle && (
+        <h3 className="text-foreground line-clamp-2 text-xl font-semibold">{entity.caption}</h3>
+        {/* {subtitle && (
           <p className="text-muted-foreground text-sm">{subtitle}</p>
-        )}
+        )} */}
       </div>
     </Link>
   );

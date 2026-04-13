@@ -26,6 +26,7 @@
   --input: #d1d9e0; /* neutral/6 */
   --ring: #0969da; /* blue/5 */
   --tertiary: #f8fafc; /* blue/5 */
+  --brand: #192e49;
 
   /* Chart Colors */
   --chart-1: #0969da; /* blue/5 */
@@ -357,6 +358,7 @@
   --color-neutral-13: var(--neutral-13);
 
   --color-tertiary: var(--tertiary);
+  --color-brand: var(--brand);
 }
 
 @layer base {
