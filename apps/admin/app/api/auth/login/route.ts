@@ -32,7 +32,11 @@ export async function POST(request: NextRequest) {
       const status = statusMap[authError.code ?? ''] ?? response.status;
 
       return NextResponse.json(
-        { message: authError.message ?? 'Authentication failed', code: authError.code ?? 'AUTH_ERROR' },
+        {
+          message: authError.message ?? 'Authentication failed',
+          code: authError.code ?? 'AUTH_ERROR',
+          raw: authError,
+        },
         { status },
       );
     }

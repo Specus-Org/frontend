@@ -31,10 +31,11 @@ export default function AMLSearchPage(): React.ReactElement {
 
   // SWR handles fetching, caching, and cancellation automatically.
   // Passing `null` as key when `q` is empty disables the fetch.
-  const { data: results = [], error, isLoading } = useSWR(
-    q ? ['screening-search', q] : null,
-    ([, searchQuery]) => fetchResults(searchQuery),
-  );
+  const {
+    data: results = [],
+    error,
+    isLoading,
+  } = useSWR(q ? ['screening-search', q] : null, ([, searchQuery]) => fetchResults(searchQuery));
 
   const handleSearch = () => {
     if (query.trim()) {
@@ -86,10 +87,7 @@ function SingleResult({ result }: { result: ScreeningSearchResult }) {
   return (
     <>
       <SearchResultHeader name={result.caption} status="Listed" />
-      <BiographySection
-        entityType={result.entity_type}
-        typeFields={result.type_fields}
-      />
+      <BiographySection entityType={result.entity_type} typeFields={result.type_fields} />
       {sanctions.length > 0 ? <ListedInSection items={sanctions} /> : null}
     </>
   );

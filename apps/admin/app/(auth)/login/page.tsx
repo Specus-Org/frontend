@@ -53,9 +53,7 @@ export default function LoginPage() {
         }));
 
         const errorMessage =
-          ERROR_MESSAGES[data.code] ??
-          data.message ??
-          'Authentication failed. Please try again.';
+          ERROR_MESSAGES[data.code] ?? data.message ?? 'Authentication failed. Please try again.';
         setError(errorMessage);
         return;
       }
@@ -63,9 +61,7 @@ export default function LoginPage() {
       router.push(callbackUrl);
       router.refresh();
     } catch {
-      setError(
-        'Network error. Please check your connection and try again.',
-      );
+      setError('Network error. Please check your connection and try again.');
     } finally {
       setIsLoading(false);
     }
@@ -78,9 +74,7 @@ export default function LoginPage() {
           <Shield className="size-6" />
         </div>
         <CardTitle className="text-xl font-semibold">Specus Admin</CardTitle>
-        <CardDescription>
-          Sign in to the administration dashboard
-        </CardDescription>
+        <CardDescription>Sign in to the administration dashboard</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="grid gap-5">
@@ -119,11 +113,7 @@ export default function LoginPage() {
             />
           </div>
 
-          <Button
-            type="submit"
-            className="mt-1 w-full"
-            disabled={isLoading}
-          >
+          <Button type="submit" className="mt-1 w-full" disabled={isLoading}>
             {isLoading ? (
               <>
                 <Loader2 className="size-4 animate-spin" />

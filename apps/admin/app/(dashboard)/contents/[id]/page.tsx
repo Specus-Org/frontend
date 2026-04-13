@@ -8,9 +8,10 @@ import { toast } from 'sonner';
 import useSWR from 'swr';
 import { Button } from '@specus/ui/components/button';
 import { Skeleton } from '@specus/ui/components/skeleton';
-import type { CmsContent } from '@specus/api-client';
+import type { CmsAdminContent } from '@specus/api-client';
 import dynamic from 'next/dynamic';
 import type { ContentFormValues } from '@/components/contents/content-form';
+import { FooterGroupCard } from '@/components/contents/footer-group-card';
 import { fetcher } from '@/lib/fetcher';
 
 const ContentForm = dynamic(
@@ -27,7 +28,7 @@ export default function EditContentPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
 
-  const { data: content, error, isLoading } = useSWR<CmsContent>(
+  const { data: content, error, isLoading } = useSWR<CmsAdminContent>(
     `/api/cms/contents/${params.id}`,
     fetcher,
   );
@@ -188,6 +189,10 @@ export default function EditContentPage() {
           onSubmit={handleSubmit}
           isSubmitting={isSubmitting}
         />
+      </div>
+
+      <div className="max-w-3xl">
+        <FooterGroupCard contentId={content.id} />
       </div>
 
       {/* Delete dialog */}

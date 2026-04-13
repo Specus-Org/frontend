@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { AdminAuthLoginData, AdminAuthLoginErrors, AdminAuthLoginResponses, AdminAuthLogoutData, AdminAuthLogoutResponses, AdminAuthRefreshData, AdminAuthRefreshErrors, AdminAuthRefreshResponses, AdminConfirmUploadData, AdminConfirmUploadErrors, AdminConfirmUploadResponses, AdminCreateAuthorData, AdminCreateAuthorErrors, AdminCreateAuthorResponses, AdminCreateCategoryData, AdminCreateCategoryErrors, AdminCreateCategoryResponses, AdminCreateContentData, AdminCreateContentErrors, AdminCreateContentResponses, AdminCreatePageTypeData, AdminCreatePageTypeErrors, AdminCreatePageTypeResponses, AdminCreateTagData, AdminCreateTagErrors, AdminCreateTagResponses, AdminDeleteAuthorData, AdminDeleteAuthorErrors, AdminDeleteAuthorResponses, AdminDeleteCategoryData, AdminDeleteCategoryErrors, AdminDeleteCategoryResponses, AdminDeleteContentData, AdminDeleteContentErrors, AdminDeleteContentResponses, AdminDeletePageTypeData, AdminDeletePageTypeErrors, AdminDeletePageTypeResponses, AdminDeleteTagData, AdminDeleteTagErrors, AdminDeleteTagResponses, AdminDeleteUploadData, AdminDeleteUploadErrors, AdminDeleteUploadResponses, AdminGetAuthorData, AdminGetAuthorErrors, AdminGetAuthorResponses, AdminGetContentData, AdminGetContentErrors, AdminGetContentResponses, AdminListAuthorsData, AdminListAuthorsResponses, AdminListCategoriesData, AdminListCategoriesResponses, AdminListContentsData, AdminListContentsErrors, AdminListContentsResponses, AdminListPageTypesData, AdminListPageTypesResponses, AdminListTagsData, AdminListTagsResponses, AdminListUploadsData, AdminListUploadsResponses, AdminPresignUploadData, AdminPresignUploadErrors, AdminPresignUploadResponses, AdminReorderPagesData, AdminReorderPagesErrors, AdminReorderPagesResponses, AdminUpdateAuthorData, AdminUpdateAuthorErrors, AdminUpdateAuthorResponses, AdminUpdateCategoryData, AdminUpdateCategoryErrors, AdminUpdateCategoryResponses, AdminUpdateContentData, AdminUpdateContentErrors, AdminUpdateContentResponses, GetScreeningEntityData, GetScreeningEntityErrors, GetScreeningEntityResponses, HealthLiveData, HealthLiveResponses, HealthReadyData, HealthReadyErrors, HealthReadyResponses, ListScreeningSourcesData, ListScreeningSourcesResponses, PublicGetAuthorBySlugData, PublicGetAuthorBySlugErrors, PublicGetAuthorBySlugResponses, PublicGetContentByTypeAndSlugData, PublicGetContentByTypeAndSlugErrors, PublicGetContentByTypeAndSlugResponses, PublicGetPageTreeData, PublicGetPageTreeResponses, PublicGetUploadUrlData, PublicGetUploadUrlErrors, PublicGetUploadUrlResponses, PublicListCategoriesData, PublicListCategoriesResponses, PublicListContentsData, PublicListContentsErrors, PublicListContentsResponses, PublicListTagsData, PublicListTagsResponses, PublicResolvePagePathData, PublicResolvePagePathErrors, PublicResolvePagePathResponses, ScreeningSearchData, ScreeningSearchErrors, ScreeningSearchResponses } from './types.gen';
+import type { AdminAssignContentToFooterData, AdminAssignContentToFooterErrors, AdminAssignContentToFooterResponses, AdminAuthLoginData, AdminAuthLoginErrors, AdminAuthLoginResponses, AdminAuthLogoutData, AdminAuthLogoutResponses, AdminAuthRefreshData, AdminAuthRefreshErrors, AdminAuthRefreshResponses, AdminConfirmUploadData, AdminConfirmUploadErrors, AdminConfirmUploadResponses, AdminCreateAuthorData, AdminCreateAuthorErrors, AdminCreateAuthorResponses, AdminCreateCategoryData, AdminCreateCategoryErrors, AdminCreateCategoryResponses, AdminCreateContentData, AdminCreateContentErrors, AdminCreateContentResponses, AdminCreateFooterGroupData, AdminCreateFooterGroupErrors, AdminCreateFooterGroupResponses, AdminCreatePageTypeData, AdminCreatePageTypeErrors, AdminCreatePageTypeResponses, AdminCreateTagData, AdminCreateTagErrors, AdminCreateTagResponses, AdminDeleteAuthorData, AdminDeleteAuthorErrors, AdminDeleteAuthorResponses, AdminDeleteCategoryData, AdminDeleteCategoryErrors, AdminDeleteCategoryResponses, AdminDeleteContentData, AdminDeleteContentErrors, AdminDeleteContentResponses, AdminDeleteFooterGroupData, AdminDeleteFooterGroupErrors, AdminDeleteFooterGroupResponses, AdminDeletePageTypeData, AdminDeletePageTypeErrors, AdminDeletePageTypeResponses, AdminDeleteTagData, AdminDeleteTagErrors, AdminDeleteTagResponses, AdminDeleteUploadData, AdminDeleteUploadErrors, AdminDeleteUploadResponses, AdminGetAuthorData, AdminGetAuthorErrors, AdminGetAuthorResponses, AdminGetContentData, AdminGetContentErrors, AdminGetContentResponses, AdminListAuthorsData, AdminListAuthorsResponses, AdminListCategoriesData, AdminListCategoriesResponses, AdminListContentsData, AdminListContentsErrors, AdminListContentsResponses, AdminListFooterGroupsData, AdminListFooterGroupsResponses, AdminListPageTypesData, AdminListPageTypesResponses, AdminListTagsData, AdminListTagsResponses, AdminListUploadsData, AdminListUploadsErrors, AdminListUploadsResponses, AdminPresignUploadData, AdminPresignUploadErrors, AdminPresignUploadResponses, AdminReorderPagesData, AdminReorderPagesErrors, AdminReorderPagesResponses, AdminUnassignContentFromFooterData, AdminUnassignContentFromFooterErrors, AdminUnassignContentFromFooterResponses, AdminUpdateAuthorData, AdminUpdateAuthorErrors, AdminUpdateAuthorResponses, AdminUpdateCategoryData, AdminUpdateCategoryErrors, AdminUpdateCategoryResponses, AdminUpdateContentData, AdminUpdateContentErrors, AdminUpdateContentResponses, AdminUpdateFooterGroupData, AdminUpdateFooterGroupErrors, AdminUpdateFooterGroupResponses, AdminUpdateUploadData, AdminUpdateUploadErrors, AdminUpdateUploadResponses, AuthRefreshData, AuthRefreshErrors, AuthRefreshResponses, GetScreeningEntityData, GetScreeningEntityErrors, GetScreeningEntityResponses, HealthLiveData, HealthLiveResponses, HealthReadyData, HealthReadyErrors, HealthReadyResponses, ListScreeningSourcesData, ListScreeningSourcesResponses, PublicGetAuthorBySlugData, PublicGetAuthorBySlugErrors, PublicGetAuthorBySlugResponses, PublicGetContentByTypeAndSlugData, PublicGetContentByTypeAndSlugErrors, PublicGetContentByTypeAndSlugResponses, PublicGetFooterData, PublicGetFooterResponses, PublicGetPageTreeData, PublicGetPageTreeResponses, PublicGetUploadUrlData, PublicGetUploadUrlErrors, PublicGetUploadUrlResponses, PublicListCategoriesData, PublicListCategoriesResponses, PublicListContentsData, PublicListContentsErrors, PublicListContentsResponses, PublicListTagsData, PublicListTagsResponses, PublicListUploadsData, PublicListUploadsErrors, PublicListUploadsResponses, PublicResolvePagePathData, PublicResolvePagePathErrors, PublicResolvePagePathResponses, ScreeningSearchData, ScreeningSearchErrors, ScreeningSearchResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -181,6 +181,57 @@ export const adminUpdateContent = <ThrowOnError extends boolean = false>(options
 });
 
 /**
+ * Remove content from footer group
+ */
+export const adminUnassignContentFromFooter = <ThrowOnError extends boolean = false>(options: Options<AdminUnassignContentFromFooterData, ThrowOnError>) => (options.client ?? client).delete<AdminUnassignContentFromFooterResponses, AdminUnassignContentFromFooterErrors, ThrowOnError>({ url: '/api/v1/admin/cms/contents/{id}/footer', ...options });
+
+/**
+ * Assign content to footer group
+ */
+export const adminAssignContentToFooter = <ThrowOnError extends boolean = false>(options: Options<AdminAssignContentToFooterData, ThrowOnError>) => (options.client ?? client).put<AdminAssignContentToFooterResponses, AdminAssignContentToFooterErrors, ThrowOnError>({
+    url: '/api/v1/admin/cms/contents/{id}/footer',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * List footer groups
+ */
+export const adminListFooterGroups = <ThrowOnError extends boolean = false>(options?: Options<AdminListFooterGroupsData, ThrowOnError>) => (options?.client ?? client).get<AdminListFooterGroupsResponses, unknown, ThrowOnError>({ url: '/api/v1/admin/cms/footer-groups', ...options });
+
+/**
+ * Create footer group
+ */
+export const adminCreateFooterGroup = <ThrowOnError extends boolean = false>(options: Options<AdminCreateFooterGroupData, ThrowOnError>) => (options.client ?? client).post<AdminCreateFooterGroupResponses, AdminCreateFooterGroupErrors, ThrowOnError>({
+    url: '/api/v1/admin/cms/footer-groups',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Delete footer group
+ */
+export const adminDeleteFooterGroup = <ThrowOnError extends boolean = false>(options: Options<AdminDeleteFooterGroupData, ThrowOnError>) => (options.client ?? client).delete<AdminDeleteFooterGroupResponses, AdminDeleteFooterGroupErrors, ThrowOnError>({ url: '/api/v1/admin/cms/footer-groups/{id}', ...options });
+
+/**
+ * Update footer group
+ */
+export const adminUpdateFooterGroup = <ThrowOnError extends boolean = false>(options: Options<AdminUpdateFooterGroupData, ThrowOnError>) => (options.client ?? client).put<AdminUpdateFooterGroupResponses, AdminUpdateFooterGroupErrors, ThrowOnError>({
+    url: '/api/v1/admin/cms/footer-groups/{id}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
  * List page types
  */
 export const adminListPageTypes = <ThrowOnError extends boolean = false>(options?: Options<AdminListPageTypesData, ThrowOnError>) => (options?.client ?? client).get<AdminListPageTypesResponses, unknown, ThrowOnError>({ url: '/api/v1/admin/cms/page-types', ...options });
@@ -241,12 +292,24 @@ export const adminDeleteTag = <ThrowOnError extends boolean = false>(options: Op
 /**
  * List uploads
  */
-export const adminListUploads = <ThrowOnError extends boolean = false>(options?: Options<AdminListUploadsData, ThrowOnError>) => (options?.client ?? client).get<AdminListUploadsResponses, unknown, ThrowOnError>({ url: '/api/v1/admin/cms/uploads', ...options });
+export const adminListUploads = <ThrowOnError extends boolean = false>(options?: Options<AdminListUploadsData, ThrowOnError>) => (options?.client ?? client).get<AdminListUploadsResponses, AdminListUploadsErrors, ThrowOnError>({ url: '/api/v1/admin/cms/uploads', ...options });
 
 /**
  * Delete upload
  */
 export const adminDeleteUpload = <ThrowOnError extends boolean = false>(options: Options<AdminDeleteUploadData, ThrowOnError>) => (options.client ?? client).delete<AdminDeleteUploadResponses, AdminDeleteUploadErrors, ThrowOnError>({ url: '/api/v1/admin/cms/uploads/{id}', ...options });
+
+/**
+ * Update upload metadata
+ */
+export const adminUpdateUpload = <ThrowOnError extends boolean = false>(options: Options<AdminUpdateUploadData, ThrowOnError>) => (options.client ?? client).put<AdminUpdateUploadResponses, AdminUpdateUploadErrors, ThrowOnError>({
+    url: '/api/v1/admin/cms/uploads/{id}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
 
 /**
  * Confirm upload
@@ -260,6 +323,22 @@ export const adminConfirmUpload = <ThrowOnError extends boolean = false>(options
  */
 export const adminPresignUpload = <ThrowOnError extends boolean = false>(options: Options<AdminPresignUploadData, ThrowOnError>) => (options.client ?? client).post<AdminPresignUploadResponses, AdminPresignUploadErrors, ThrowOnError>({
     url: '/api/v1/admin/cms/uploads/presign',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Refresh customer access token
+ *
+ * Exchanges a valid refresh token for a new access token and rotated
+ * refresh token.
+ *
+ */
+export const authRefresh = <ThrowOnError extends boolean = false>(options: Options<AuthRefreshData, ThrowOnError>) => (options.client ?? client).post<AuthRefreshResponses, AuthRefreshErrors, ThrowOnError>({
+    url: '/api/v1/auth/refresh',
     ...options,
     headers: {
         'Content-Type': 'application/json',
@@ -294,6 +373,13 @@ export const publicListContents = <ThrowOnError extends boolean = false>(options
 export const publicGetContentByTypeAndSlug = <ThrowOnError extends boolean = false>(options: Options<PublicGetContentByTypeAndSlugData, ThrowOnError>) => (options.client ?? client).get<PublicGetContentByTypeAndSlugResponses, PublicGetContentByTypeAndSlugErrors, ThrowOnError>({ url: '/api/v1/cms/contents/{content_type}/{slug}', ...options });
 
 /**
+ * Footer groups with published CMS items
+ *
+ * Returns footer groups and their published CMS items for frontend navigation rendering.
+ */
+export const publicGetFooter = <ThrowOnError extends boolean = false>(options?: Options<PublicGetFooterData, ThrowOnError>) => (options?.client ?? client).get<PublicGetFooterResponses, unknown, ThrowOnError>({ url: '/api/v1/cms/footer', ...options });
+
+/**
  * Resolve URL path to static page
  *
  * Resolves a URL path (e.g., /about/team) to a published static page.
@@ -313,6 +399,11 @@ export const publicGetPageTree = <ThrowOnError extends boolean = false>(options?
  * List all tags
  */
 export const publicListTags = <ThrowOnError extends boolean = false>(options?: Options<PublicListTagsData, ThrowOnError>) => (options?.client ?? client).get<PublicListTagsResponses, unknown, ThrowOnError>({ url: '/api/v1/cms/tags', ...options });
+
+/**
+ * List confirmed uploads
+ */
+export const publicListUploads = <ThrowOnError extends boolean = false>(options?: Options<PublicListUploadsData, ThrowOnError>) => (options?.client ?? client).get<PublicListUploadsResponses, PublicListUploadsErrors, ThrowOnError>({ url: '/api/v1/cms/uploads', ...options });
 
 /**
  * Get a presigned download URL for an upload
