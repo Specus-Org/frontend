@@ -62,7 +62,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`font-sans antialiased ${rethinkSans.variable}`}>
+      <body className={`min-h-screen bg-background font-sans antialiased ${rethinkSans.variable}`}>
         <ThemeProvider defaultTheme="light" forcedTheme="light" disableTransitionOnChange>
           <SessionProvider session={session}>{children}</SessionProvider>
         </ThemeProvider>
