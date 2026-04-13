@@ -1,17 +1,38 @@
 import React from 'react';
+import { CoverageSection } from '@/components/landing/coverage-section';
+import { ContactCta } from '@/components/landing/contact-cta';
+import { LandingHero } from '@/components/landing/landing-hero';
+import { PrinciplesSection } from '@/components/landing/principles-section';
+import { RoadmapSection } from '@/components/landing/roadmap-section';
+import { SolutionsGrid } from '@/components/landing/solutions-grid';
+import { TrustStrip } from '@/components/landing/trust-strip';
+import { WorkflowSection } from '@/components/landing/workflow-section';
+import { landingContent } from '@/lib/landing-content';
 
-export default function HomePage(): React.ReactElement {
+export default async function HomePage(): Promise<React.ReactElement> {
   return (
-    <div className="flex flex-col items-center justify-center gap-4 px-4 py-16 text-center sm:px-6 sm:py-24 md:px-8 md:py-32 lg:py-48">
-      <div className="rounded-full bg-amber-100 px-4 py-1.5 text-sm font-medium text-amber-800 dark:bg-amber-900/30 dark:text-amber-400">
-        Under Development
-      </div>
-      <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
-        We&apos;re building something great
-      </h1>
-      <p className="max-w-md text-muted-foreground sm:text-lg">
-        This page is still in development. Check back soon for updates.
-      </p>
+    <div className="bg-background text-foreground">
+      <LandingHero
+        announcement={landingContent.announcement}
+        title={landingContent.heroTitle}
+        description={landingContent.heroDescription}
+        slogan={landingContent.slogan}
+        metrics={landingContent.heroMetrics}
+      />
+      {/* <TrustStrip
+        metrics={landingContent.heroMetrics}
+        trustedSources={landingContent.trustedSources}
+      /> */}
+      {/* <PrinciplesSection
+        mission={landingContent.mission}
+        vision={landingContent.vision}
+        principles={landingContent.principles}
+      /> */}
+      <SolutionsGrid solutions={landingContent.solutions} />
+      <WorkflowSection steps={landingContent.workflow} />
+      <CoverageSection trustedSources={landingContent.trustedSources} />
+      <RoadmapSection roadmap={landingContent.roadmap} />
+      <ContactCta slogan={landingContent.slogan} contactLinks={landingContent.contactLinks} />
     </div>
   );
 }
