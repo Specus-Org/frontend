@@ -37,6 +37,15 @@ export type AdminAuthTokenPair = {
     refresh_token: string;
 };
 
+export type CmsAdminContent = CmsContent & {
+    footer?: CmsContentFooterAssignment | null;
+};
+
+export type CmsAssignFooterRequest = {
+    footer_group_id: string;
+    footer_sort_order?: number;
+};
+
 export type CmsAuthor = {
     avatar_url?: string | null;
     bio?: string | null;
@@ -90,6 +99,11 @@ export type CmsContent = {
     tags?: Array<CmsTag>;
     title: string;
     updated_at: string;
+};
+
+export type CmsContentFooterAssignment = {
+    group_id: string;
+    sort_order: number;
 };
 
 /**
@@ -159,6 +173,12 @@ export type CmsCreateContentRequest = {
     title: string;
 };
 
+export type CmsCreateFooterGroupRequest = {
+    name: string;
+    slug: string;
+    sort_order?: number;
+};
+
 export type CmsCreatePageTypeRequest = {
     name: string;
     slug: string;
@@ -172,6 +192,41 @@ export type CmsCreateTagRequest = {
 export type CmsError = {
     code?: string;
     message: string;
+};
+
+export type CmsFooterGroup = {
+    created_at: string;
+    id: string;
+    name: string;
+    slug: string;
+    sort_order: number;
+    updated_at: string;
+};
+
+export type CmsFooterGroupListResponse = {
+    items: Array<CmsFooterGroup>;
+};
+
+export type CmsFooterGroupWithItems = CmsFooterGroup & {
+    items: Array<CmsFooterItem>;
+};
+
+export type CmsFooterItem = {
+    content_type: 'static_page' | 'flexible_page';
+    id: string;
+    page_type?: CmsFooterItemPageType | null;
+    slug: string;
+    title: string;
+    url_path: string;
+};
+
+export type CmsFooterItemPageType = {
+    name: string;
+    slug: string;
+};
+
+export type CmsFooterResponse = {
+    groups: Array<CmsFooterGroupWithItems>;
 };
 
 export type CmsNavigationNode = {
@@ -208,6 +263,25 @@ export type CmsPaginationMeta = {
      * Opaque cursor token for the next page
      */
     next_cursor?: string | null;
+};
+
+export type CmsPublicUpload = {
+    alt_text?: string | null;
+    content_type: string;
+    created_at: string;
+    description?: string | null;
+    filename: string;
+    id: string;
+    public_url: string;
+    size_bytes?: number | null;
+    title?: string | null;
+    updated_at: string;
+    upload_type: 'image' | 'document';
+};
+
+export type CmsPublicUploadListResponse = {
+    items: Array<CmsPublicUpload>;
+    pagination: CmsPaginationMeta;
 };
 
 export type CmsReorderPagesRequest = {
@@ -267,33 +341,55 @@ export type CmsUpdateContentRequest = {
     title: string;
 };
 
+export type CmsUpdateFooterGroupRequest = {
+    name: string;
+    slug: string;
+    sort_order?: number;
+};
+
+/**
+ * Partial update — omitted fields are left unchanged. Once set, fields cannot be cleared to null.
+ */
+export type CmsUpdateUploadRequest = {
+    alt_text?: string | null;
+    description?: string | null;
+    title?: string | null;
+};
+
 export type CmsUpload = {
+    alt_text?: string | null;
     content_type: string;
     created_at: string;
+    description?: string | null;
     filename: string;
     id: string;
     public_url: string;
     size_bytes?: number | null;
     status: 'pending' | 'confirmed';
     storage_key: string;
+    title?: string | null;
     updated_at: string;
     upload_type: 'image' | 'document';
 };
 
 export type CmsUploadListResponse = {
     items: Array<CmsUpload>;
+    pagination: CmsPaginationMeta;
 };
 
 export type CmsUploadPresignRequest = {
+    alt_text?: string | null;
     /**
      * MIME type (e.g., image/jpeg, application/pdf)
      */
     content_type: string;
+    description?: string | null;
     filename: string;
     /**
      * File size in bytes. Validated against per-type limits (images 10MB, documents 50MB).
      */
     size_bytes: number;
+    title?: string | null;
     upload_type: 'image' | 'document';
 };
 
@@ -318,9 +414,6 @@ export type CmsUploadUrlResponse = {
      * Presigned GET URL for downloading the file (time-limited)
      */
     download_url: string;
-    /**
-     * When the presigned download URL expires
-     */
     expires_at: string;
 };
 
@@ -330,13 +423,21 @@ export type EntityName = {
 };
 
 export type EntitySanction = {
+    delisting_date?: string;
+    delisting_date_label?: string;
+    designation_date?: string;
+    designation_date_label?: string;
     event_type: 'sanction' | 'pep' | 'blacklist';
+    is_active: boolean;
+    list_url?: string;
+    program?: string;
     /**
      * Event-specific attributes from Lexicon
      */
     properties?: {
         [key: string]: unknown;
     };
+    remarks?: string;
     role?: string;
     sanctions_list?: SanctionsListSummary;
     title?: string;
@@ -390,6 +491,7 @@ export type ScreeningEntity = {
     last_seen?: string;
     names: Array<EntityName>;
     sanctions: Array<EntitySanction>;
+    summary?: string;
     topics?: Array<string>;
     /**
      * Type-specific fields from Lexicon properties JSONB
@@ -891,7 +993,7 @@ export type AdminGetContentResponses = {
     /**
      * Content found
      */
-    200: CmsContent;
+    200: CmsAdminContent;
 };
 
 export type AdminGetContentResponse = AdminGetContentResponses[keyof AdminGetContentResponses];
@@ -926,6 +1028,161 @@ export type AdminUpdateContentResponses = {
 };
 
 export type AdminUpdateContentResponse = AdminUpdateContentResponses[keyof AdminUpdateContentResponses];
+
+export type AdminUnassignContentFromFooterData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/cms/contents/{id}/footer';
+};
+
+export type AdminUnassignContentFromFooterErrors = {
+    /**
+     * Content not found
+     */
+    404: CmsError;
+};
+
+export type AdminUnassignContentFromFooterError = AdminUnassignContentFromFooterErrors[keyof AdminUnassignContentFromFooterErrors];
+
+export type AdminUnassignContentFromFooterResponses = {
+    /**
+     * Content removed from footer
+     */
+    204: void;
+};
+
+export type AdminUnassignContentFromFooterResponse = AdminUnassignContentFromFooterResponses[keyof AdminUnassignContentFromFooterResponses];
+
+export type AdminAssignContentToFooterData = {
+    body: CmsAssignFooterRequest;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/cms/contents/{id}/footer';
+};
+
+export type AdminAssignContentToFooterErrors = {
+    /**
+     * Invalid request
+     */
+    400: CmsError;
+    /**
+     * Content or footer group not found
+     */
+    404: CmsError;
+};
+
+export type AdminAssignContentToFooterError = AdminAssignContentToFooterErrors[keyof AdminAssignContentToFooterErrors];
+
+export type AdminAssignContentToFooterResponses = {
+    /**
+     * Content assigned to footer
+     */
+    200: unknown;
+};
+
+export type AdminListFooterGroupsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/admin/cms/footer-groups';
+};
+
+export type AdminListFooterGroupsResponses = {
+    /**
+     * List of footer groups
+     */
+    200: CmsFooterGroupListResponse;
+};
+
+export type AdminListFooterGroupsResponse = AdminListFooterGroupsResponses[keyof AdminListFooterGroupsResponses];
+
+export type AdminCreateFooterGroupData = {
+    body: CmsCreateFooterGroupRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/admin/cms/footer-groups';
+};
+
+export type AdminCreateFooterGroupErrors = {
+    /**
+     * Invalid request
+     */
+    400: CmsError;
+};
+
+export type AdminCreateFooterGroupError = AdminCreateFooterGroupErrors[keyof AdminCreateFooterGroupErrors];
+
+export type AdminCreateFooterGroupResponses = {
+    /**
+     * Footer group created
+     */
+    201: CmsFooterGroup;
+};
+
+export type AdminCreateFooterGroupResponse = AdminCreateFooterGroupResponses[keyof AdminCreateFooterGroupResponses];
+
+export type AdminDeleteFooterGroupData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/cms/footer-groups/{id}';
+};
+
+export type AdminDeleteFooterGroupErrors = {
+    /**
+     * Footer group not found
+     */
+    404: CmsError;
+};
+
+export type AdminDeleteFooterGroupError = AdminDeleteFooterGroupErrors[keyof AdminDeleteFooterGroupErrors];
+
+export type AdminDeleteFooterGroupResponses = {
+    /**
+     * Footer group deleted
+     */
+    204: void;
+};
+
+export type AdminDeleteFooterGroupResponse = AdminDeleteFooterGroupResponses[keyof AdminDeleteFooterGroupResponses];
+
+export type AdminUpdateFooterGroupData = {
+    body: CmsUpdateFooterGroupRequest;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/cms/footer-groups/{id}';
+};
+
+export type AdminUpdateFooterGroupErrors = {
+    /**
+     * Invalid request
+     */
+    400: CmsError;
+    /**
+     * Footer group not found
+     */
+    404: CmsError;
+};
+
+export type AdminUpdateFooterGroupError = AdminUpdateFooterGroupErrors[keyof AdminUpdateFooterGroupErrors];
+
+export type AdminUpdateFooterGroupResponses = {
+    /**
+     * Footer group updated
+     */
+    200: CmsFooterGroup;
+};
+
+export type AdminUpdateFooterGroupResponse = AdminUpdateFooterGroupResponses[keyof AdminUpdateFooterGroupResponses];
 
 export type AdminListPageTypesData = {
     body?: never;
@@ -1093,9 +1350,26 @@ export type AdminDeleteTagResponse = AdminDeleteTagResponses[keyof AdminDeleteTa
 export type AdminListUploadsData = {
     body?: never;
     path?: never;
-    query?: never;
+    query?: {
+        /**
+         * Opaque cursor token from a previous page
+         */
+        cursor?: string;
+        page_size?: number;
+        upload_type?: 'image' | 'document';
+        status?: 'pending' | 'confirmed';
+    };
     url: '/api/v1/admin/cms/uploads';
 };
+
+export type AdminListUploadsErrors = {
+    /**
+     * Invalid request
+     */
+    400: CmsError;
+};
+
+export type AdminListUploadsError = AdminListUploadsErrors[keyof AdminListUploadsErrors];
 
 export type AdminListUploadsResponses = {
     /**
@@ -1132,6 +1406,33 @@ export type AdminDeleteUploadResponses = {
 };
 
 export type AdminDeleteUploadResponse = AdminDeleteUploadResponses[keyof AdminDeleteUploadResponses];
+
+export type AdminUpdateUploadData = {
+    body: CmsUpdateUploadRequest;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/v1/admin/cms/uploads/{id}';
+};
+
+export type AdminUpdateUploadErrors = {
+    /**
+     * Upload not found
+     */
+    404: CmsError;
+};
+
+export type AdminUpdateUploadError = AdminUpdateUploadErrors[keyof AdminUpdateUploadErrors];
+
+export type AdminUpdateUploadResponses = {
+    /**
+     * Upload updated
+     */
+    200: CmsUpload;
+};
+
+export type AdminUpdateUploadResponse = AdminUpdateUploadResponses[keyof AdminUpdateUploadResponses];
 
 export type AdminConfirmUploadData = {
     body?: never;
@@ -1188,6 +1489,39 @@ export type AdminPresignUploadResponses = {
 };
 
 export type AdminPresignUploadResponse = AdminPresignUploadResponses[keyof AdminPresignUploadResponses];
+
+export type AuthRefreshData = {
+    body: AdminAuthRefreshRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/refresh';
+};
+
+export type AuthRefreshErrors = {
+    /**
+     * Invalid request body
+     */
+    400: AdminAuthError;
+    /**
+     * Invalid or expired refresh token
+     */
+    401: AdminAuthError;
+    /**
+     * Authentication service unavailable
+     */
+    502: AdminAuthError;
+};
+
+export type AuthRefreshError = AuthRefreshErrors[keyof AuthRefreshErrors];
+
+export type AuthRefreshResponses = {
+    /**
+     * Token refreshed
+     */
+    200: AdminAuthTokenPair;
+};
+
+export type AuthRefreshResponse = AuthRefreshResponses[keyof AuthRefreshResponses];
 
 export type PublicGetAuthorBySlugData = {
     body?: never;
@@ -1310,6 +1644,22 @@ export type PublicGetContentByTypeAndSlugResponses = {
 
 export type PublicGetContentByTypeAndSlugResponse = PublicGetContentByTypeAndSlugResponses[keyof PublicGetContentByTypeAndSlugResponses];
 
+export type PublicGetFooterData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/cms/footer';
+};
+
+export type PublicGetFooterResponses = {
+    /**
+     * Footer groups
+     */
+    200: CmsFooterResponse;
+};
+
+export type PublicGetFooterResponse = PublicGetFooterResponses[keyof PublicGetFooterResponses];
+
 export type PublicResolvePagePathData = {
     body?: never;
     path?: never;
@@ -1371,6 +1721,38 @@ export type PublicListTagsResponses = {
 };
 
 export type PublicListTagsResponse = PublicListTagsResponses[keyof PublicListTagsResponses];
+
+export type PublicListUploadsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Opaque cursor token from a previous page
+         */
+        cursor?: string;
+        page_size?: number;
+        upload_type?: 'image' | 'document';
+    };
+    url: '/api/v1/cms/uploads';
+};
+
+export type PublicListUploadsErrors = {
+    /**
+     * Invalid request
+     */
+    400: CmsError;
+};
+
+export type PublicListUploadsError = PublicListUploadsErrors[keyof PublicListUploadsErrors];
+
+export type PublicListUploadsResponses = {
+    /**
+     * List of confirmed uploads
+     */
+    200: CmsPublicUploadListResponse;
+};
+
+export type PublicListUploadsResponse = PublicListUploadsResponses[keyof PublicListUploadsResponses];
 
 export type PublicGetUploadUrlData = {
     body?: never;
