@@ -1,6 +1,8 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import {
   adminAssignContentToFooter,
+  adminGetContent,
+  adminListFooterGroups,
   adminUnassignContentFromFooter,
   type CmsAssignFooterRequest,
 } from '@specus/api-client';
@@ -19,21 +21,67 @@ async function getAuthHeaders() {
   };
 }
 
-/**
- * Placeholder content-footer-group proxy.
- *
- * The generated SDK now supports assign/unassign, but it still does not expose
- * a dedicated "get current footer assignment" operation. This GET route stays
- * as a placeholder until that lookup contract exists.
- */
-export async function GET(_request: NextRequest, _context: RouteContext) {
-  return NextResponse.json({
-    current_footer_group_id: null,
-    current_footer_group: null,
-    integration_ready: false,
-    message:
-      'Footer membership lookup is scaffolded because the generated API client does not expose a read endpoint yet.',
-  });
+export async function GET(_request: NextRequest, context: RouteContext) {
+  const headers = await getAuthHeaders();
+
+  if (!headers) {
+    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+  }
+
+  const { id } = await context.params;
+
+  try {
+    const { data: content, error, response } = await adminGetContent({
+      headers,
+      path: { id },
+    });
+
+    if (error || !content) {
+      return NextResponse.json(
+        error ?? { message: 'Failed to fetch footer assignment' },
+        { status: response.status },
+      );
+    }
+
+    const currentFooterGroupId = content.footer?.group_id ?? null;
+    const footerSortOrder = content.footer?.sort_order ?? null;
+
+    let currentFooterGroup = null;
+    let message: string | undefined;
+
+    if (currentFooterGroupId) {
+      const footerGroupsResult = await adminListFooterGroups({ headers });
+
+      if (footerGroupsResult.data) {
+        currentFooterGroup =
+          footerGroupsResult.data.items.find(
+            (footerGroup) => footerGroup.id === currentFooterGroupId,
+          ) ?? null;
+
+        if (!currentFooterGroup) {
+          message =
+            'This content is assigned to a footer group that is not present in the current footer group list.';
+        }
+      } else {
+        message =
+          'Footer assignment was found, but the current footer group details could not be loaded.';
+      }
+    }
+
+    return NextResponse.json({
+      current_footer_group_id: currentFooterGroupId,
+      current_footer_group: currentFooterGroup,
+      footer_sort_order: footerSortOrder,
+      is_assigned: currentFooterGroupId !== null,
+      integration_ready: true,
+      message,
+    });
+  } catch {
+    return NextResponse.json(
+      { message: 'Failed to fetch footer assignment' },
+      { status: 502 },
+    );
+  }
 }
 
 export async function PUT(request: NextRequest, context: RouteContext) {

@@ -16,6 +16,8 @@ export interface FooterGroupListResponse {
 export interface ContentFooterGroupResponse {
   current_footer_group_id: string | null;
   current_footer_group?: FooterGroup | null;
+  footer_sort_order?: number | null;
+  is_assigned: boolean;
   integration_ready: boolean;
   message?: string;
 }

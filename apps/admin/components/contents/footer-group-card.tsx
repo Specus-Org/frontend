@@ -60,14 +60,17 @@ export function FooterGroupCard({ contentId }: FooterGroupCardProps) {
     (footerGroupsData?.integration_ready ?? false) && (membershipData?.integration_ready ?? false);
   const loading = footerGroupsLoading || membershipLoading;
   const error = footerGroupsError ?? membershipError;
-  const currentFooterGroup = membershipData?.current_footer_group ?? null;
+  const currentFooterGroup =
+    membershipData?.current_footer_group ??
+    footerGroups.find(
+      (footerGroup) => footerGroup.id === membershipData?.current_footer_group_id,
+    ) ??
+    null;
   const selectableFooterGroups =
     currentFooterGroup &&
     !footerGroups.some((footerGroup) => footerGroup.id === currentFooterGroup.id)
       ? [currentFooterGroup, ...footerGroups]
       : footerGroups;
-  const canAssign =
-    !!selectedFooterGroupId && selectedFooterGroupId !== membershipData?.current_footer_group_id;
 
   async function handleAssign() {
     if (!selectedFooterGroupId) {
@@ -207,7 +210,7 @@ export function FooterGroupCard({ contentId }: FooterGroupCardProps) {
                 variant="outline"
                 onClick={handleRemove}
                 disabled={
-                  !integrationReady || !membershipData?.current_footer_group_id || isRemoving
+                  !integrationReady || !membershipData?.is_assigned || isRemoving
                 }
               >
                 <Unlink className="mr-2 size-4" />
