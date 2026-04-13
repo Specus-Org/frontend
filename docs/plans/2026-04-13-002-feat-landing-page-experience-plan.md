@@ -1,7 +1,7 @@
 ---
 title: "feat: Build Specus marketing landing page"
 type: feat
-status: active
+status: completed
 date: 2026-04-13
 ---
 
@@ -15,11 +15,11 @@ Replace the placeholder homepage at `apps/web/app/(main)/page.tsx` with a polish
 
 The public homepage is still a minimal "Under Development" placeholder, which leaves the product without a credible first impression despite the rest of the web app already having a real navigation shell, metadata, and product routes such as `/aml`, `/resources`, and CMS-backed pages. The requested change is not just to fill space, but to establish a strong landing experience that clearly communicates:
 
-- what Specus does
-- why procurement and compliance teams should trust it
-- how the platform works in practice
-- which concrete capabilities and coverage areas differentiate it
-- how interested buyers should take the next step
+- What Specus does
+- Why procurement and compliance teams should trust it
+- How the platform works in practice
+- Which concrete capabilities and coverage areas differentiate it
+- How interested buyers should take the next step
 
 Because there is no upstream brainstorm document, this plan uses the user-supplied brand, mission, principles, solutions, workflow, roadmap, and contact data as the source of truth for the landing page content architecture.
 
@@ -120,7 +120,7 @@ apps/web/lib/
 
 ## Implementation Units
 
-- [ ] **Unit 1: Establish landing-page content contract and page shell**
+- [x] **Unit 1: Establish landing-page content contract and page shell**
 
 **Goal:** Replace the placeholder homepage with a structured landing-page entry point and a reusable content source for all major sections.
 
@@ -129,32 +129,36 @@ apps/web/lib/
 **Dependencies:** None
 
 **Files:**
+
 - Modify: `apps/web/app/(main)/page.tsx`
 - Create: `apps/web/lib/landing-content.ts`
 - Test: `apps/web/app/(main)/page.test.tsx`
 
 **Approach:**
+
 - Replace the current placeholder JSX with a homepage composition that imports landing content and section components.
 - Create a typed content module holding the hero copy, primary metrics, principles, solution definitions, workflow steps, roadmap milestones, trusted data sources, and contact links.
 - Keep `page.tsx` responsible for section order and metadata-friendly composition, while pushing large copy arrays and structured content into the content module.
 - Ensure the top of the page immediately communicates the product category, proof metrics, and primary CTA rather than burying the core value proposition below the fold.
 
 **Patterns to follow:**
+
 - `apps/web/app/(main)/aml/page.tsx` for hero-scale typography and centered opening composition.
 - `apps/web/app/(main)/resources/page.tsx` for spacing and container usage.
 - `apps/web/app/layout.tsx` for current metadata posture and product naming.
 
 **Test scenarios:**
+
 - Happy path: homepage render includes the primary `Specus` brand heading, main value proposition, and at least one primary CTA.
 - Happy path: homepage render includes the three proof metrics `200+`, `3`, and `<5s` in visible landing content.
 - Edge case: content module arrays are iterated safely and do not break render order when optional descriptive copy is absent.
 - Integration: page composition renders inside the existing `(main)` layout without duplicating navbar or footer content in the page body.
 
 **Verification:**
+
 - The homepage route no longer shows placeholder copy.
 - The page source has a clean, section-based structure that future contributors can edit without unpacking a single large component.
-
-- [ ] **Unit 2: Build the hero, trust, and brand-foundation sections**
+- [x] **Unit 2: Build the hero, trust, and brand-foundation sections**
 
 **Goal:** Create the top-of-page experience that sells the product quickly and establishes credibility before visitors scroll into deeper feature detail.
 
@@ -163,6 +167,7 @@ apps/web/lib/
 **Dependencies:** Unit 1
 
 **Files:**
+
 - Create: `apps/web/components/landing/landing-hero.tsx`
 - Create: `apps/web/components/landing/trust-strip.tsx`
 - Create: `apps/web/components/landing/principles-section.tsx`
@@ -171,6 +176,7 @@ apps/web/lib/
 - Test: `apps/web/components/landing/landing-hero.test.tsx`
 
 **Approach:**
+
 - Design a strong hero with layered background treatment, concise tagline, supporting paragraph, primary CTA, and secondary CTA.
 - Pair the hero with a trust strip or stat row that foregrounds the strongest proof points and trusted data-source references.
 - Introduce a compact mission/vision bridge near the top of the page so the user-provided purpose statements anchor the rest of the landing narrative.
@@ -179,25 +185,28 @@ apps/web/lib/
 - Ensure the first screen works on mobile without collapsing into an unreadable text wall or forcing all trust signals below the fold.
 
 **Technical design:** *(directional guidance, not implementation specification)*
+
 - Hero should prioritize a left-aligned or split-layout composition on desktop, with proof metrics either embedded beneath the headline or immediately below as a trust strip.
 - The principles section should read as brand foundation, not feature list repetition.
 
 **Patterns to follow:**
+
 - `apps/web/app/(main)/aml/page.tsx` for large-format product messaging.
 - `packages/ui/src/components/button.tsx` and `badge.tsx` for CTA and micro-label styling.
 - `packages/ui/styles/globals.css` for token usage instead of introducing arbitrary color values everywhere.
 
 **Test scenarios:**
+
 - Happy path: hero renders primary and secondary CTAs with accessible names and valid destinations.
 - Happy path: the principles section renders all four principle cards in the intended order.
 - Edge case: hero supporting copy wraps cleanly for narrow mobile widths without hiding the CTAs.
 - Integration: trust strip content remains visible and semantically associated with the page opening rather than drifting below unrelated sections.
 
 **Verification:**
+
 - The top of the homepage clearly communicates product, credibility, and next action in one glance on desktop and mobile.
 - The design feels intentionally branded rather than like a reused placeholder card stack.
-
-- [ ] **Unit 3: Implement solutions, workflow, coverage, and roadmap storytelling**
+- [x] **Unit 3: Implement solutions, workflow, coverage, and roadmap storytelling**
 
 **Goal:** Translate the user's product detail into mid-page sections that explain what Specus offers, how it works, and why teams can rely on it over time.
 
@@ -206,6 +215,7 @@ apps/web/lib/
 **Dependencies:** Units 1 and 2
 
 **Files:**
+
 - Create: `apps/web/components/landing/solutions-grid.tsx`
 - Create: `apps/web/components/landing/workflow-section.tsx`
 - Create: `apps/web/components/landing/coverage-section.tsx`
@@ -215,6 +225,7 @@ apps/web/lib/
 - Test: `apps/web/components/landing/storytelling-sections.test.tsx`
 
 **Approach:**
+
 - Present the six solution pillars as a structured feature grid with short benefit-focused descriptions and bullet-level capability detail.
 - Build a "How it works" section that maps cleanly to the three provided workflow stages: upload/search vendor details, automated multi-source search, actionable intelligence output.
 - Add a coverage/data-source section to reinforce the `360-degree` narrative, tying together Keyping, Lexicon, E-PMS, global coverage, and continuous monitoring.
@@ -222,11 +233,13 @@ apps/web/lib/
 - Maintain narrative pacing so feature detail, workflow explanation, and roadmap credibility each have a distinct role instead of repeating similar cards with different labels.
 
 **Patterns to follow:**
+
 - `apps/web/app/(main)/resources/page.tsx` for repeatable grid composition and empty-state spacing rhythm.
 - `packages/ui/src/components/card.tsx` for feature/roadmap card foundations.
 - Existing web-app typography and spacing conventions for readable section rhythm.
 
 **Test scenarios:**
+
 - Happy path: all six solution categories render with their section titles and supporting capability bullets.
 - Happy path: workflow section renders the three-step process in the intended sequence.
 - Happy path: roadmap section renders Q1 through Q4 milestones with each quarter's listed initiatives.
@@ -234,10 +247,10 @@ apps/web/lib/
 - Integration: coverage/data-source messaging includes Keyping, Lexicon, and E-PMS alongside global coverage and continuous monitoring claims.
 
 **Verification:**
+
 - A first-time visitor can understand the product capabilities, operating model, and maturity trajectory without leaving the homepage.
 - Mid-page sections feel cohesive and progressively informative rather than like disconnected marketing blocks.
-
-- [ ] **Unit 4: Finish the closing conversion section, responsive polish, and regression coverage**
+- [x] **Unit 4: Finish the closing conversion section, responsive polish, and regression coverage**
 
 **Goal:** Land the page with a strong contact-oriented close, verify responsive behavior, and protect the new homepage structure with focused tests.
 
@@ -246,12 +259,14 @@ apps/web/lib/
 **Dependencies:** Units 1, 2, and 3
 
 **Files:**
+
 - Create: `apps/web/components/landing/contact-cta.tsx`
 - Create: `apps/web/components/landing/contact-cta.test.tsx`
 - Modify: `apps/web/app/(main)/page.tsx`
 - Test: `apps/web/app/(main)/page.test.tsx`
 
 **Approach:**
+
 - Add a closing CTA section that uses the slogan, direct contact routes, and a compact restatement of the platform promise.
 - Use stable CTA endpoints that fit current scope: `mailto:hello@specus.org`, external site link to `https://procurelens.org`, and a placeholder LinkedIn destination that is easy to replace later.
 - Confirm spacing, stacking, and section transitions across mobile and desktop, including the visual handoff into the existing footer.
@@ -261,10 +276,12 @@ apps/web/lib/
 **Execution note:** Start with a failing homepage render test that asserts the new content landmarks and CTA links, then implement the closing conversion section and final page composition against those expectations.
 
 **Patterns to follow:**
+
 - `apps/web/components/footer/footer.test.tsx` and `apps/web/components/footer/footer-links.test.tsx` for current test style.
 - `apps/web/components/footer.tsx` for page-to-footer spacing expectations at the end of a public route.
 
 **Test scenarios:**
+
 - Happy path: closing CTA section renders the contact email and external site link with accessible names and valid `href` values.
 - Happy path: homepage render includes mission-aligned headline copy plus a closing conversion section near the footer boundary.
 - Edge case: external links render safely and do not replace the internal navigation shell.
@@ -272,6 +289,7 @@ apps/web/lib/
 - Integration: the homepage retains the shared navbar and footer while rendering all major landing sections in sequence.
 
 **Verification:**
+
 - The landing page ends with a clear next step instead of an abrupt drop into the footer.
 - Focused tests protect the main homepage landmarks, metrics, and CTA destinations.
 
@@ -286,13 +304,15 @@ apps/web/lib/
 
 ## Risks & Dependencies
 
-| Risk | Mitigation |
-|------|------------|
-| Landing page drifts into generic SaaS-template design | Anchor the implementation in the provided mission, principles, data-source trust signals, and existing brand tokens rather than generic filler copy |
-| Long supplied content overwhelms the page and hurts scanability | Normalize content into concise cards, metrics, and section summaries inside `apps/web/lib/landing-content.ts` |
-| Brand-name inconsistency (`Specus` vs `Procure Lens`) creates confusing hero copy | Treat `Specus` as primary brand and keep other naming secondary until the product language is clarified |
-| Homepage-specific styling leaks into other pages | Scope any new CSS helpers to landing-page classes or page-local composition patterns |
-| Tests become too brittle for future copy refinement | Assert section landmarks, key proof points, and CTA destinations rather than exact paragraph text everywhere |
+
+| Risk                                                                              | Mitigation                                                                                                                                          |
+| --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Landing page drifts into generic SaaS-template design                             | Anchor the implementation in the provided mission, principles, data-source trust signals, and existing brand tokens rather than generic filler copy |
+| Long supplied content overwhelms the page and hurts scanability                   | Normalize content into concise cards, metrics, and section summaries inside `apps/web/lib/landing-content.ts`                                       |
+| Brand-name inconsistency (`Specus` vs `Procure Lens`) creates confusing hero copy | Treat `Specus` as primary brand and keep other naming secondary until the product language is clarified                                             |
+| Homepage-specific styling leaks into other pages                                  | Scope any new CSS helpers to landing-page classes or page-local composition patterns                                                                |
+| Tests become too brittle for future copy refinement                               | Assert section landmarks, key proof points, and CTA destinations rather than exact paragraph text everywhere                                        |
+
 
 ## Documentation / Operational Notes
 
