@@ -6,6 +6,7 @@ import {
   FolderTree,
   Tag,
   FileType2,
+  PanelsTopLeft,
   Upload,
   Activity,
 } from 'lucide-react';
@@ -59,6 +60,11 @@ export const navigation: NavGroup[] = [
         title: 'Page Types',
         href: '/page-types',
         icon: FileType2,
+      },
+      {
+        title: 'Footer Groups',
+        href: '/footer-groups',
+        icon: PanelsTopLeft,
       },
       {
         title: 'Uploads',
