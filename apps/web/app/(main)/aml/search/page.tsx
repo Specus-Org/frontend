@@ -1,5 +1,6 @@
 'use client';
 
+import { AMLSearchLoadingState } from '@/components/aml/loading-states';
 import { NoMatchesSection } from '@/components/aml/no-matches-section';
 import { SearchResultList } from '@/components/aml/search-result-list';
 import { screeningSearch, ScreeningSearchResult } from '@specus/api-client';
@@ -10,7 +11,7 @@ import React, { Suspense, useEffect, useState } from 'react';
 
 export default function AMLSearchPage(): React.ReactElement {
   return (
-    <Suspense fallback={<SearchSkeleton />}>
+    <Suspense fallback={<AMLSearchLoadingState />}>
       <AMLSearchContent />
     </Suspense>
   );
@@ -92,7 +93,7 @@ function AMLSearchContent(): React.ReactElement {
       </div>
 
       <div className="py-8 space-y-8 mb-40">
-        {loading && <SearchSkeleton />}
+        {loading && <AMLSearchLoadingState />}
 
         {error && <p className="text-sm text-red-600">Failed to load results. Please try again.</p>}
 
@@ -100,22 +101,6 @@ function AMLSearchContent(): React.ReactElement {
 
         {!loading && !error && results.length > 0 && <SearchResultList entities={results} />}
       </div>
-    </div>
-  );
-}
-
-function SearchSkeleton() {
-  return (
-    <div className="space-y-4 animate-pulse">
-      {Array.from({ length: 3 }).map((_, i) => (
-        <div key={i} className="flex items-center gap-4 rounded-2xl bg-slate-50 p-4">
-          <div className="h-16 w-16 rounded-lg bg-gray-200 shrink-0 sm:h-24 sm:w-24" />
-          <div className="flex-1 space-y-3">
-            <div className="h-5 w-48 rounded bg-gray-200" />
-            <div className="h-4 w-32 rounded bg-gray-200" />
-          </div>
-        </div>
-      ))}
     </div>
   );
 }

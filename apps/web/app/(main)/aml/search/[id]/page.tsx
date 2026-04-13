@@ -1,6 +1,7 @@
 'use client';
 
 import { BiographySection } from '@/components/aml/biography-section';
+import { AMLEntityDetailLoadingState } from '@/components/aml/loading-states';
 import { ListedInSection } from '@/components/aml/listed-in-section';
 import { SearchResultHeader } from '@/components/aml/search-result-header';
 import { getScreeningEntity, ScreeningEntity } from '@specus/api-client';
@@ -75,7 +76,7 @@ export default function AMLEntityDetailPage(): React.ReactElement {
         </div>
 
         <div className="py-8 space-y-8 mb-40">
-          {loading && <DetailSkeleton />}
+          {loading && <AMLEntityDetailLoadingState />}
 
           {!loading && (error || !entity) && (
             <p className="text-sm text-red-600">
@@ -91,33 +92,11 @@ export default function AMLEntityDetailPage(): React.ReactElement {
 }
 
 function EntityDetail({ entity }: { entity: ScreeningEntity }) {
-  const sanctionsSources =
-    entity.sanctions
-      ?.map((s) => s.sanctions_list)
-      .filter((s): s is NonNullable<typeof s> => s != null) ?? [];
-
   return (
     <>
       <SearchResultHeader entity={entity} />
       <BiographySection entityType={entity.entity_type} typeFields={entity.type_fields} />
-      {sanctionsSources.length > 0 && <ListedInSection items={sanctionsSources} />}
+      {entity.sanctions.length > 0 && <ListedInSection items={entity.sanctions} />}
     </>
-  );
-}
-
-function DetailSkeleton() {
-  return (
-    <div className="space-y-6 animate-pulse">
-      <div className="h-8 w-64 rounded bg-gray-200" />
-      <div className="h-5 w-24 rounded bg-gray-200" />
-      <div className="flex flex-col gap-6 mt-8 sm:flex-row">
-        <div className="h-24 w-24 rounded-lg bg-gray-200 shrink-0 sm:h-40 sm:w-40" />
-        <div className="flex-1 space-y-3">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-5 w-full rounded bg-gray-200" />
-          ))}
-        </div>
-      </div>
-    </div>
   );
 }

@@ -9,12 +9,14 @@ export default function MainLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <>
+    <div className="flex min-h-screen flex-col">
       <Suspense>
         <Navbar />
       </Suspense>
-      <main className="rounded-t-xl rounded-b-xl border-t border-b">{children}</main>
+      <main className="flex-1 rounded-t-xl rounded-b-xl border-y">
+        {children}
+      </main>
       <Footer />
-    </>
+    </div>
   );
 }

@@ -1,7 +1,7 @@
 ---
 title: "feat: Integrate AML entity detail page with new API UI"
 type: feat
-status: active
+status: completed
 date: 2026-04-13
 ---
 
@@ -111,7 +111,7 @@ flowchart TD
 
 ## Implementation Units
 
-- [ ] **Unit 1: Rewire the AML detail route to pass the new entity detail data to dedicated sections**
+- [x] **Unit 1: Rewire the AML detail route to pass the new entity detail data to dedicated sections**
 
 **Goal:** Make the route boundary pass the right API data shapes into the page sections so the UI can consume the updated contract without relying on summary-only data.
 
@@ -143,7 +143,7 @@ flowchart TD
 **Verification:**
 - The detail route continues to load by id and the page sections now receive event-level sanction data instead of summary-only sources.
 
-- [ ] **Unit 2: Add recursive biodata formatting for heterogeneous `type_fields` values**
+- [x] **Unit 2: Add recursive biodata formatting for heterogeneous `type_fields` values**
 
 **Goal:** Replace naive stringification in `BiographySection` with a formatter that renders primitives, arrays, and nested objects safely.
 
@@ -184,7 +184,7 @@ flowchart TD
 - No biodata value on the detail page renders as `[object Object]`.
 - Nested object content is visible as labeled sub-rows and array content is readable as comma-separated text.
 
-- [ ] **Unit 3: Replace sanction-history placeholders with ordered event detail rows and optional link actions**
+- [x] **Unit 3: Replace sanction-history placeholders with ordered event detail rows and optional link actions**
 
 **Goal:** Render each sanction entry using the requested fixed field order and show a link button only when the payload exposes a usable URL.
 
@@ -222,7 +222,7 @@ flowchart TD
 - The section no longer contains placeholder labels or fake values.
 - Sanction rows always follow the requested order and empty values are not shown.
 
-- [ ] **Unit 4: Add targeted AML detail regression coverage in `apps/web`**
+- [x] **Unit 4: Add targeted AML detail regression coverage in `apps/web`**
 
 **Goal:** Protect the new recursive biodata and sanction-history behavior with focused component-level tests that fit the repo’s current Vitest setup.
 

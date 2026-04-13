@@ -11,13 +11,6 @@ export function EntityItem({ entity }: EntityItemProps): React.ReactElement {
   const imageSrc =
     entity.entity_type === 'person' ? '/images/img_individual.webp' : '/images/img_company.webp';
 
-  const typeFields = entity.type_fields ?? {};
-  const subtitle = Object.values(typeFields)
-    .filter((v) => v != null && String(v).trim() !== '')
-    .map(String)
-    .slice(0, 2)
-    .join(' • ');
-
   return (
     <Link
       href={`/aml/search/${entity.id}`}
