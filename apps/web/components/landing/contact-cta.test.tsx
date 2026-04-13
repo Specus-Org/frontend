@@ -19,10 +19,7 @@ vi.mock('next/link', () => ({
 describe('ContactCta', () => {
   it('renders the closing CTA and contact destinations', () => {
     render(
-      <ContactCta
-        slogan={landingContent.slogan}
-        contactLinks={landingContent.contactLinks}
-      />,
+      <ContactCta slogan={landingContent.slogan} contactLinks={landingContent.contactLinks} />,
     );
 
     expect(
@@ -34,9 +31,9 @@ describe('ContactCta', () => {
       'href',
       'mailto:hello@specus.org',
     );
-    expect(screen.getByRole('link', { name: /visit procurelens.org/i })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: /visit specus.biz/i })).toHaveAttribute(
       'href',
-      'https://procurelens.org',
+      'https://specus.biz',
     );
     expect(screen.getByRole('link', { name: /linkedin \(coming soon\)/i })).toBeInTheDocument();
   });

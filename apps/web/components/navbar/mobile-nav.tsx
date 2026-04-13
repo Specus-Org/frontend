@@ -6,7 +6,13 @@ import React from 'react';
 import { Menu, LogOut, User } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { Button } from '@specus/ui/components/button';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@specus/ui/components/sheet';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@specus/ui/components/sheet';
 import { Avatar, AvatarFallback, AvatarImage } from '@specus/ui/components/avatar';
 import { NavItem } from '@/components/navbar/nav-items';
 
@@ -25,7 +31,12 @@ interface MobileNavProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export default function MobileNav({ items, currentPath, isOpen, onOpenChange }: MobileNavProps): React.ReactNode {
+export default function MobileNav({
+  items,
+  currentPath,
+  isOpen,
+  onOpenChange,
+}: MobileNavProps): React.ReactNode {
   const { data: session } = useSession();
   const handleMenuItemClick = () => {
     onOpenChange(false);
@@ -41,12 +52,7 @@ export default function MobileNav({ items, currentPath, isOpen, onOpenChange }: 
       <SheetContent side="right" className="w-72">
         <SheetHeader className="border-b pb-4">
           <SheetTitle>
-            <Image
-              src="/images/img_logo_procurement.webp"
-              width={190}
-              height={56}
-              alt="Lexicon Procurement Logo"
-            />
+            <Image src="/ic_logo_transparent.png" width={50} height={56} alt="Specus Logo" />
           </SheetTitle>
         </SheetHeader>
 

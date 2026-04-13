@@ -31,6 +31,16 @@ vi.mock('next/link', () => ({
   ),
 }));
 
+vi.mock('next/image', () => ({
+  default: ({
+    src,
+    alt,
+    ...props
+  }: React.ImgHTMLAttributes<HTMLImageElement> & { src: string; alt: string }) => (
+    <img src={src} alt={alt} {...props} />
+  ),
+}));
+
 describe('Footer', () => {
   beforeEach(() => {
     publicGetFooter.mockReset();
@@ -77,6 +87,7 @@ describe('Footer', () => {
 
     render(await Footer());
 
+    expect(screen.getByRole('img', { name: 'Specus logo' })).toHaveAttribute('src', '/ic_logo.png');
     expect(screen.getByRole('heading', { name: 'Products' })).toBeInTheDocument();
     expect(screen.queryByRole('heading', { name: 'Company' })).not.toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Insights' })).toBeInTheDocument();

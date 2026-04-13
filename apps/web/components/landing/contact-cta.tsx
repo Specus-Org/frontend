@@ -8,18 +8,12 @@ interface ContactCtaProps {
   contactLinks: readonly ContactLink[];
 }
 
-export function ContactCta({
-  slogan,
-  contactLinks,
-}: ContactCtaProps): React.ReactElement {
+export function ContactCta({ slogan, contactLinks }: ContactCtaProps): React.ReactElement {
   const emailLink = contactLinks.find((link) => link.href.startsWith('mailto:'));
-  const websiteLink = contactLinks.find((link) => link.href.startsWith('https://procurelens.org'));
-  const socialLinks = contactLinks.filter(
-    (link) => link !== emailLink && link !== websiteLink,
-  );
+  const socialLinks = contactLinks.filter((link) => link !== emailLink);
 
   return (
-    <section className="px-4 pb-16 pt-4 sm:px-6 md:px-8 md:pb-20">
+    <section className="px-4 sm:px-6 md:px-8 md:py-20">
       <div className="mx-auto max-w-7xl overflow-hidden rounded-[2rem] border border-border/60 bg-[linear-gradient(145deg,rgba(25,46,73,1),rgba(3,61,139,0.95))] px-6 py-10 text-white shadow-[0_28px_96px_-48px_rgba(25,46,73,0.75)] md:px-10 md:py-12">
         <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
           <div>
@@ -42,18 +36,13 @@ export function ContactCta({
 
             <div className="mt-6 flex flex-col gap-3">
               {emailLink ? (
-                <Button asChild size="lg" className="justify-between rounded-full bg-white text-primary hover:bg-white/90">
+                <Button
+                  asChild
+                  size="lg"
+                  className="justify-between rounded-full bg-white text-primary hover:bg-white/90"
+                >
                   <Link href={emailLink.href}>
                     Email Specus
-                    <ArrowRight className="size-4" />
-                  </Link>
-                </Button>
-              ) : null}
-
-              {websiteLink ? (
-                <Button asChild variant="outline" size="lg" className="justify-between rounded-full border-white/20 bg-transparent text-white hover:bg-white/10 hover:text-white">
-                  <Link href={websiteLink.href} target="_blank" rel="noreferrer">
-                    {websiteLink.label}
                     <ArrowRight className="size-4" />
                   </Link>
                 </Button>

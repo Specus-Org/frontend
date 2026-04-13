@@ -150,9 +150,8 @@ export const landingContent = {
   workflow: [
     {
       step: '01',
-      title: 'Upload or search vendor details',
-      description:
-        'Start with the supplier information you already have, whether that is a vendor name, entity details, or onboarding documentation.',
+      title: 'Search vendor details',
+      description: 'Start with the supplier information you already have, vendor name.',
     },
     {
       step: '02',
@@ -210,11 +209,6 @@ export const landingContent = {
     {
       label: 'Contact Specus',
       href: 'mailto:hello@specus.org',
-    },
-    {
-      label: 'Visit procurelens.org',
-      href: 'https://procurelens.org',
-      external: true,
     },
     {
       label: 'LinkedIn',

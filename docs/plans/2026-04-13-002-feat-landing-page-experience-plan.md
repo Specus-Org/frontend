@@ -1,5 +1,5 @@
 ---
-title: "feat: Build Specus marketing landing page"
+title: 'feat: Build Specus marketing landing page'
 type: feat
 status: completed
 date: 2026-04-13
@@ -90,7 +90,7 @@ Because there is no upstream brainstorm document, this plan uses the user-suppli
 
 ## High-Level Technical Design
 
-> *This illustrates the intended approach and is directional guidance for review, not implementation specification. The implementing agent should treat it as context, not code to reproduce.*
+> _This illustrates the intended approach and is directional guidance for review, not implementation specification. The implementing agent should treat it as context, not code to reproduce._
 
 ```text
 apps/web/app/(main)/page.tsx
@@ -184,7 +184,7 @@ apps/web/lib/
 - Use the existing design tokens but add landing-page-specific utility classes or CSS variables where needed for richer section backgrounds, gradients, and spacing rhythm.
 - Ensure the first screen works on mobile without collapsing into an unreadable text wall or forcing all trust signals below the fold.
 
-**Technical design:** *(directional guidance, not implementation specification)*
+**Technical design:** _(directional guidance, not implementation specification)_
 
 - Hero should prioritize a left-aligned or split-layout composition on desktop, with proof metrics either embedded beneath the headline or immediately below as a trust strip.
 - The principles section should read as brand foundation, not feature list repetition.
@@ -268,7 +268,7 @@ apps/web/lib/
 **Approach:**
 
 - Add a closing CTA section that uses the slogan, direct contact routes, and a compact restatement of the platform promise.
-- Use stable CTA endpoints that fit current scope: `mailto:hello@specus.org`, external site link to `https://procurelens.org`, and a placeholder LinkedIn destination that is easy to replace later.
+- Use stable CTA endpoints that fit current scope: `mailto:hello@specus.org`, external site link to `https://specus.biz`, and a placeholder LinkedIn destination that is easy to replace later.
 - Confirm spacing, stacking, and section transitions across mobile and desktop, including the visual handoff into the existing footer.
 - Reuse the existing `apps/web` Vitest setup to cover homepage render structure, CTA presence, and key content groups without overbuilding snapshot-heavy tests.
 - Keep test coverage focused on stable content landmarks and semantic roles so future copy edits do not create noisy failures.
@@ -304,7 +304,6 @@ apps/web/lib/
 
 ## Risks & Dependencies
 
-
 | Risk                                                                              | Mitigation                                                                                                                                          |
 | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Landing page drifts into generic SaaS-template design                             | Anchor the implementation in the provided mission, principles, data-source trust signals, and existing brand tokens rather than generic filler copy |
@@ -312,7 +311,6 @@ apps/web/lib/
 | Brand-name inconsistency (`Specus` vs `Procure Lens`) creates confusing hero copy | Treat `Specus` as primary brand and keep other naming secondary until the product language is clarified                                             |
 | Homepage-specific styling leaks into other pages                                  | Scope any new CSS helpers to landing-page classes or page-local composition patterns                                                                |
 | Tests become too brittle for future copy refinement                               | Assert section landmarks, key proof points, and CTA destinations rather than exact paragraph text everywhere                                        |
-
 
 ## Documentation / Operational Notes
 
