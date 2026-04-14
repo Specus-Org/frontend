@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import Image from 'next/image';
 import { auth } from '@specus/auth';
+import { isAuthenticatedSession } from '@specus/auth/session';
 import { Button } from '@specus/ui/components/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@specus/ui/components/card';
 import { LogOut, Mail, User } from 'lucide-react';
@@ -16,7 +17,7 @@ function getInitials(name: string): string {
 export default async function ProfilePage() {
   const session = await auth();
 
-  if (!session?.user) {
+  if (!isAuthenticatedSession(session)) {
     redirect('/auth/signin?callbackUrl=/profile');
   }
 

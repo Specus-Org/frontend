@@ -1,4 +1,5 @@
 import { Badge } from '@specus/ui/components/badge';
+import { formatDisplayDate } from '@/lib/date-format';
 
 interface ContentHeaderProps {
   title: string;
@@ -25,11 +26,7 @@ export function ContentHeader({
         <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
           {publishedAt ? (
             <time dateTime={publishedAt}>
-              {new Date(publishedAt).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              })}
+              {formatDisplayDate(publishedAt)}
             </time>
           ) : null}
           {publishedAt && author ? (

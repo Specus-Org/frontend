@@ -5,6 +5,7 @@ import Link from 'next/link';
 import React from 'react';
 import { Menu, LogOut, User } from 'lucide-react';
 import { useSession } from 'next-auth/react';
+import { isAuthenticatedSession } from '@specus/auth/session';
 import { Button } from '@specus/ui/components/button';
 import {
   Sheet,
@@ -38,6 +39,7 @@ export default function MobileNav({
   onOpenChange,
 }: MobileNavProps): React.ReactNode {
   const { data: session } = useSession();
+  const isAuthenticated = isAuthenticatedSession(session);
   const handleMenuItemClick = () => {
     onOpenChange(false);
   };
@@ -57,7 +59,7 @@ export default function MobileNav({
         </SheetHeader>
 
         {/* Authenticated: show user info at the top */}
-        {session?.user && (
+        {isAuthenticated && (
           <div className="flex items-center gap-3 border-b p-4">
             <Avatar>
               {session.user.image && (
@@ -96,7 +98,7 @@ export default function MobileNav({
 
           {/* Auth actions at the bottom */}
           <div className="mt-2 border-t pt-2">
-            {session?.user ? (
+            {isAuthenticated ? (
               <>
                 <Link
                   href="/profile"

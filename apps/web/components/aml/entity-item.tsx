@@ -14,12 +14,14 @@ export function EntityItem({ entity }: EntityItemProps): React.ReactElement {
   return (
     <Link
       href={`/aml/search/${entity.id}`}
-      className="flex w-full items-center gap-3 rounded-2xl bg-slate-50 px-2 py-3 transition-all duration-200 hover:border-gray-200 hover:shadow-md"
+      className="flex w-full min-w-0 items-center gap-3 rounded-2xl bg-slate-50 px-2 py-3 transition-all duration-200 hover:border-gray-200 hover:shadow-md"
     >
       <Image src={imageSrc} alt={entity.caption} width={96} height={96} />
 
-      <div className="mx-3 flex flex-col items-start">
-        <h3 className="text-foreground line-clamp-2 text-xl font-semibold">{entity.caption}</h3>
+      <div className="mx-3 min-w-0 flex flex-col items-start">
+        <h3 className="text-foreground line-clamp-2 break-words text-xl font-semibold">
+          {entity.caption}
+        </h3>
         {/* {subtitle && (
           <p className="text-muted-foreground text-sm">{subtitle}</p>
         )} */}

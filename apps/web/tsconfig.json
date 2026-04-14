@@ -5,6 +5,7 @@
       "@/*": ["./*"],
       "@specus/ui/*": ["../../packages/ui/src/*"],
       "@specus/auth": ["../../packages/auth/src/index.ts"],
+      "@specus/auth/session": ["../../packages/auth/src/session.ts"],
       "@specus/api-client": ["../../packages/api-client/src/generated/index.ts"],
       "@specus/api-client/*": ["../../packages/api-client/src/*"]
     }

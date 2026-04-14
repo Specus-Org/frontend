@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 import { auth } from '@specus/auth';
+import { isAuthenticatedSession } from '@specus/auth/session';
 import { AuthBreadcrumb } from '../breadcrumb';
 import { SignInForm } from './signin-form';
 
@@ -11,7 +12,7 @@ interface SignInPageProps {
 
 export default async function SignInPage({ searchParams }: SignInPageProps) {
   const session = await auth();
-  if (session) {
+  if (isAuthenticatedSession(session)) {
     redirect('/profile');
   }
 

@@ -13,7 +13,7 @@ export function SearchResultList({ entities }: SearchResultListProps): React.Rea
         <span className="font-semibold">{entities.length} Potential</span>{' '}
         <span className="text-muted-foreground">records found</span>
       </p>
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
         {entities.map((entity) => (
           <EntityItem key={entity.id} entity={entity} />
         ))}

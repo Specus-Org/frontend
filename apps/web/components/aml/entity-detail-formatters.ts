@@ -1,4 +1,5 @@
 import type { EntitySanction } from '@specus/api-client';
+import { tryFormatDisplayDate } from '@/lib/date-format';
 
 export interface DetailTextValue {
   kind: 'text';
@@ -30,15 +31,6 @@ const SANCTION_URL_PROPERTY_CANDIDATES = [
   'link',
   'list_url',
 ] as const;
-const DATE_ONLY_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/;
-const ISO_DATETIME_PATTERN = /^\d{4}-\d{2}-\d{2}T/;
-const DISPLAY_DATE_FORMATTER = new Intl.DateTimeFormat('en-US', {
-  month: 'long',
-  day: 'numeric',
-  year: 'numeric',
-  timeZone: 'UTC',
-});
-
 export function formatLabel(key: string): string {
   return key.replace(/_/g, ' ').replace(/\b\w/g, (character) => character.toUpperCase());
 }
@@ -59,32 +51,7 @@ function toDisplayText(value: unknown): string | null {
 }
 
 function formatDateValue(value: string): string | null {
-  const normalized = value.trim();
-
-  const dateOnlyMatch = normalized.match(DATE_ONLY_PATTERN);
-  if (dateOnlyMatch) {
-    const [, year, month, day] = dateOnlyMatch;
-    const date = new Date(Date.UTC(Number(year), Number(month) - 1, Number(day)));
-
-    if (
-      date.getUTCFullYear() === Number(year) &&
-      date.getUTCMonth() === Number(month) - 1 &&
-      date.getUTCDate() === Number(day)
-    ) {
-      return DISPLAY_DATE_FORMATTER.format(date);
-    }
-
-    return null;
-  }
-
-  if (ISO_DATETIME_PATTERN.test(normalized)) {
-    const parsed = new Date(normalized);
-    if (!Number.isNaN(parsed.getTime())) {
-      return DISPLAY_DATE_FORMATTER.format(parsed);
-    }
-  }
-
-  return null;
+  return tryFormatDisplayDate(value);
 }
 
 function toDetailDisplayText(value: unknown): string | null {
@@ -169,7 +136,7 @@ export function buildDetailRows(fields?: Record<string, unknown>): DetailFieldRo
 
 function toSanctionRow(label: SanctionFieldRow['label'], value: unknown): SanctionFieldRow | null {
   const text = toDisplayText(value);
-  return text ? { label, value: text } : null;
+  return text ? { label, value: formatDateValue(text) ?? text } : null;
 }
 
 export function buildSanctionRows(sanction: EntitySanction): SanctionFieldRow[] {

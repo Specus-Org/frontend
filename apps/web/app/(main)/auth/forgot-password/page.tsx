@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { auth } from '@specus/auth';
+import { isAuthenticatedSession } from '@specus/auth/session';
 import { CheckCircle2 } from 'lucide-react';
 import { AuthBreadcrumb } from '../breadcrumb';
 import { ForgotPasswordForm } from './forgot-password-form';
@@ -13,7 +14,7 @@ interface ForgotPasswordPageProps {
 
 export default async function ForgotPasswordPage({ searchParams }: ForgotPasswordPageProps) {
   const session = await auth();
-  if (session) {
+  if (isAuthenticatedSession(session)) {
     redirect('/profile');
   }
 

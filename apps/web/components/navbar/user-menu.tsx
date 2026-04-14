@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect } from 'react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
+import { isAuthenticatedSession } from '@specus/auth/session';
 import { LogOut, User } from 'lucide-react';
 import { Button } from '@specus/ui/components/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@specus/ui/components/avatar';
@@ -25,14 +25,7 @@ function getInitials(name: string): string {
 
 export default function UserMenu(): React.ReactNode {
   const { data: session, status } = useSession();
-
-  useEffect(() => {
-    if (session?.error === 'RefreshTokenError') {
-      window.location.assign('/auth/signin');
-    }
-  }, [session?.error]);
-
-  if (session?.error === 'RefreshTokenError') return null;
+  const isAuthenticated = isAuthenticatedSession(session);
 
   // Loading state — fixed-size skeleton to prevent layout shift
   if (status === 'loading') {
@@ -40,7 +33,7 @@ export default function UserMenu(): React.ReactNode {
   }
 
   // Unauthenticated — show sign-in button
-  if (!session?.user) {
+  if (!isAuthenticated) {
     return (
       <Button size="sm" asChild>
         <Link href="/auth/signin">Sign in</Link>

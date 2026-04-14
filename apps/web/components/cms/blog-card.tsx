@@ -7,6 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@specus/ui/components/card';
+import { formatDisplayDate } from '@/lib/date-format';
 import Link from 'next/link';
 
 interface BlogCardProps {
@@ -14,13 +15,7 @@ interface BlogCardProps {
 }
 
 export function BlogCard({ post }: BlogCardProps) {
-  const publishedDate = post.published_at
-    ? new Date(post.published_at).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-      })
-    : null;
+  const publishedDate = post.published_at ? formatDisplayDate(post.published_at) : null;
 
   return (
     <Link href={`/blog/${post.slug}`} className="group">

@@ -54,7 +54,7 @@ describe('entity detail formatters', () => {
 
     expect(rows).toEqual([
       { label: 'Program', value: 'OFAC SDN' },
-      { label: 'Designation Date', value: '2024-10-01' },
+      { label: 'Designation Date', value: 'October 1, 2024' },
       { label: 'Remarks', value: 'Listed for enforcement action' },
     ]);
   });

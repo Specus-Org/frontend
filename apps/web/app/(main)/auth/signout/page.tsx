@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { auth } from '@specus/auth';
+import { isAuthenticatedSession } from '@specus/auth/session';
 import { Button } from '@specus/ui/components/button';
 import { LogOut } from 'lucide-react';
 import { AuthBreadcrumb } from '../breadcrumb';
@@ -9,7 +10,7 @@ export const metadata = { title: 'Sign out' };
 
 export default async function SignOutPage() {
   const session = await auth();
-  if (!session) {
+  if (!isAuthenticatedSession(session)) {
     redirect('/auth/signin');
   }
 

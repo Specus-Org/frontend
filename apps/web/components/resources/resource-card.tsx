@@ -5,6 +5,7 @@ import { Copy, ExternalLink, FileText, ImageIcon } from 'lucide-react';
 import { Badge } from '@specus/ui/components/badge';
 import { Button } from '@specus/ui/components/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@specus/ui/components/card';
+import { formatDisplayDate } from '@/lib/date-format';
 import type { CmsUploadPublic } from '@/types/uploads';
 
 interface ResourceCardProps {
@@ -16,14 +17,6 @@ function formatFileSize(bytes?: number | null): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
-
-function formatDate(dateString: string) {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  });
 }
 
 export function ResourceCard({ upload }: ResourceCardProps) {
@@ -100,7 +93,7 @@ export function ResourceCard({ upload }: ResourceCardProps) {
         <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
           <span>{formatFileSize(upload.size_bytes)}</span>
           <span aria-hidden="true">&middot;</span>
-          <span>{formatDate(upload.created_at)}</span>
+          <span>{formatDisplayDate(upload.created_at)}</span>
         </div>
       </CardContent>
 
