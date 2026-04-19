@@ -11,7 +11,7 @@ describe('SolutionsGrid', () => {
       expect(screen.getByText(solution.title)).toBeInTheDocument();
 
       for (const bullet of solution.bullets) {
-        expect(screen.getByText(bullet)).toBeInTheDocument();
+        expect(screen.getByText(`– ${bullet}`)).toBeInTheDocument();
       }
     }
   });

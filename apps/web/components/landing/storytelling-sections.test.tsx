@@ -29,7 +29,7 @@ describe('Landing storytelling sections', () => {
     render(<CoverageSection trustedSources={landingContent.trustedSources} />);
 
     for (const source of landingContent.trustedSources) {
-      expect(screen.getByText(`· ${source}`)).toBeInTheDocument();
+      expect(screen.getByText(`– ${source}`)).toBeInTheDocument();
     }
   });
 });
