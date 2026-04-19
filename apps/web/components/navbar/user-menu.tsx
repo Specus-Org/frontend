@@ -1,7 +1,7 @@
 'use client';
 
-import Link from 'next/link';
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import { isAuthenticatedSession } from '@specus/auth/session';
 import { LogOut, User } from 'lucide-react';
 import { Button } from '@specus/ui/components/button';
@@ -14,6 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@specus/ui/components/dropdown-menu';
+import { openDialog } from '@/lib/auth-dialog';
 
 function getInitials(name: string): string {
   const parts = name.trim().split(/\s+/);
@@ -25,6 +26,7 @@ function getInitials(name: string): string {
 
 export default function UserMenu(): React.ReactNode {
   const { data: session, status } = useSession();
+  const router = useRouter();
   const isAuthenticated = isAuthenticatedSession(session);
 
   // Loading state — fixed-size skeleton to prevent layout shift
@@ -35,8 +37,8 @@ export default function UserMenu(): React.ReactNode {
   // Unauthenticated — show sign-in button
   if (!isAuthenticated) {
     return (
-      <Button size="sm" asChild>
-        <Link href="/auth/signin">Sign in</Link>
+      <Button size="sm" onClick={() => openDialog(router, 'login')}>
+        Sign in
       </Button>
     );
   }
@@ -65,11 +67,9 @@ export default function UserMenu(): React.ReactNode {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link href="/profile">
-            <User className="size-4" />
-            Profile
-          </Link>
+        <DropdownMenuItem onSelect={() => openDialog(router, 'profile')}>
+          <User className="size-4" />
+          Profile
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
@@ -77,7 +77,7 @@ export default function UserMenu(): React.ReactNode {
             // POST to federated signout for full OIDC logout
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = '/api/auth/federated-signout';
+            form.action = '/api/auth/logout';
             document.body.appendChild(form);
             form.submit();
           }}

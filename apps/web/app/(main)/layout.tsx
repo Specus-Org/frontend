@@ -2,6 +2,7 @@ import type React from 'react';
 import { Suspense } from 'react';
 import Navbar from '@/components/navbar';
 import Footer from '@/components/footer';
+import { AuthDialogManager } from '@/components/auth/auth-dialog-manager';
 
 export default function MainLayout({
   children,
@@ -17,6 +18,9 @@ export default function MainLayout({
         {children}
       </main>
       <Footer />
+      <Suspense fallback={null}>
+        <AuthDialogManager />
+      </Suspense>
     </div>
   );
 }

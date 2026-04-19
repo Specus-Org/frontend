@@ -6,19 +6,19 @@ export interface NavItem {
 
 export const navItems: NavItem[] = [
   {
-    labelKey: 'Insights',
-    value: 'insight',
-    href: '/insight',
+    labelKey: 'Bangladesh',
+    value: 'bangladesh',
+    href: '/bangladesh',
   },
   {
-    labelKey: 'Resources',
-    value: 'resources',
-    href: '/resources',
+    labelKey: 'Indonesia',
+    value: 'indonesia',
+    href: '/indonesia',
   },
   {
-    labelKey: 'Profiling',
-    value: 'profiling',
-    href: '/profiling',
+    labelKey: 'Paraguay',
+    value: 'paraguay',
+    href: '/paraguay',
   },
   {
     labelKey: 'AML Screening',

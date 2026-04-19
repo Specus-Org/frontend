@@ -108,7 +108,7 @@ export default function MobileNav({
                   <User className="size-4" />
                   <span className="text-base font-medium">Profile</span>
                 </Link>
-                <form method="POST" action="/api/auth/federated-signout">
+                <form method="POST" action="/api/auth/logout">
                   <button
                     type="submit"
                     onClick={handleMenuItemClick}

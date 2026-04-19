@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
+import { getAuthSecret } from '@/lib/api';
 
 async function clearSessionCookies() {
   const cookieStore = await cookies();
@@ -15,7 +16,6 @@ async function clearSessionCookies() {
 }
 
 export async function POST(request: NextRequest) {
-  // CSRF protection: verify the request Origin matches the app host
   const origin = request.headers.get('origin');
   const host = request.headers.get('host');
   if (!origin || !host) {
@@ -25,11 +25,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'CSRF validation failed' }, { status: 403 });
   }
 
-  // Get the raw JWT to retrieve the refresh token (auth() session doesn't include it)
-  const token = await getToken({ req: request });
+  const token = await getToken({ req: request, secret: getAuthSecret() });
   const refreshToken = token?.refresh_token as string | undefined;
 
-  // Revoke the refresh token via the backend
   if (refreshToken) {
     const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:8080';
     try {
@@ -44,14 +42,11 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  // Clear all Auth.js session cookies
   await clearSessionCookies();
 
-  // Redirect to home
   return NextResponse.redirect(new URL('/', request.nextUrl.origin));
 }
 
-// Reject non-POST requests
 export async function GET() {
   return NextResponse.json({ error: 'Method not allowed' }, { status: 405 });
 }

@@ -28,7 +28,7 @@ export default async function SignOutPage() {
       </div>
 
       <div className="flex flex-col gap-3" role="group" aria-label="Sign out actions">
-        <form method="POST" action="/api/auth/federated-signout">
+        <form method="POST" action="/api/auth/logout">
           <Button type="submit" className="w-full" size="lg">
             Sign out
           </Button>
