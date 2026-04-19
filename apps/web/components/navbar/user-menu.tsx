@@ -29,15 +29,13 @@ export default function UserMenu(): React.ReactNode {
   const router = useRouter();
   const isAuthenticated = isAuthenticatedSession(session);
 
-  // Loading state — fixed-size skeleton to prevent layout shift
   if (status === 'loading') {
     return <div className="size-8 animate-pulse rounded-full bg-muted" />;
   }
 
-  // Unauthenticated — show sign-in button
   if (!isAuthenticated) {
     return (
-      <Button size="sm" onClick={() => openDialog(router, 'login')}>
+      <Button className="bg-brand" size="sm" onClick={() => openDialog(router, 'login')}>
         Sign in
       </Button>
     );
@@ -61,9 +59,7 @@ export default function UserMenu(): React.ReactNode {
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col gap-1">
             {name && <p className="text-sm font-medium leading-none">{name}</p>}
-            {email && (
-              <p className="text-xs leading-none text-muted-foreground">{email}</p>
-            )}
+            {email && <p className="text-xs leading-none text-muted-foreground">{email}</p>}
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -74,7 +70,6 @@ export default function UserMenu(): React.ReactNode {
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onSelect={() => {
-            // POST to federated signout for full OIDC logout
             const form = document.createElement('form');
             form.method = 'POST';
             form.action = '/api/auth/logout';

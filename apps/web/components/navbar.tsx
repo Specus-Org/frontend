@@ -65,10 +65,8 @@ export default function Navbar(): React.ReactNode {
           </svg>
         </Link>
 
-        {/* Desktop Navigation */}
         <DesktopNav items={navItems} currentPath={path} />
 
-        {/* Mobile Navigation */}
         <MobileNav items={navItems} currentPath={path} isOpen={isOpen} onOpenChange={setIsOpen} />
       </nav>
     </header>
