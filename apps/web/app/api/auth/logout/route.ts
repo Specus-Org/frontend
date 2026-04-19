@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
 
   await clearSessionCookies();
 
-  return NextResponse.redirect(new URL('/', request.nextUrl.origin));
+  return NextResponse.redirect(new URL('/', request.url));
 }
 
 export async function GET() {
