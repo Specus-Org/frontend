@@ -1,35 +1,32 @@
 import React from 'react';
-import { CoverageSection } from '@/components/landing/coverage-section';
-import { ContactCta } from '@/components/landing/contact-cta';
 import { LandingHero } from '@/components/landing/landing-hero';
+import { VisionMissionSection } from '@/components/landing/vision-mission-section';
 import { SolutionsGrid } from '@/components/landing/solutions-grid';
 import { WorkflowSection } from '@/components/landing/workflow-section';
+import { PlatformsSection } from '@/components/landing/platforms-section';
+import { CoverageSection } from '@/components/landing/coverage-section';
+import { ContactCta } from '@/components/landing/contact-cta';
 import { landingContent } from '@/lib/landing-content';
 
 export default async function HomePage(): Promise<React.ReactElement> {
   return (
     <div className="bg-background text-foreground">
       <LandingHero
-        announcement={landingContent.announcement}
         title={landingContent.heroTitle}
         description={landingContent.heroDescription}
-        slogan={landingContent.slogan}
-        metrics={landingContent.heroMetrics}
       />
-      {/* <TrustStrip
-        metrics={landingContent.heroMetrics}
-        trustedSources={landingContent.trustedSources}
-      /> */}
-      {/* <PrinciplesSection
-        mission={landingContent.mission}
+      <VisionMissionSection
         vision={landingContent.vision}
-        principles={landingContent.principles}
-      /> */}
+        mission={landingContent.mission}
+      />
       <SolutionsGrid solutions={landingContent.solutions} />
       <WorkflowSection steps={landingContent.workflow} />
+      <PlatformsSection platforms={landingContent.platforms} />
       <CoverageSection trustedSources={landingContent.trustedSources} />
-      {/* <RoadmapSection roadmap={landingContent.roadmap} /> */}
-      <ContactCta slogan={landingContent.slogan} contactLinks={landingContent.contactLinks} />
+      <ContactCta
+        announcement={landingContent.announcement}
+        contactLinks={landingContent.contactLinks}
+      />
     </div>
   );
 }

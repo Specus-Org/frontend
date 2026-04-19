@@ -17,24 +17,21 @@ vi.mock('next/link', () => ({
 }));
 
 describe('ContactCta', () => {
-  it('renders the closing CTA and contact destinations', () => {
+  it('renders the closing CTA with contact and get started links', () => {
     render(
-      <ContactCta slogan={landingContent.slogan} contactLinks={landingContent.contactLinks} />,
+      <ContactCta
+        announcement={landingContent.announcement}
+        contactLinks={landingContent.contactLinks}
+      />,
     );
 
     expect(
-      screen.getByRole('heading', {
-        name: /ready to bring secure, compliant procurement into one trusted workflow/i,
-      }),
+      screen.getByText(/trusted procurement intelligence for secure, compliant vendor decisions/i),
     ).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /email specus/i })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: /contact us/i })).toHaveAttribute(
       'href',
       'mailto:hello@specus.org',
     );
-    expect(screen.getByRole('link', { name: /visit specus.biz/i })).toHaveAttribute(
-      'href',
-      'https://specus.biz',
-    );
-    expect(screen.getByRole('link', { name: /linkedin \(coming soon\)/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /get started/i })).toHaveAttribute('href', '/aml');
   });
 });

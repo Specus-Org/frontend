@@ -16,34 +16,21 @@ vi.mock('next/link', () => ({
 }));
 
 describe('HomePage', () => {
-  it('renders the landing page with the primary brand and proof metrics', async () => {
+  it('renders the primary hero heading', async () => {
     render(await HomePage());
 
     expect(
-      screen.getByRole('heading', {
-        name: /build ethical procurement with intelligence you can verify/i,
-      }),
+      screen.getByRole('heading', { name: /building trust in global business/i }),
     ).toBeInTheDocument();
-    expect(screen.getByText('3+')).toBeInTheDocument();
-    expect(screen.getByText('3')).toBeInTheDocument();
-    expect(screen.getByText('<5s')).toBeInTheDocument();
   });
 
-  it('renders the primary calls to action and key section landmarks', async () => {
+  it('renders the primary calls to action', async () => {
     render(await HomePage());
 
-    expect(screen.getByRole('link', { name: /start a screening/i })).toHaveAttribute(
-      'href',
-      '/aml',
-    );
-    expect(screen.getByRole('link', { name: /contact specus/i })).toHaveAttribute(
+    expect(screen.getAllByRole('link', { name: /get started/i })[0]).toHaveAttribute('href', '/aml');
+    expect(screen.getAllByRole('link', { name: /contact us/i })[0]).toHaveAttribute(
       'href',
       'mailto:hello@specus.org',
     );
-    expect(
-      screen.getByRole('heading', { name: /solutions built for modern procurement teams/i }),
-    ).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /how specus works/i })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /2026 roadmap/i })).toBeInTheDocument();
   });
 });

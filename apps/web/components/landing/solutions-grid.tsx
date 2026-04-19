@@ -1,5 +1,4 @@
 import { Activity, BadgeAlert, FileCheck2, GitFork, MapPinned, ShieldAlert } from 'lucide-react';
-import { Card, CardContent, CardHeader } from '@specus/ui/components/card';
 import type { Solution } from '@/lib/landing-content';
 
 const solutionIcons = [
@@ -17,52 +16,34 @@ interface SolutionsGridProps {
 
 export function SolutionsGrid({ solutions }: SolutionsGridProps): React.ReactElement {
   return (
-    <section className="border-y border-border/60 bg-secondary/35">
-      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 md:px-8 md:py-20">
-        <div className="max-w-3xl">
-          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-primary/80">
-            Core solutions
-          </p>
-          <h2 className="mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
-            Solutions built for modern procurement teams
-          </h2>
-          <p className="mt-4 text-base leading-8 text-muted-foreground">
-            Each capability is designed to turn fragmented risk checks into a consistent,
-            explainable decision workflow for procurement, compliance, and leadership teams.
-          </p>
-        </div>
+    <section className="border-b border-border/60 bg-background">
+      <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 md:px-8 md:py-20">
+        <p className="mx-auto max-w-2xl text-center text-lg font-medium leading-8 text-foreground">
+          Each capability is designed to turn fragmented risk checks into a consistent, explainable
+          decision workflow.
+        </p>
 
-        <div className="mt-10 grid gap-5 lg:grid-cols-2 xl:grid-cols-3">
+        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {solutions.map((solution, index) => {
             const Icon = solutionIcons[index % solutionIcons.length];
-
             return (
-              <Card
+              <div
                 key={solution.title}
-                className="h-full border-border/60 bg-background shadow-[0_20px_48px_-32px_rgba(25,46,73,0.2)]"
+                className="rounded-xl border border-border/60 bg-background p-5"
               >
-                <CardHeader className="gap-4">
-                  <div className="flex size-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                    <Icon className="size-5" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-semibold text-foreground">{solution.title}</h3>
-                    <p className="mt-2 text-sm leading-7 text-muted-foreground">
-                      {solution.description}
-                    </p>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-3 text-sm leading-6 text-foreground/85">
-                    {solution.bullets.map((bullet) => (
-                      <li key={bullet} className="flex items-start gap-3">
-                        <span className="mt-2 block size-1.5 shrink-0 rounded-full bg-primary" />
-                        <span>{bullet}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-              </Card>
+                <div className="flex size-9 items-center justify-center rounded-lg bg-primary/8 text-primary">
+                  <Icon className="size-4" />
+                </div>
+                <h3 className="mt-3 text-sm font-semibold text-foreground">{solution.title}</h3>
+                <ul className="mt-3 space-y-1.5">
+                  {solution.bullets.map((bullet) => (
+                    <li key={bullet} className="flex items-start gap-2 text-xs leading-6 text-muted-foreground">
+                      <span className="mt-2 block size-1 shrink-0 rounded-full bg-muted-foreground/50" />
+                      <span>{bullet}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             );
           })}
         </div>

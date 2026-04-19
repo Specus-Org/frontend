@@ -33,11 +33,17 @@ export interface ContactLink {
   external?: boolean;
 }
 
+export interface Platform {
+  name: string;
+  description: string;
+  href?: string;
+}
+
 export const landingContent = {
   announcement: 'Trusted procurement intelligence for secure, compliant vendor decisions',
-  heroTitle: 'Build ethical procurement with intelligence you can verify',
+  heroTitle: 'Building Trust in Global Business',
   heroDescription:
-    'Specus helps procurement and compliance teams screen vendors, surface risk signals, and document defensible decisions with sanctions data, AML intelligence, and procurement analytics in one workflow.',
+    'Comprehensive compliance intelligence for secure, ethical business worldwide.',
   mission:
     'To empower organizations worldwide with the intelligence and tools they need to conduct secure, compliant procurement while mitigating financial crime risks.',
   vision:
@@ -205,6 +211,20 @@ export const landingContent = {
     },
   ] satisfies RoadmapQuarter[],
   trustedSources: ['Keyping', 'Lexicon', 'E-PMS'],
+  platforms: [
+    {
+      name: 'Keyping',
+      description: 'Build procurement intelligence via collaborative knowledge graph.',
+    },
+    {
+      name: 'Lexicon',
+      description: 'Fraud and corruption detection through procurement intelligence.',
+    },
+    {
+      name: 'E-PMS',
+      description: 'Platform provides procurement risk visualizations and trend analysis.',
+    },
+  ] satisfies Platform[],
   contactLinks: [
     {
       label: 'Contact Specus',

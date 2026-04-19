@@ -20,41 +20,18 @@ describe('LandingHero', () => {
   it('renders primary hero copy and CTA links', () => {
     render(
       <LandingHero
-        announcement={landingContent.announcement}
         title={landingContent.heroTitle}
         description={landingContent.heroDescription}
-        slogan={landingContent.slogan}
-        metrics={landingContent.heroMetrics}
       />,
     );
 
     expect(
-      screen.getByRole('heading', { name: /build ethical procurement with intelligence you can verify/i }),
+      screen.getByRole('heading', { name: /building trust in global business/i }),
     ).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /start a screening/i })).toHaveAttribute(
-      'href',
-      '/aml',
-    );
-    expect(screen.getByRole('link', { name: /contact specus/i })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: /get started/i })).toHaveAttribute('href', '/aml');
+    expect(screen.getByRole('link', { name: /contact us/i })).toHaveAttribute(
       'href',
       'mailto:hello@specus.org',
     );
-  });
-
-  it('renders all proof metrics', () => {
-    render(
-      <LandingHero
-        announcement={landingContent.announcement}
-        title={landingContent.heroTitle}
-        description={landingContent.heroDescription}
-        slogan={landingContent.slogan}
-        metrics={landingContent.heroMetrics}
-      />,
-    );
-
-    for (const metric of landingContent.heroMetrics) {
-      expect(screen.getByText(metric.value)).toBeInTheDocument();
-      expect(screen.getByText(metric.label)).toBeInTheDocument();
-    }
   });
 });
