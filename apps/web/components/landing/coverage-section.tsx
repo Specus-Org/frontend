@@ -1,63 +1,68 @@
+import { Platform } from '@/lib/landing-content';
 import { Globe2, Radar, ScanSearch } from 'lucide-react';
-import { Badge } from '@specus/ui/components/badge';
+import Link from 'next/link';
 
 interface CoverageSectionProps {
-  trustedSources: readonly string[];
+  trustedSources: readonly Platform[];
 }
 
 export function CoverageSection({ trustedSources }: CoverageSectionProps): React.ReactElement {
+  const features = [
+    {
+      Icon: ScanSearch,
+      title: 'Multi-source intelligence',
+      bullets: trustedSources,
+    },
+    {
+      Icon: Globe2,
+      title: 'Global procurement coverage',
+      description:
+        'Support cross-border procurement reviews with 3+ country coverage, multi-language support, and local compliance context.',
+    },
+    {
+      Icon: Radar,
+      title: '24/7 continuous monitoring',
+      description:
+        'Monitor vendors after onboarding with alerts and historical records that help you identify and classify risk signals.',
+    },
+  ];
+
   return (
-    <section className="border-y border-border/60 bg-[linear-gradient(135deg,rgba(25,46,73,1),rgba(3,61,139,0.92))] text-white">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 md:px-8 md:py-20 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-blue-1">
-            Data sources and coverage
-          </p>
-          <h2 className="mt-4 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-            A 360-degree view built from multiple authoritative sources
-          </h2>
-          <p className="mt-4 max-w-2xl text-base leading-8 text-blue-0/85">
-            Specus combines trusted source data, global coverage, and continuous monitoring so teams
-            can move beyond point-in-time screening toward sustained vendor risk awareness.
-          </p>
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-3">
-          <div className="rounded-[1.75rem] border border-white/15 bg-white/6 p-6 backdrop-blur">
-            <ScanSearch className="size-8 text-blue-1" />
-            <h3 className="mt-4 text-lg font-semibold">Multi-source intelligence</h3>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {trustedSources.map((source) => (
-                <Badge
-                  key={source}
-                  variant="secondary"
-                  className="rounded-full border-0 bg-white/12 px-3 py-1 text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-white"
-                >
-                  {source}
-                </Badge>
-              ))}
+    <div className="w-full">
+      <p className="font-rethink text-3xl font-semibold leading-9 text-foreground text-center mb-8">
+        End-to-end compliance intelligence tailored to your organization&apos;s procurement needs.
+      </p>
+      <div className="grid grid-cols-3 gap-4">
+        {features.map((feature) => (
+          <div key={feature.title} className="rounded-xl border border-secondary p-[17px]">
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#00adb2]/10">
+              <feature.Icon className="h-6 w-6 text-[#00adb2]" />
             </div>
+            <h3 className="mt-3 text-xl font-semibold leading-7 text-foreground">
+              {feature.title}
+            </h3>
+            {feature.bullets ? (
+              <ul className="mt-2 list-disc list-inside space-y-1">
+                {feature.bullets.map((b) => (
+                  <li key={b.name} className="text-base leading-6 text-muted-foreground">
+                    <Link
+                      className="underline underline-offset-4"
+                      target="_blank"
+                      href={b.href ?? '/'}
+                    >
+                      {b.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="mt-2 text-base leading-6 text-muted-foreground">
+                {feature.description}
+              </p>
+            )}
           </div>
-
-          <div className="rounded-[1.75rem] border border-white/15 bg-white/6 p-6 backdrop-blur">
-            <Globe2 className="size-8 text-blue-1" />
-            <h3 className="mt-4 text-lg font-semibold">Global procurement coverage</h3>
-            <p className="mt-4 text-sm leading-7 text-blue-0/85">
-              Support cross-border procurement reviews with 3+ country coverage, multi-language
-              support, and local compliance context.
-            </p>
-          </div>
-
-          <div className="rounded-[1.75rem] border border-white/15 bg-white/6 p-6 backdrop-blur">
-            <Radar className="size-8 text-blue-1" />
-            <h3 className="mt-4 text-lg font-semibold">24/7 continuous monitoring</h3>
-            <p className="mt-4 text-sm leading-7 text-blue-0/85">
-              Monitor vendors after onboarding with alerts and historical records that help teams
-              react to changing sanctions or AML risk signals.
-            </p>
-          </div>
-        </div>
+        ))}
       </div>
-    </section>
+    </div>
   );
 }

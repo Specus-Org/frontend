@@ -20,25 +20,34 @@ export default function FooterLinks({ groups }: FooterLinksProps): React.ReactNo
         <ul className="space-y-2">
           <li>
             <Link
-              href="/blacklist"
+              href="/bangladesh"
               className={linkClassName}
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             >
-              Insights
+              Bangladesh
             </Link>
           </li>
           <li>
             <Link
-              href="/tender"
+              href="/indonesia"
               className={linkClassName}
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             >
-              Profiling
+              Indonesia
             </Link>
           </li>
           <li>
             <Link
-              href="/tender"
+              href="/paraguay"
+              className={linkClassName}
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            >
+              Paraguay
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/aml"
               className={linkClassName}
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             >
@@ -54,7 +63,11 @@ export default function FooterLinks({ groups }: FooterLinksProps): React.ReactNo
           <ul className="space-y-2">
             {group.items.map((item) => (
               <li key={item.id}>
-                <Link href={item.urlPath} className={linkClassName}>
+                <Link
+                  href={item.urlPath}
+                  className={linkClassName}
+                  onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                >
                   {item.title}
                 </Link>
               </li>

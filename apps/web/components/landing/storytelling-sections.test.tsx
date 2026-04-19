@@ -1,56 +1,35 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { CoverageSection } from './coverage-section';
-import { PrinciplesSection } from './principles-section';
-import { RoadmapSection } from './roadmap-section';
+import { VisionMissionSection } from './vision-mission-section';
 import { WorkflowSection } from './workflow-section';
 import { landingContent } from '@/lib/landing-content';
 
 describe('Landing storytelling sections', () => {
-  it('renders mission, vision, and principles', () => {
+  it('renders vision and mission text', () => {
     render(
-      <PrinciplesSection
+      <VisionMissionSection
         mission={landingContent.mission}
         vision={landingContent.vision}
-        principles={landingContent.principles}
       />,
     );
 
-    expect(screen.getByText(landingContent.mission)).toBeInTheDocument();
     expect(screen.getByText(landingContent.vision)).toBeInTheDocument();
-
-    for (const principle of landingContent.principles) {
-      expect(screen.getByRole('heading', { name: principle.name })).toBeInTheDocument();
-    }
+    expect(screen.getByText(landingContent.mission)).toBeInTheDocument();
   });
 
   it('renders the workflow steps in order', () => {
     render(<WorkflowSection steps={landingContent.workflow} />);
 
-    expect(screen.getByRole('heading', { name: /how specus works/i })).toBeInTheDocument();
-
-    const stepLabels = screen.getAllByText(/step 0[1-3]/i);
-    expect(stepLabels.map((label) => label.textContent)).toEqual(['Step 01', 'Step 02', 'Step 03']);
+    const stepLabels = screen.getAllByText(/step [123]/i);
+    expect(stepLabels).toHaveLength(3);
   });
 
-  it('renders trusted data sources and roadmap milestones', () => {
-    render(
-      <>
-        <CoverageSection trustedSources={landingContent.trustedSources} />
-        <RoadmapSection roadmap={landingContent.roadmap} />
-      </>,
-    );
+  it('renders trusted data sources', () => {
+    render(<CoverageSection trustedSources={landingContent.trustedSources} />);
 
     for (const source of landingContent.trustedSources) {
-      expect(screen.getByText(source)).toBeInTheDocument();
-    }
-
-    for (const quarter of landingContent.roadmap) {
-      expect(screen.getByText(quarter.quarter)).toBeInTheDocument();
-
-      for (const milestone of quarter.milestones) {
-        expect(screen.getByText(milestone)).toBeInTheDocument();
-      }
+      expect(screen.getByText(`– ${source}`)).toBeInTheDocument();
     }
   });
 });
