@@ -42,7 +42,11 @@ interface DeleteAccountDialogProps {
   onSwitch: (key: AuthDialogKey) => void;
 }
 
-export function DeleteAccountDialog({ open, onClose, onSwitch: _onSwitch }: DeleteAccountDialogProps) {
+export function DeleteAccountDialog({
+  open,
+  onClose,
+  onSwitch: _onSwitch,
+}: DeleteAccountDialogProps) {
   const { data: session } = useSession();
   const isAuthenticated = isAuthenticatedSession(session);
   const userEmail = isAuthenticated ? (session.user.email ?? '') : '';
@@ -53,14 +57,19 @@ export function DeleteAccountDialog({ open, onClose, onSwitch: _onSwitch }: Dele
       // POST to federated signout to clear session after account deletion
       const form = document.createElement('form');
       form.method = 'POST';
-      form.action = '/api/auth/federated-signout';
+      form.action = '/api/auth/logout';
       document.body.appendChild(form);
       form.submit();
     }
   }, [state?.success]);
 
   return (
-    <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>
+    <Dialog
+      open={open}
+      onOpenChange={(isOpen) => {
+        if (!isOpen) onClose();
+      }}
+    >
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Delete Account</DialogTitle>
@@ -77,9 +86,7 @@ export function DeleteAccountDialog({ open, onClose, onSwitch: _onSwitch }: Dele
           <FormErrorAlert message={state?.error} />
 
           <div className="flex flex-col gap-2">
-            <Label htmlFor="delete-confirm-email">
-              To confirm, type your email below.
-            </Label>
+            <Label htmlFor="delete-confirm-email">To confirm, type your email below.</Label>
             <Input
               id="delete-confirm-email"
               name="email"
