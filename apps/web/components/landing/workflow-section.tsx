@@ -6,27 +6,24 @@ interface WorkflowSectionProps {
 
 export function WorkflowSection({ steps }: WorkflowSectionProps): React.ReactElement {
   return (
-    <section className="border-b border-border/60 bg-muted/40">
-      <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 md:px-8">
-        <p className="mx-auto max-w-2xl text-center text-base font-medium leading-7 text-foreground">
-          Simple, powerful, and automated procurement intelligence in three steps.
-        </p>
-
-        <div className="mt-10 grid gap-4 sm:grid-cols-3">
-          {steps.map((step, i) => (
-            <div
-              key={step.step}
-              className="rounded-xl border border-border/60 bg-background p-6"
-            >
-              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-primary">
-                Step {i + 1}
-              </p>
-              <h3 className="mt-3 text-sm font-semibold text-foreground">{step.title}</h3>
-              <p className="mt-2 text-xs leading-6 text-muted-foreground">{step.description}</p>
-            </div>
-          ))}
-        </div>
+    <div className="w-full">
+      <p className="font-rethink text-3xl font-semibold leading-9 text-foreground text-center mb-8">
+        Simple, powerful, and automated procurement intelligence in three steps.
+      </p>
+      <div className="grid grid-cols-3 gap-4">
+        {steps.map((step, i) => (
+          <div
+            key={step.step}
+            className="rounded-xl border border-secondary p-[17px]"
+          >
+            <p className="text-base font-semibold leading-6 text-[#00adb2] uppercase">
+              STEP {i + 1}
+            </p>
+            <h3 className="mt-2 text-xl font-semibold leading-7 text-foreground">{step.title}</h3>
+            <p className="mt-2 text-base leading-6 text-muted-foreground">{step.description}</p>
+          </div>
+        ))}
       </div>
-    </section>
+    </div>
   );
 }

@@ -3,28 +3,28 @@ interface VisionMissionSectionProps {
   mission: string;
 }
 
+const items = [
+  { key: 'vision', label: 'OUR VISION' },
+  { key: 'mission', label: 'OUR MISSION' },
+] as const;
+
 export function VisionMissionSection({
   vision,
   mission,
 }: VisionMissionSectionProps): React.ReactElement {
+  const texts = { vision, mission };
+
   return (
-    <section className="border-b border-border/60 bg-muted/40">
-      <div className="mx-auto max-w-4xl px-4 py-14 sm:px-6 md:px-8">
-        <div className="grid gap-10 md:grid-cols-2 md:gap-0 md:divide-x md:divide-border/60">
-          <div className="md:pr-12">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-primary">
-              Our Vision
-            </p>
-            <p className="mt-3 text-sm leading-7 text-muted-foreground">{vision}</p>
-          </div>
-          <div className="border-t border-border/60 pt-10 md:border-t-0 md:pl-12 md:pt-0">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-primary">
-              Our Mission
-            </p>
-            <p className="mt-3 text-sm leading-7 text-muted-foreground">{mission}</p>
-          </div>
+    <div className="flex w-full gap-4">
+      {items.map(({ key, label }) => (
+        <div
+          key={key}
+          className="flex flex-1 flex-col gap-2 rounded-xl border border-secondary p-6"
+        >
+          <p className="text-base font-semibold leading-6 text-[#00adb2]">{label}</p>
+          <p className="text-lg leading-7 text-foreground">{texts[key]}</p>
         </div>
-      </div>
-    </section>
+      ))}
+    </div>
   );
 }

@@ -11,26 +11,29 @@ export function ContactCta({ announcement, contactLinks }: ContactCtaProps): Rea
   const emailLink = contactLinks.find((l) => l.href.startsWith('mailto:'));
 
   return (
-    <section className="bg-background">
-      <div className="mx-auto max-w-3xl px-4 py-16 text-center sm:px-6 sm:py-20 md:px-8">
-        <p className="text-2xl font-bold leading-snug tracking-tight text-foreground sm:text-3xl">
-          {announcement}
-        </p>
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-          {emailLink && (
-            <Button asChild variant="outline" size="default" className="rounded-full px-5">
-              <Link href={emailLink.href}>Contact us</Link>
-            </Button>
-          )}
+    <div className="flex w-full items-center gap-8">
+      <p className="flex-1 font-rethink text-4xl font-semibold leading-10 text-foreground">
+        {announcement}
+      </p>
+      <div className="flex shrink-0 items-center gap-4">
+        {emailLink && (
           <Button
             asChild
+            variant="outline"
             size="default"
-            className="rounded-full bg-foreground px-5 text-background hover:bg-foreground/90"
+            className="rounded-sm border-border px-3 py-2.5 text-sm font-semibold"
           >
-            <Link href="/aml">Get started</Link>
+            <Link href={emailLink.href}>Contact us</Link>
           </Button>
-        </div>
+        )}
+        <Button
+          asChild
+          size="default"
+          className="rounded-sm bg-brand px-3 py-2.5 text-sm font-semibold text-slate-50 hover:bg-brand/90"
+        >
+          <Link href="/aml">Get started</Link>
+        </Button>
       </div>
-    </section>
+    </div>
   );
 }

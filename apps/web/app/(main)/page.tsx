@@ -11,22 +11,21 @@ import { landingContent } from '@/lib/landing-content';
 export default async function HomePage(): Promise<React.ReactElement> {
   return (
     <div className="bg-background text-foreground">
-      <LandingHero
-        title={landingContent.heroTitle}
-        description={landingContent.heroDescription}
-      />
-      <VisionMissionSection
-        vision={landingContent.vision}
-        mission={landingContent.mission}
-      />
-      <SolutionsGrid solutions={landingContent.solutions} />
-      <WorkflowSection steps={landingContent.workflow} />
-      <PlatformsSection platforms={landingContent.platforms} />
-      <CoverageSection trustedSources={landingContent.trustedSources} />
-      <ContactCta
-        announcement={landingContent.announcement}
-        contactLinks={landingContent.contactLinks}
-      />
+      <div className="mx-auto max-w-6xl rounded-3xl border-y border-border px-16 py-32 flex flex-col gap-28">
+        <LandingHero
+          title={landingContent.heroTitle}
+          description={landingContent.heroDescription}
+        />
+        <VisionMissionSection vision={landingContent.vision} mission={landingContent.mission} />
+        <SolutionsGrid solutions={landingContent.solutions} />
+        <WorkflowSection steps={landingContent.workflow} />
+        <PlatformsSection platforms={landingContent.platforms} />
+        <CoverageSection trustedSources={landingContent.platforms} />
+        <ContactCta
+          announcement={landingContent.announcement}
+          contactLinks={landingContent.contactLinks}
+        />
+      </div>
     </div>
   );
 }

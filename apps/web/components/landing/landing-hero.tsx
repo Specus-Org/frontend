@@ -8,32 +8,28 @@ interface LandingHeroProps {
 
 export function LandingHero({ title, description }: LandingHeroProps): React.ReactElement {
   return (
-    <section className="border-b border-border/60 bg-background">
-      <div className="mx-auto max-w-3xl px-4 py-20 text-center sm:px-6 sm:py-24 md:px-8">
-        <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-          {title}
-        </h1>
-        <p className="mx-auto mt-4 max-w-xl text-base leading-7 text-muted-foreground">
-          {description}
-        </p>
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-          <Button
-            asChild
-            variant="outline"
-            size="default"
-            className="rounded-full px-5"
-          >
-            <Link href="mailto:hello@specus.org">Contact us</Link>
-          </Button>
-          <Button
-            asChild
-            size="default"
-            className="rounded-full bg-foreground px-5 text-background hover:bg-foreground/90"
-          >
-            <Link href="/aml">Get started</Link>
-          </Button>
-        </div>
+    <div className="flex flex-col items-center gap-5 text-center">
+      <h1 className="font-rethink text-5xl font-semibold leading-[48px] text-foreground">
+        {title}
+      </h1>
+      <p className="text-2xl leading-8 text-foreground">{description}</p>
+      <div className="flex items-center gap-4">
+        <Button
+          asChild
+          variant="outline"
+          size="default"
+          className="rounded-sm border-border px-3 py-2.5 text-sm font-semibold"
+        >
+          <Link href="mailto:hello@specus.org">Contact us</Link>
+        </Button>
+        <Button
+          asChild
+          size="default"
+          className="rounded-sm bg-brand px-3 py-2.5 text-sm font-semibold text-slate-50 hover:bg-brand/90"
+        >
+          <Link href="/aml">Get started</Link>
+        </Button>
       </div>
-    </section>
+    </div>
   );
 }

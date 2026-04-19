@@ -42,8 +42,7 @@ export interface Platform {
 export const landingContent = {
   announcement: 'Trusted procurement intelligence for secure, compliant vendor decisions',
   heroTitle: 'Building Trust in Global Business',
-  heroDescription:
-    'Comprehensive compliance intelligence for secure, ethical business worldwide.',
+  heroDescription: 'Comprehensive compliance intelligence for secure, ethical business worldwide.',
   mission:
     'To empower organizations worldwide with the intelligence and tools they need to conduct secure, compliant procurement while mitigating financial crime risks.',
   vision:
@@ -161,15 +160,15 @@ export const landingContent = {
     },
     {
       step: '02',
-      title: 'Run automated multi-source screening',
+      title: 'Run automated screening',
       description:
-        'Specus checks Keyping, Lexicon, and E-PMS instantly to build a 360-degree risk view from multiple authoritative sources.',
+        'Our platform checks Keyping, Lexicon, and E-PMS databases instantly for comprehensive risk assessment',
     },
     {
       step: '03',
       title: 'Review actionable intelligence',
       description:
-        'Teams receive risk scores, heat maps, compliance context, and supporting records to guide procurement decisions confidently.',
+        'Review detailed reports with risk scores, heat maps, and compliance data to make informed procurement decisions.',
     },
   ] satisfies WorkflowStep[],
   roadmap: [
@@ -210,19 +209,21 @@ export const landingContent = {
       ],
     },
   ] satisfies RoadmapQuarter[],
-  trustedSources: ['Keyping', 'Lexicon', 'E-PMS'],
   platforms: [
     {
       name: 'Keyping',
-      description: 'Build procurement intelligence via collaborative knowledge graph.',
+      description: 'Public procurement intelligence via collaborative knowledge graph.',
+      href: 'https://www.keyping.org/',
     },
     {
       name: 'Lexicon',
       description: 'Fraud and corruption detection through procurement intelligence.',
+      href: 'https://procurement.lexicon.id',
     },
     {
       name: 'E-PMS',
-      description: 'Platform provides procurement risk visualizations and trend analysis.',
+      description: 'Interactive procurement risk visualization and trend analysis.',
+      href: 'bangladesh: https://app.powerbi.com/view?r=eyJrIjoiZTFkNTRkYjAtODc4YS00NDhhLTkyZTEtMzhhMzIxMGVmYzQwIiwidCI6ImNmNTEzOWVlLTM5ZmItNGMwMS05NDkzLTJhYjVjYjZiMjY1MiIsImMiOjEwfQ%3D%3D',
     },
   ] satisfies Platform[],
   contactLinks: [

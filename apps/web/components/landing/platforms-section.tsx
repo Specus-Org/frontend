@@ -1,5 +1,6 @@
 import { ExternalLink } from 'lucide-react';
 import type { Platform } from '@/lib/landing-content';
+import Link from 'next/link';
 
 interface PlatformsSectionProps {
   platforms: readonly Platform[];
@@ -7,29 +8,28 @@ interface PlatformsSectionProps {
 
 export function PlatformsSection({ platforms }: PlatformsSectionProps): React.ReactElement {
   return (
-    <section className="border-b border-border/60 bg-background">
-      <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 md:px-8">
-        <p className="mx-auto max-w-2xl text-center text-base font-medium leading-7 text-foreground">
-          Integrated intelligence from three authoritative platforms.
-        </p>
-
-        <div className="mt-10 grid gap-4 sm:grid-cols-3">
-          {platforms.map((platform) => (
-            <div
-              key={platform.name}
-              className="rounded-xl border border-border/60 bg-background p-5"
-            >
-              <div className="flex items-start justify-between gap-2">
-                <span className="text-sm font-semibold text-foreground">{platform.name}</span>
-                <ExternalLink className="mt-0.5 size-3.5 shrink-0 text-muted-foreground" />
-              </div>
-              <p className="mt-3 text-xs leading-6 text-muted-foreground">
-                {platform.description}
-              </p>
+    <div className="w-full">
+      <p className="font-rethink text-3xl font-semibold leading-9 text-foreground text-center mb-8">
+        Integrated intelligence from three authoritative platforms.
+      </p>
+      <div className="grid grid-cols-3 gap-4">
+        {platforms.map((platform) => (
+          <Link
+            key={platform.name}
+            href={platform.href ?? '/'}
+            target="_blank"
+            className="rounded-xl border border-secondary p-[17px]"
+          >
+            <div className="flex items-start justify-between gap-2">
+              <span className="text-xl font-semibold leading-7 text-foreground">
+                {platform.name}
+              </span>
+              <ExternalLink className="mt-1 h-5 w-5 shrink-0 text-muted-foreground" />
             </div>
-          ))}
-        </div>
+            <p className="mt-2 text-base leading-6 text-muted-foreground">{platform.description}</p>
+          </Link>
+        ))}
       </div>
-    </section>
+    </div>
   );
 }
