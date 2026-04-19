@@ -77,7 +77,7 @@ export default function UserMenu(): React.ReactNode {
             // POST to federated signout for full OIDC logout
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = '/api/auth/federated-signout';
+            form.action = '/api/auth/signout';
             document.body.appendChild(form);
             form.submit();
           }}
