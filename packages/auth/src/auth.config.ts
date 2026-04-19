@@ -181,6 +181,9 @@ const config: NextAuthConfig = {
       if (token.error) {
         session.error = token.error;
       }
+      if (token.access_token) {
+        session.access_token = token.access_token;
+      }
       return session;
     },
   },

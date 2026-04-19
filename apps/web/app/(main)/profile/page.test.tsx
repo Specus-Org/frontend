@@ -1,5 +1,3 @@
-import { render, screen } from '@testing-library/react';
-import React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import ProfilePage from './page';
 
@@ -21,43 +19,6 @@ vi.mock('next/navigation', () => ({
   redirect: redirectMock,
 }));
 
-vi.mock('next/image', () => ({
-  default: ({ alt }: { alt?: string }) => <span data-testid="mock-image" data-alt={alt} />,
-}));
-
-vi.mock('@specus/ui/components/button', () => ({
-  Button: ({ children, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
-    <button {...props}>{children}</button>
-  ),
-}));
-
-vi.mock('@specus/ui/components/card', () => ({
-  Card: ({
-    children,
-    ...props
-  }: React.HTMLAttributes<HTMLDivElement> & { children: React.ReactNode }) => (
-    <div {...props}>{children}</div>
-  ),
-  CardContent: ({
-    children,
-    ...props
-  }: React.HTMLAttributes<HTMLDivElement> & { children: React.ReactNode }) => (
-    <div {...props}>{children}</div>
-  ),
-  CardHeader: ({
-    children,
-    ...props
-  }: React.HTMLAttributes<HTMLDivElement> & { children: React.ReactNode }) => (
-    <div {...props}>{children}</div>
-  ),
-  CardTitle: ({
-    children,
-    ...props
-  }: React.HTMLAttributes<HTMLHeadingElement> & { children: React.ReactNode }) => (
-    <h1 {...props}>{children}</h1>
-  ),
-}));
-
 describe('ProfilePage', () => {
   beforeEach(() => {
     authMock.mockReset();
@@ -65,7 +26,7 @@ describe('ProfilePage', () => {
     redirectMock.mockReset();
   });
 
-  it('redirects invalid sessions back to sign-in with the profile callback', async () => {
+  it('redirects unauthenticated sessions back to sign-in with profile callback', async () => {
     authMock.mockResolvedValue({
       user: { id: 'user-1' },
       error: 'RefreshTokenError',
@@ -77,21 +38,14 @@ describe('ProfilePage', () => {
     expect(redirectMock).toHaveBeenCalledWith('/auth/signin?callbackUrl=/profile');
   });
 
-  it('renders profile details for a valid session', async () => {
+  it('redirects authenticated users to home with profile modal', async () => {
     authMock.mockResolvedValue({
-      user: {
-        id: 'user-1',
-        name: 'Specus User',
-        email: 'user@specus.test',
-        image: null,
-      },
+      user: { id: 'user-1', name: 'Specus User', email: 'user@specus.test' },
     });
     isAuthenticatedSessionMock.mockReturnValue(true);
 
-    render(await ProfilePage());
+    await ProfilePage();
 
-    expect(redirectMock).not.toHaveBeenCalled();
-    expect(screen.getByRole('heading', { name: 'Specus User' })).toBeInTheDocument();
-    expect(screen.getByText('user@specus.test')).toBeInTheDocument();
+    expect(redirectMock).toHaveBeenCalledWith('/?modal=profile');
   });
 });

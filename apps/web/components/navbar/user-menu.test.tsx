@@ -3,24 +3,21 @@ import React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import UserMenu from './user-menu';
 
-const { useSessionMock } = vi.hoisted(() => ({
+const { useSessionMock, useRouterMock } = vi.hoisted(() => ({
   useSessionMock: vi.fn(),
+  useRouterMock: vi.fn(),
 }));
 
 vi.mock('next-auth/react', () => ({
   useSession: useSessionMock,
 }));
 
-vi.mock('next/link', () => ({
-  default: ({
-    href,
-    children,
-    ...props
-  }: React.AnchorHTMLAttributes<HTMLAnchorElement> & { href: string }) => (
-    <a href={href} {...props}>
-      {children}
-    </a>
-  ),
+vi.mock('next/navigation', () => ({
+  useRouter: useRouterMock,
+}));
+
+vi.mock('@/lib/auth-dialog', () => ({
+  openDialog: vi.fn(),
 }));
 
 vi.mock('@specus/ui/components/button', () => ({
@@ -44,12 +41,11 @@ vi.mock('@specus/ui/components/dropdown-menu', () => ({
   DropdownMenu: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   DropdownMenuContent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   DropdownMenuItem: ({
-    asChild,
     children,
   }: {
     asChild?: boolean;
     children: React.ReactNode;
-  }) => (asChild ? children : <div>{children}</div>),
+  }) => <div>{children}</div>,
   DropdownMenuLabel: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
   DropdownMenuSeparator: () => <hr />,
   DropdownMenuTrigger: ({
@@ -64,9 +60,10 @@ vi.mock('@specus/ui/components/dropdown-menu', () => ({
 describe('UserMenu', () => {
   beforeEach(() => {
     useSessionMock.mockReset();
+    useRouterMock.mockReturnValue({ push: vi.fn(), replace: vi.fn() });
   });
 
-  it('shows the sign-in action instead of profile controls when refresh failed', () => {
+  it('shows the sign-in button instead of profile controls when refresh failed', () => {
     useSessionMock.mockReturnValue({
       data: {
         user: { id: 'user-1', name: 'Specus User' },
@@ -77,10 +74,7 @@ describe('UserMenu', () => {
 
     render(<UserMenu />);
 
-    expect(screen.getByRole('link', { name: /sign in/i })).toHaveAttribute(
-      'href',
-      '/auth/signin',
-    );
-    expect(screen.queryByRole('link', { name: /profile/i })).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument();
+    expect(screen.queryByText(/profile/i)).not.toBeInTheDocument();
   });
 });
