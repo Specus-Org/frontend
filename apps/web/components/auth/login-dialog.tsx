@@ -2,6 +2,7 @@
 
 import { useActionState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { Input } from '@specus/ui/components/input';
 import { Label } from '@specus/ui/components/label';
 import { Button } from '@specus/ui/components/button';
@@ -26,14 +27,15 @@ interface LoginDialogProps {
 
 export function LoginDialog({ open, onClose, onSwitch }: LoginDialogProps) {
   const router = useRouter();
+  const { update: updateSession } = useSession();
   const [state, formAction] = useActionState(signInDialogAction, null);
 
   useEffect(() => {
     if (state?.success) {
       onClose();
-      router.refresh();
+      updateSession().then(() => router.refresh());
     }
-  }, [state?.success, onClose, router]);
+  }, [state?.success, onClose, router, updateSession]);
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>
