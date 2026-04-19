@@ -15,7 +15,7 @@ export function VisionMissionSection({
   const texts = { vision, mission };
 
   return (
-    <div className="flex w-full gap-4">
+    <div className="flex w-full flex-col gap-4 sm:flex-row">
       {items.map(({ key, label }) => (
         <div
           key={key}

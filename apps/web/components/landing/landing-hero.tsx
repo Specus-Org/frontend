@@ -9,10 +9,10 @@ interface LandingHeroProps {
 export function LandingHero({ title, description }: LandingHeroProps): React.ReactElement {
   return (
     <div className="flex flex-col items-center gap-5 text-center">
-      <h1 className="font-rethink text-5xl font-semibold leading-[48px] text-foreground">
+      <h1 className="font-rethink text-3xl font-semibold leading-tight text-foreground sm:text-4xl md:text-5xl md:leading-[48px]">
         {title}
       </h1>
-      <p className="text-2xl leading-8 text-foreground">{description}</p>
+      <p className="text-lg leading-7 text-foreground sm:text-xl md:text-2xl md:leading-8">{description}</p>
       <div className="flex items-center gap-4">
         <Button
           asChild

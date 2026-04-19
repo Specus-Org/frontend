@@ -11,7 +11,7 @@ import { landingContent } from '@/lib/landing-content';
 export default async function HomePage(): Promise<React.ReactElement> {
   return (
     <div className="bg-background text-foreground rounded-3xl">
-      <div className="mx-auto max-w-6xl px-16 py-32 flex flex-col gap-28">
+      <div className="mx-auto max-w-6xl px-4 py-12 flex flex-col gap-16 sm:px-8 sm:py-20 sm:gap-20 md:px-16 md:py-32 md:gap-28">
         <LandingHero
           title={landingContent.heroTitle}
           description={landingContent.heroDescription}

@@ -29,10 +29,10 @@ export function CoverageSection({ trustedSources }: CoverageSectionProps): React
 
   return (
     <div className="w-full">
-      <p className="font-rethink text-3xl font-semibold leading-9 text-foreground text-center mb-8">
+      <p className="font-rethink text-2xl font-semibold leading-8 text-foreground text-center mb-6 sm:text-3xl sm:leading-9 sm:mb-8">
         End-to-end compliance intelligence tailored to your organization&apos;s procurement needs.
       </p>
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         {features.map((feature) => (
           <div key={feature.title} className="rounded-xl border border-secondary p-[17px]">
             <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#00adb2]/10">

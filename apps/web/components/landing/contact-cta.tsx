@@ -11,8 +11,8 @@ export function ContactCta({ announcement, contactLinks }: ContactCtaProps): Rea
   const emailLink = contactLinks.find((l) => l.href.startsWith('mailto:'));
 
   return (
-    <div className="flex w-full items-center gap-8">
-      <p className="flex-1 font-rethink text-4xl font-semibold leading-10 text-foreground">
+    <div className="flex w-full flex-col gap-6 sm:flex-row sm:items-center sm:gap-8">
+      <p className="font-rethink text-2xl font-semibold leading-8 text-foreground sm:flex-1 sm:text-3xl md:text-4xl md:leading-10">
         {announcement}
       </p>
       <div className="flex shrink-0 items-center gap-4">
