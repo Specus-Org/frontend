@@ -63,7 +63,6 @@ export default function AMLEntityDetailPage(): React.ReactElement {
               if (e.key === 'Enter') handleSearch();
             }}
             value={query}
-            disabled
             placeholder="Search individual or entity name…"
           />
 
