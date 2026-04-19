@@ -42,11 +42,7 @@ interface DeleteAccountDialogProps {
   onSwitch: (key: AuthDialogKey) => void;
 }
 
-export function DeleteAccountDialog({
-  open,
-  onClose,
-  onSwitch: _onSwitch,
-}: DeleteAccountDialogProps) {
+export function DeleteAccountDialog({ open, onClose }: DeleteAccountDialogProps) {
   const { data: session } = useSession();
   const isAuthenticated = isAuthenticatedSession(session);
   const userEmail = isAuthenticated ? (session.user.email ?? '') : '';
@@ -54,7 +50,6 @@ export function DeleteAccountDialog({
 
   useEffect(() => {
     if (state?.success) {
-      // POST to federated signout to clear session after account deletion
       const form = document.createElement('form');
       form.method = 'POST';
       form.action = '/api/auth/logout';

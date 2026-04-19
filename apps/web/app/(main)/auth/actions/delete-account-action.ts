@@ -35,7 +35,9 @@ export async function deleteAccountAction(
     if (!res.ok) {
       const body = await res.json().catch(() => null);
       const message =
-        typeof body?.message === 'string' ? body.message : 'Failed to delete account. Please try again.';
+        typeof body?.message === 'string'
+          ? body.message
+          : 'Failed to delete account. Please try again.';
       return { error: message };
     }
   } catch {

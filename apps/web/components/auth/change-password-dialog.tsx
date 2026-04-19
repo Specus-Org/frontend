@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useEffect } from 'react';
+import { useActionState, useEffect, useEffectEvent } from 'react';
 import { Input } from '@specus/ui/components/input';
 import { Label } from '@specus/ui/components/label';
 import { Button } from '@specus/ui/components/button';
@@ -25,14 +25,23 @@ interface ChangePasswordDialogProps {
 export function ChangePasswordDialog({ open, onClose, onSwitch }: ChangePasswordDialogProps) {
   const [state, formAction] = useActionState(changePasswordAction, null);
 
+  const onChangedPassword = useEffectEvent(() => {
+    onClose();
+  });
+
   useEffect(() => {
     if (state?.success) {
-      onClose();
+      onChangedPassword();
     }
-  }, [state?.success, onClose]);
+  }, [state?.success]);
 
   return (
-    <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>
+    <Dialog
+      open={open}
+      onOpenChange={(isOpen) => {
+        if (!isOpen) onClose();
+      }}
+    >
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Password</DialogTitle>
@@ -92,7 +101,11 @@ export function ChangePasswordDialog({ open, onClose, onSwitch }: ChangePassword
           </div>
 
           <DialogFooter>
-            <AuthSubmitButton idleLabel="Update password" pendingLabel="Updating…" className="sm:w-auto" />
+            <AuthSubmitButton
+              idleLabel="Update password"
+              pendingLabel="Updating…"
+              className="sm:w-auto"
+            />
           </DialogFooter>
         </form>
       </DialogContent>

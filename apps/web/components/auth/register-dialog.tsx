@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useEffect } from 'react';
+import { useActionState, useEffect, useEffectEvent } from 'react';
 import { Input } from '@specus/ui/components/input';
 import { Label } from '@specus/ui/components/label';
 import { Button } from '@specus/ui/components/button';
@@ -25,14 +25,23 @@ interface RegisterDialogProps {
 export function RegisterDialog({ open, onClose, onSwitch }: RegisterDialogProps) {
   const [state, formAction] = useActionState(registerDialogAction, null);
 
+  const onRegistered = useEffectEvent(() => {
+    onSwitch('check-email', { type: 'register' });
+  });
+
   useEffect(() => {
     if (state?.success) {
-      onSwitch('check-email', { type: 'register' });
+      onRegistered();
     }
-  }, [state?.success, onSwitch]);
+  }, [state?.success]);
 
   return (
-    <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>
+    <Dialog
+      open={open}
+      onOpenChange={(isOpen) => {
+        if (!isOpen) onClose();
+      }}
+    >
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Register</DialogTitle>
@@ -105,7 +114,11 @@ export function RegisterDialog({ open, onClose, onSwitch }: RegisterDialogProps)
                 Sign in
               </Button>
             </p>
-            <AuthSubmitButton idleLabel="Create account" pendingLabel="Creating…" className="sm:w-auto" />
+            <AuthSubmitButton
+              idleLabel="Create account"
+              pendingLabel="Creating…"
+              className="sm:w-auto"
+            />
           </DialogFooter>
         </form>
       </DialogContent>

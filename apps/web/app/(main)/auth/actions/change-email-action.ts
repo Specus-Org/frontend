@@ -36,7 +36,9 @@ export async function changeEmailAction(
     if (!res.ok) {
       const body = await res.json().catch(() => null);
       const message =
-        typeof body?.message === 'string' ? body.message : 'Failed to update email. Please try again.';
+        typeof body?.message === 'string'
+          ? body.message
+          : 'Failed to update email. Please try again.';
       return { error: message };
     }
   } catch {

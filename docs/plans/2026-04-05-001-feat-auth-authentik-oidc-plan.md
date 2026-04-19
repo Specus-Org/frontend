@@ -1,5 +1,5 @@
 ---
-title: "feat: Add authentication with Auth.js v5 + Authentik OIDC"
+title: 'feat: Add authentication with Auth.js v5 + Authentik OIDC'
 type: feat
 status: completed
 date: 2026-04-05
@@ -106,7 +106,7 @@ Authentik is the team's chosen identity provider (self-hosted OIDC/OAuth2). Auth
 
 ## High-Level Technical Design
 
-> *This illustrates the intended approach and is directional guidance for review, not implementation specification. The implementing agent should treat it as context, not code to reproduce.*
+> _This illustrates the intended approach and is directional guidance for review, not implementation specification. The implementing agent should treat it as context, not code to reproduce._
 
 ```mermaid
 sequenceDiagram
@@ -164,6 +164,7 @@ sequenceDiagram
 **Files:** None (spike only, no committed code)
 
 **Approach:**
+
 - Create a minimal `proxy.ts` that imports `auth()` from `next-auth` and verify it works with Next.js 16.1.6. Record the result and update Unit 3 accordingly (proxy.ts or middleware.ts)
 - Run `npm view next-auth@beta peerDependencies` to confirm `next@16` is in range. If not, document the `peerDependencyRules` override needed
 - Measure a sample Authentik access token + id_token + refresh token size to validate cookie chunking assumption. **Decision gate**: if combined token size after encryption exceeds ~6KB (chunking produces 2+ cookies), re-evaluate whether JWT strategy is appropriate or if a server-side session store (Redis/database) would be simpler. Cookie chunking works but can cause issues with CDNs and reverse proxies that limit cookie header size
@@ -171,6 +172,7 @@ sequenceDiagram
 **Test expectation:** none — spike produces decisions, not shipped code
 
 **Verification:**
+
 - Proxy.ts vs middleware.ts decision is recorded
 - Peer dependency compatibility is confirmed or override documented
 - Token size measurement confirms JWT+chunking approach OR triggers a pivot to session-store strategy
@@ -186,6 +188,7 @@ sequenceDiagram
 **Dependencies:** Unit 0 (JWT vs. session-store decision must be made first)
 
 **Files:**
+
 - Create: `packages/auth/package.json`
 - Create: `packages/auth/tsconfig.json`
 - Create: `packages/auth/src/index.ts`
@@ -195,6 +198,7 @@ sequenceDiagram
 - Test: Manual — verify package builds and exports resolve
 
 **Approach:**
+
 - `packages/auth/src/auth.config.ts` contains the `NextAuth()` call with Authentik provider, JWT strategy, and callbacks (jwt, session, signIn)
 - `packages/auth/src/index.ts` re-exports `auth`, `handlers`, `signIn`, `signOut` from the config
 - JWT callback: on initial sign-in, persist `access_token`, `id_token`, `expires_at`, `refresh_token` from `account`. On subsequent requests, check expiry and refresh via Authentik's token endpoint if expired
@@ -205,15 +209,18 @@ sequenceDiagram
 - `package.json` exports `"."` pointing to `src/index.ts`, with `"next-auth": "catalog:"` as dependency (after adding `next-auth: "5.0.0-beta.30"` to `pnpm-workspace.yaml` catalog) and `next`, `react` as peer dependencies
 
 **Patterns to follow:**
+
 - `packages/api-client/package.json` for package structure and export map
 - `packages/api-client/tsconfig.json` extending `@specus/typescript-config/library.json`
 
 **Test scenarios:**
+
 - Happy path: Package exports `auth`, `handlers`, `signIn`, `signOut` as named exports, and TypeScript resolves all types correctly
 - Happy path: `pnpm install` succeeds and both apps can import `@specus/auth`
 - Edge case: Module augmentation for `next-auth` types compiles without errors when imported from consuming apps
 
 **Verification:**
+
 - `pnpm install` succeeds with no resolution errors
 - `import { auth, handlers, signIn, signOut } from '@specus/auth'` resolves in both apps' TypeScript context
 
@@ -228,23 +235,28 @@ sequenceDiagram
 **Dependencies:** None (can run in parallel with Unit 1)
 
 **Files:**
+
 - Modify: `.env.example`
 - Modify: `turbo.json`
 
 **Approach:**
+
 - Add to `.env.example` under the "SERVER / BUILD-TIME ONLY" section: `AUTH_SECRET`, `AUTH_TRUST_HOST`, `AUTH_AUTHENTIK_ID`, `AUTH_AUTHENTIK_SECRET`, `AUTH_AUTHENTIK_ISSUER`
 - Add all five variables to `turbo.json` `globalEnv` array so Turbo passes them to all tasks and invalidates cache when they change
 - `AUTH_SECRET` is generated via `npx auth secret` — document this in `.env.example` comments
 - `AUTH_AUTHENTIK_ISSUER` format: `https://<authentik-host>/application/o/<app-slug>` (no trailing slash)
 
 **Patterns to follow:**
+
 - Existing `.env.example` section/comment structure
 
 **Test scenarios:**
+
 - Happy path: `turbo.json` is valid JSON and includes all five `AUTH_*` variables in `globalEnv`
 - Happy path: `.env.example` documents all required variables with descriptions
 
 **Verification:**
+
 - `pnpm build` succeeds (Turbo recognizes the new env vars without breaking cache)
 - `.env.example` has clear instructions for each variable
 
@@ -259,6 +271,7 @@ sequenceDiagram
 **Dependencies:** Unit 1, Unit 2
 
 **Files:**
+
 - Create: `apps/web/app/api/auth/[...nextauth]/route.ts`
 - Create: `apps/web/proxy.ts` (or `apps/web/middleware.ts` if proxy.ts is incompatible with Auth.js)
 - Create: `apps/web/components/session-provider.tsx`
@@ -268,6 +281,7 @@ sequenceDiagram
 - Test: Manual — verify sign-in redirect flow works end-to-end
 
 **Approach:**
+
 - `route.ts`: Re-export `GET` and `POST` from `@specus/auth` handlers. The `/api/auth/*` routes are excluded from proxy protection by design — Auth.js manages its own CSRF tokens for all POST actions
 - `proxy.ts` (or `middleware.ts` fallback): Import `auth` from `@specus/auth` and wrap in a proxy function. For protected routes (initially only `/profile`), redirect unauthenticated users to `/auth/signin`. Use a matcher that excludes static assets, API routes, and auth pages: `/((?!api|auth|_next/static|_next/image|favicon.ico).*)`. Inside the handler, check if the matched path is a protected route (`/profile`) before redirecting — all other matched paths should pass through without auth checks. This keeps the broad matcher for future protected routes while explicitly allowing public pages. First verify `proxy.ts` compatibility; if Auth.js's `auth()` export is not compatible with the proxy handler signature, use `middleware.ts` instead
 - `session-provider.tsx`: `'use client'` wrapper around `SessionProvider` from `next-auth/react`, following the existing `theme-provider.tsx` pattern
@@ -275,10 +289,12 @@ sequenceDiagram
 - `tsconfig.json`: Add path mapping `"@specus/auth": ["../../packages/auth/src/index.ts"]` following the existing `@specus/api-client` pattern
 
 **Patterns to follow:**
+
 - `apps/web/components/theme-provider.tsx` for the client provider wrapper pattern
 - `apps/web/app/layout.tsx` for provider composition in the root layout
 
 **Test scenarios:**
+
 - Happy path: Visiting `/profile` while unauthenticated redirects to the sign-in page
 - Happy path: Visiting `/` or `/aml` while unauthenticated renders normally (no redirect)
 - Happy path: After signing in, `useSession()` returns the session with user name and email
@@ -286,6 +302,7 @@ sequenceDiagram
 - Error path: If `AUTH_SECRET` is missing, the app fails fast with a clear error (Auth.js built-in behavior)
 
 **Verification:**
+
 - `pnpm dev` starts without errors
 - Navigating to `/profile` triggers the auth redirect flow
 - Public pages load without any auth redirect
@@ -301,10 +318,12 @@ sequenceDiagram
 **Dependencies:** Unit 3
 
 **Files:**
+
 - Create: `apps/web/app/auth/signin/page.tsx`
 - Test: Manual — verify the sign-in page renders and the button triggers OIDC flow
 
 **Approach:**
+
 - Server component page. Use `auth()` to check if user is already authenticated — if so, redirect to `/profile`
 - Display a centered card with the Specus logo and a "Sign in with Authentik" button
 - The button triggers Auth.js sign-in by either using a form action with `signIn("authentik")` server action, or a link to `/api/auth/signin/authentik`
@@ -312,14 +331,17 @@ sequenceDiagram
 - Accept a `callbackUrl` search param to redirect back to the original page after sign-in. **Security: validate `callbackUrl` as a relative path before passing to `signIn()`** — Auth.js v5 performs same-origin validation by default, but do not bypass it. Never derive `callbackUrl` from unvalidated user input with absolute URLs
 
 **Patterns to follow:**
+
 - `apps/web/app/not-found.tsx` for standalone page layout with centered content using `@specus/ui` components
 
 **Interaction states:**
+
 - **Idle**: Sign-in card with active button
 - **Submitting**: Button disabled with loading spinner after click — prevents double-submit during OIDC redirect (the redirect may take 1-2 seconds)
 - **Error**: If Auth.js returns `?error=<code>` query param (e.g., `OAuthSignin`, `OAuthCallback`), display an inline error banner above the button with a user-friendly message and a "Try again" action. Do not rely on Auth.js's unstyled default error page for callback errors that redirect back to the sign-in page
 
 **Test scenarios:**
+
 - Happy path: Unauthenticated user sees the sign-in card and can click the button to start OIDC flow
 - Happy path: Authenticated user visiting `/auth/signin` is redirected to `/profile`
 - Happy path: `callbackUrl` query param is preserved through the OIDC flow, and user is redirected back after sign-in
@@ -328,6 +350,7 @@ sequenceDiagram
 - Edge case: Auth.js error param displays inline error banner with retry option
 
 **Verification:**
+
 - `/auth/signin` renders a branded sign-in page
 - Clicking "Sign in" initiates the Authentik OIDC authorization flow
 - Successful callback sets the session cookie and redirects to the callback URL or `/profile`
@@ -343,25 +366,30 @@ sequenceDiagram
 **Dependencies:** Unit 3, Unit 4. Soft dependency on Unit 7 (sign-out button works with basic local sign-out; OIDC logout is layered on by Unit 7)
 
 **Files:**
+
 - Create: `apps/web/app/profile/page.tsx`
 - Test: Manual — verify the page shows user info and is inaccessible without auth
 
 **Approach:**
+
 - Server component. Call `auth()` to get the session. If no session, redirect to `/auth/signin` (defense-in-depth — proxy.ts handles the first redirect, this is the security gate)
 - Display user information: name, email, profile image (from Authentik). Use `@specus/ui` components: `Card`
 - Include a sign-out button that triggers `signOut()` server action. Initially this performs local-only sign-out; Unit 7 upgrades it to full OIDC logout
 - Keep the page simple — it serves as the proof-of-concept for protected routes
 
 **Patterns to follow:**
+
 - `apps/web/app/aml/page.tsx` for page structure
 
 **Test scenarios:**
+
 - Happy path: Authenticated user sees their name, email, and avatar on the profile page
 - Happy path: Profile image falls back to name initials (first letter, or first two if name has space) on a neutral background; generic person icon if name is absent
 - Error path: Unauthenticated user is redirected to `/auth/signin?callbackUrl=/profile`
 - Edge case: Session with `RefreshTokenError` triggers re-authentication
 
 **Verification:**
+
 - `/profile` shows the current user's information when authenticated
 - `/profile` redirects to sign-in when not authenticated
 - User info matches what Authentik provides (name, email, image)
@@ -374,9 +402,10 @@ sequenceDiagram
 
 **Requirements:** R6
 
-**Dependencies:** Unit 3. Soft dependency on Unit 7 (sign-out initially uses `signOut()` for local-only logout; Unit 7 upgrades to POST `/api/auth/federated-signout`)
+**Dependencies:** Unit 3. Soft dependency on Unit 7 (sign-out initially uses `signOut()` for local-only logout; Unit 7 upgrades to POST `/api/auth/signout`)
 
 **Files:**
+
 - Create: `packages/ui/src/components/avatar.tsx`
 - Create: `packages/ui/src/components/dropdown-menu.tsx`
 - Create: `apps/web/components/navbar/user-menu.tsx`
@@ -388,6 +417,7 @@ sequenceDiagram
 Note: `@specus/ui` uses wildcard exports (`"./components/*": "./src/components/*.tsx"`), so adding new component files automatically makes them importable — no `package.json` modification needed.
 
 **Approach:**
+
 - Add `avatar` and `dropdown-menu` shadcn/Radix components to `@specus/ui` following the existing component pattern (using Radix primitives + CVA + Tailwind)
 - Create `user-menu.tsx` as a `'use client'` component that uses `useSession()`:
   - **Loading state**: Render a fixed-size skeleton circle (32x32px, matching Avatar size) to prevent layout shift. Since the root layout passes a server-side `session` prop to `SessionProvider` (Unit 3), the loading state should be brief or absent on initial load — it mainly appears during client-side navigation
@@ -400,10 +430,12 @@ Note: `@specus/ui` uses wildcard exports (`"./components/*": "./src/components/*
 - Mobile (authenticated): User avatar + name appears as a list item at the top of the Sheet nav (above navigation links), with "Profile" and "Sign out" as separate list items at the bottom. No nested dropdown — use flat list items within the Sheet for touch-friendly interaction
 
 **Patterns to follow:**
+
 - `packages/ui/src/components/button.tsx` for shadcn component structure
 - `apps/web/components/navbar/mobile-nav.tsx` for `'use client'` navbar component pattern
 
 **Test scenarios:**
+
 - Happy path: Unauthenticated user sees "Sign in" button in both desktop and mobile nav
 - Happy path: Authenticated user sees their avatar and name, clicking shows dropdown with "Profile" and "Sign out"
 - Happy path: "Sign out" in dropdown triggers the sign-out flow
@@ -411,6 +443,7 @@ Note: `@specus/ui` uses wildcard exports (`"./components/*": "./src/components/*
 - Edge case: Long user names — apply `max-w-[160px]` on desktop / `max-w-[120px]` on mobile with `overflow-hidden text-ellipsis` on the trigger; show full name in the dropdown body
 
 **Verification:**
+
 - Navbar reflects auth state correctly in both desktop and mobile layouts
 - User can navigate to profile and trigger sign-out from the navbar
 
@@ -425,27 +458,31 @@ Note: `@specus/ui` uses wildcard exports (`"./components/*": "./src/components/*
 **Dependencies:** Unit 1, Unit 3
 
 **Files:**
-- Create: `apps/web/app/api/auth/federated-signout/route.ts`
+
+- Create: `apps/web/app/api/auth/signout/route.ts`
 - Test: Manual — verify sign-out redirects to Authentik and then back to the app
 
 **Approach:**
+
 - Auth.js v5's `events.signOut` callback is void (cannot return a redirect), so RP-initiated logout requires a **custom API route**:
   1. Store `id_token` in the JWT (needed as `id_token_hint` for the end_session_endpoint) — this is already done in Unit 1's JWT callback
-  2. Create a custom `/api/auth/federated-signout` route handler that:
+  2. Create a custom `/api/auth/signout` route handler that:
      a. Calls `auth()` to retrieve the `id_token` from the server-side JWT
      b. Clears the Auth.js session cookie by calling the internal sign-out mechanism
      c. Derives both `end_session_endpoint` (`${issuer}/end-session/`) and `revocation_endpoint` (`${issuer}/../../oauth/revoke/` or fetch from `.well-known/openid-configuration` once at module init and cache) from `AUTH_AUTHENTIK_ISSUER`. Use a consistent strategy for both endpoints — either both static derivation or both cached discovery
      d. Calls the revocation endpoint to explicitly revoke the `refresh_token` (RFC 7009)
      e. Redirects to `end_session_endpoint` with `id_token_hint` and `post_logout_redirect_uri` (hardcoded to the app's home page `/` — never derived from user input)
-  3. Update the navbar/profile "Sign out" action to POST to `/api/auth/federated-signout` instead of calling `signOut()` directly
+  3. Update the navbar/profile "Sign out" action to POST to `/api/auth/signout` instead of calling `signOut()` directly
 - **CSRF protection**: This custom route is outside Auth.js's built-in CSRF coverage. The route handler MUST enforce POST-only and validate a CSRF token (e.g., read the Auth.js CSRF cookie or implement a custom double-submit cookie check). Reject GET requests to prevent cross-origin forced logout via embedded `<img>` or `<link>` tags
 - The `post_logout_redirect_uri` must be registered in the Authentik application's allowed redirect URIs
 - If Authentik's end_session_endpoint or revocation endpoint is unreachable, fall back to local-only sign-out and redirect to `/`
 
 **Patterns to follow:**
+
 - Auth.js v5 events API and JWT callback patterns from the framework documentation
 
 **Test scenarios:**
+
 - Happy path: Clicking "Sign out" clears the local cookie, redirects to Authentik's logout page, then redirects back to `/`
 - Happy path: After sign-out, clicking "Sign in" requires re-entering credentials on Authentik (no silent SSO)
 - Error path: If Authentik's end_session_endpoint is unreachable, local session is still cleared and user is redirected to `/`
@@ -453,6 +490,7 @@ Note: `@specus/ui` uses wildcard exports (`"./components/*": "./src/components/*
 - Edge case: Authentik well-known response does not include `end_session_endpoint` — fall back to local-only sign-out and redirect to `/`
 
 **Verification:**
+
 - Sign-out fully terminates the Authentik session
 - Subsequent sign-in requires re-authentication on Authentik
 - User lands on `/` after the logout redirect chain completes
@@ -487,13 +525,13 @@ Note: `@specus/ui` uses wildcard exports (`"./components/*": "./src/components/*
 
 ## Risks & Dependencies
 
-| Risk | Mitigation |
-|------|------------|
-| Authentik tokens too large for JWT cookie (>4KB) | Enable cookie chunking proactively from Unit 1. Measure cookie size under realistic token sizes before production |
-| Refresh token rotation race condition with multiple tabs | Configure Authentik's refresh token reuse grace period (30s recommended). Handle `RefreshTokenError` gracefully |
-| `proxy.ts` incompatible with Auth.js v5 | Verify compatibility first. Fall back to `middleware.ts` which Next.js 16 still supports |
-| `next-auth@5` peer dependency excludes `next@16` | Check `npm view next-auth@5 peerDependencies` before starting. Use `peerDependencyRules.allowedVersions` override if needed |
-| Stolen refresh token remains valid after sign-out | Explicitly call Authentik's token revocation endpoint (RFC 7009) in the federated sign-out route before redirecting to `end_session_endpoint`. Do not rely on `end_session_endpoint` for token revocation |
+| Risk                                                     | Mitigation                                                                                                                                                                                                |
+| -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Authentik tokens too large for JWT cookie (>4KB)         | Enable cookie chunking proactively from Unit 1. Measure cookie size under realistic token sizes before production                                                                                         |
+| Refresh token rotation race condition with multiple tabs | Configure Authentik's refresh token reuse grace period (30s recommended). Handle `RefreshTokenError` gracefully                                                                                           |
+| `proxy.ts` incompatible with Auth.js v5                  | Verify compatibility first. Fall back to `middleware.ts` which Next.js 16 still supports                                                                                                                  |
+| `next-auth@5` peer dependency excludes `next@16`         | Check `npm view next-auth@5 peerDependencies` before starting. Use `peerDependencyRules.allowedVersions` override if needed                                                                               |
+| Stolen refresh token remains valid after sign-out        | Explicitly call Authentik's token revocation endpoint (RFC 7009) in the federated sign-out route before redirecting to `end_session_endpoint`. Do not rely on `end_session_endpoint` for token revocation |
 
 ## Sources & References
 

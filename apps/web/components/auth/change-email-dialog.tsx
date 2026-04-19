@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useEffect } from 'react';
+import { useActionState, useEffect, useEffectEvent } from 'react';
 import { useSession } from 'next-auth/react';
 import { isAuthenticatedSession } from '@specus/auth/session';
 import { Input } from '@specus/ui/components/input';
@@ -28,14 +28,23 @@ export function ChangeEmailDialog({ open, onClose, onSwitch }: ChangeEmailDialog
   const currentEmail = isAuthenticatedSession(session) ? (session.user.email ?? '') : '';
   const [state, formAction] = useActionState(changeEmailAction, null);
 
+  const onSentChangeEmail = useEffectEvent(() => {
+    onSwitch('check-email', { type: 'change-email' });
+  });
+
   useEffect(() => {
     if (state?.success) {
-      onSwitch('check-email', { type: 'change-email' });
+      onSentChangeEmail();
     }
-  }, [state?.success, onSwitch]);
+  }, [state?.success]);
 
   return (
-    <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>
+    <Dialog
+      open={open}
+      onOpenChange={(isOpen) => {
+        if (!isOpen) onClose();
+      }}
+    >
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Email</DialogTitle>
@@ -58,7 +67,11 @@ export function ChangeEmailDialog({ open, onClose, onSwitch }: ChangeEmailDialog
           </div>
 
           <DialogFooter>
-            <AuthSubmitButton idleLabel="Update email" pendingLabel="Updating…" className="sm:w-auto" />
+            <AuthSubmitButton
+              idleLabel="Update email"
+              pendingLabel="Updating…"
+              className="sm:w-auto"
+            />
           </DialogFooter>
         </form>
       </DialogContent>

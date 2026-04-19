@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useEffect } from 'react';
+import { useActionState, useEffect, useEffectEvent } from 'react';
 import { Input } from '@specus/ui/components/input';
 import { Label } from '@specus/ui/components/label';
 import {
@@ -25,14 +25,23 @@ interface ForgotPasswordDialogProps {
 export function ForgotPasswordDialog({ open, onClose, onSwitch }: ForgotPasswordDialogProps) {
   const [state, formAction] = useActionState(forgotPasswordDialogAction, null);
 
+  const onSentForgotEmail = useEffectEvent(() => {
+    onSwitch('check-email', { type: 'forgot' });
+  });
+
   useEffect(() => {
     if (state?.success) {
-      onSwitch('check-email', { type: 'forgot' });
+      onSentForgotEmail();
     }
-  }, [state?.success, onSwitch]);
+  }, [state?.success]);
 
   return (
-    <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>
+    <Dialog
+      open={open}
+      onOpenChange={(isOpen) => {
+        if (!isOpen) onClose();
+      }}
+    >
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Reset your password</DialogTitle>
@@ -58,7 +67,11 @@ export function ForgotPasswordDialog({ open, onClose, onSwitch }: ForgotPassword
           </div>
 
           <DialogFooter>
-            <AuthSubmitButton idleLabel="Send reset link" pendingLabel="Sending…" className="sm:w-auto" />
+            <AuthSubmitButton
+              idleLabel="Send reset link"
+              pendingLabel="Sending…"
+              className="sm:w-auto"
+            />
           </DialogFooter>
         </form>
       </DialogContent>

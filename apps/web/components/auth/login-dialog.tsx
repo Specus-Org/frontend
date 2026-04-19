@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useEffect } from 'react';
+import { useActionState, useEffect, useEffectEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { Input } from '@specus/ui/components/input';
@@ -30,15 +30,24 @@ export function LoginDialog({ open, onClose, onSwitch }: LoginDialogProps) {
   const { update: updateSession } = useSession();
   const [state, formAction] = useActionState(signInDialogAction, null);
 
+  const onSignedIn = useEffectEvent(() => {
+    onClose();
+    updateSession().then(() => router.replace('/'));
+  });
+
   useEffect(() => {
     if (state?.success) {
-      onClose();
-      updateSession().then(() => router.refresh());
+      onSignedIn();
     }
-  }, [state?.success, onClose, router, updateSession]);
+  }, [state?.success, router]);
 
   return (
-    <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>
+    <Dialog
+      open={open}
+      onOpenChange={(isOpen) => {
+        if (!isOpen) onClose();
+      }}
+    >
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Get started with Specus</DialogTitle>
@@ -96,7 +105,11 @@ export function LoginDialog({ open, onClose, onSwitch }: LoginDialogProps) {
                 Register
               </Button>
             </p>
-            <AuthSubmitButton idleLabel="Continue" pendingLabel="Signing in…" className="sm:w-auto" />
+            <AuthSubmitButton
+              idleLabel="Continue"
+              pendingLabel="Signing in…"
+              className="sm:w-auto"
+            />
           </DialogFooter>
         </form>
       </DialogContent>

@@ -163,22 +163,22 @@ Dialog chaining:
   - Create: `apps/web/app/(main)/auth/actions/delete-account-action.ts`
   - Modify: `apps/web/app/(main)/auth/signin/action.ts` (keep for page compat, re-export or delegate)
   - Test: `apps/web/app/(main)/auth/actions/sign-in-action.test.ts`
-  **Approach:**
+    **Approach:**
   - `sign-in-action.ts` — same logic as current `signin/action.ts` but returns `{ success: true }` on success instead of `redirect()`. The page-level `signin/action.ts` can remain unchanged for backward compat until auth pages are retired.
   - `change-email-action.ts` — fetches `PATCH /api/v1/auth/email` (verify endpoint), sends `{ email }` with auth session token from `await auth()`
   - `change-password-action.ts` — fetches `PATCH /api/v1/auth/password`, sends `{ oldPassword, newPassword }`; validates `confirmPassword === newPassword` before fetch
   - `delete-account-action.ts` — validates submitted email matches `session.user.email`, calls `DELETE /api/v1/auth/account`, returns `{ success: true }` or error
   - All actions: `'use server'` directive, `AbortSignal.timeout(10000)`, typed state return object
-  **Patterns to follow:**
+    **Patterns to follow:**
   - `apps/web/app/(main)/auth/signin/action.ts` — error handling, fetch pattern, state type
   - `apps/web/app/(main)/auth/forgot-password/forgot-password-form.tsx` — `forgotPassword` action shape
-  **Test scenarios:**
+    **Test scenarios:**
   - Happy path: valid credentials → `signInAction` returns `{ success: true }`
   - Error path: invalid credentials → returns `{ error: 'Invalid email or password...' }`
   - Error path: network timeout → returns `{ error: 'Something went wrong...' }`
   - Edge case: `deleteAccountAction` with wrong email → returns validation error without hitting API
   - Edge case: `changePasswordAction` with mismatched confirm password → returns validation error
-  **Verification:**
+    **Verification:**
   - No `redirect()` calls in dialog-variant actions
   - All actions have typed return state (`{ success?: true; error?: string; values?: ... }`)
 
@@ -191,7 +191,7 @@ Dialog chaining:
   **Files:**
   - Create: `apps/web/components/auth/login-dialog.tsx`
   - Test: `apps/web/components/auth/login-dialog.test.tsx`
-  **Approach:**
+    **Approach:**
   - `'use client'` component; props: `open: boolean`, `onClose: () => void`, `onSwitch: (key: string) => void`
   - `Dialog open={open} onOpenChange={onClose}`
   - `DialogHeader` → `DialogTitle` "Get started with Specus" + `DialogDescription` "New here? We'll create your account automatically."
@@ -200,17 +200,17 @@ Dialog chaining:
   - On `state?.success` in `useEffect` → call `onClose()` + `router.refresh()`
   - "No account?" text + register link calls `onSwitch('register')`
   - Reuse `FormErrorAlert` for error display
-  **Patterns to follow:**
+    **Patterns to follow:**
   - `apps/web/app/(main)/auth/signin/signin-form.tsx` — field structure, `useActionState` pattern
   - `packages/ui/src/components/dialog.tsx` — Dialog primitives
-  **Test scenarios:**
+    **Test scenarios:**
   - Happy path: dialog renders with correct title and subtitle when `open=true`
   - Happy path: "Forgot password?" button calls `onSwitch('forgot')`
   - Happy path: register link calls `onSwitch('register')`
   - Happy path: on `state.success`, `onClose` is called and `router.refresh()` fires
   - Error path: `state.error` renders `FormErrorAlert` with message
   - Edge case: dialog does not render when `open=false`
-  **Verification:**
+    **Verification:**
   - Login dialog opens at `/?modal=login`; successful sign-in closes dialog and updates navbar avatar
 
 ---
@@ -222,18 +222,18 @@ Dialog chaining:
   **Files:**
   - Create: `apps/web/components/auth/register-dialog.tsx`
   - Test: `apps/web/components/auth/register-dialog.test.tsx`
-  **Approach:**
+    **Approach:**
   - Same structure as Login Dialog
   - Fields: Full name, Email, Password, Confirm Password — mirror `register-form.tsx` field set including `defaultValue={state?.values?.name}` repopulation
   - On `state?.success` → `onSwitch('check-email')` with `type=register` query param
   - "Already have an account?" → `onSwitch('login')`
-  **Patterns to follow:**
+    **Patterns to follow:**
   - `apps/web/app/(main)/auth/register/register-form.tsx`
-  **Test scenarios:**
+    **Test scenarios:**
   - Happy path: all fields render; on success, switches to check-email dialog
   - Error path: error state repopulates name + email fields via `state.values`
   - Edge case: "Already have an account?" calls `onSwitch('login')`
-  **Verification:**
+    **Verification:**
   - Successful registration shows Check Email dialog with type=register context
 
 ---
@@ -246,19 +246,19 @@ Dialog chaining:
   - Create: `apps/web/components/auth/forgot-password-dialog.tsx`
   - Create: `apps/web/components/auth/check-email-dialog.tsx`
   - Test: `apps/web/components/auth/check-email-dialog.test.tsx`
-  **Approach:**
+    **Approach:**
   - `ForgotPasswordDialog`: email field, on success → `onSwitch('check-email')` + `type=forgot`
   - `CheckEmailDialog`: reads `type` param (`register` | `forgot` | `change-email`) from URL via `useSearchParams()`; renders context-appropriate title and body message ("Check your inbox to confirm your email" etc.)
   - No form in CheckEmailDialog — info only with a Close / Done button
-  **Patterns to follow:**
+    **Patterns to follow:**
   - `apps/web/app/(main)/auth/forgot-password/forgot-password-form.tsx`
   - `apps/web/app/(main)/auth/register/success/page.tsx` — success message language
-  **Test scenarios:**
+    **Test scenarios:**
   - Happy path: `type=register` → renders register-specific message
   - Happy path: `type=forgot` → renders password reset message
   - Happy path: `type=change-email` → renders email update message
   - Edge case: no `type` param → renders generic "Check your email" fallback
-  **Verification:**
+    **Verification:**
   - Forgot password flow chains correctly through all three dialog states
 
 ---
@@ -270,7 +270,7 @@ Dialog chaining:
   **Files:**
   - Create: `apps/web/components/auth/profile-dialog.tsx`
   - Test: `apps/web/components/auth/profile-dialog.test.tsx`
-  **Approach:**
+    **Approach:**
   - `'use client'`; reads `useSession()` for `{ email, name }`
   - Layout: two labeled sections (Email, Password) each with title, subtitle, and a Button "Change email" / "Change password"; plus bold "Account" heading and a `<button>` styled as danger text link "Delete Account"
   - Email section subtitle: current `session.user.email`
@@ -279,16 +279,16 @@ Dialog chaining:
   - "Change password" → `onSwitch('change-password')`
   - "Delete Account" → `onSwitch('delete-account')`
   - No form submission in this dialog — it is a navigation hub
-  **Patterns to follow:**
+    **Patterns to follow:**
   - `apps/web/app/(main)/profile/page.tsx` — session access pattern
   - `apps/web/components/navbar/user-menu.tsx` — `useSession()` client component
-  **Test scenarios:**
+    **Test scenarios:**
   - Happy path: dialog renders current user email in email section subtitle
   - Happy path: "Change email" button calls `onSwitch('change-email')`
   - Happy path: "Change password" button calls `onSwitch('change-password')`
   - Happy path: "Delete Account" calls `onSwitch('delete-account')`
   - Edge case: session loading → show skeleton / disabled state
-  **Verification:**
+    **Verification:**
   - Profile dialog opens from user menu; all navigation links switch to correct dialogs
 
 ---
@@ -303,22 +303,22 @@ Dialog chaining:
   - Create: `apps/web/components/auth/delete-account-dialog.tsx`
   - Test: `apps/web/components/auth/change-email-dialog.test.tsx`
   - Test: `apps/web/components/auth/delete-account-dialog.test.tsx`
-  **Approach:**
+    **Approach:**
   - **Change Email**: `DialogTitle` "Email", email input pre-filled with `session.user.email` (editable), "Update Email" button (bottom-right via `DialogFooter`); on success → `onSwitch('check-email')` + `type=change-email`
   - **Change Password**: `DialogTitle` "Password", old password + new password + confirm password fields; "Forgot Password" button (calls `onSwitch('forgot')`); "Update Password" submit button; on success → close dialog
   - **Delete Account**: `DialogTitle` "Delete Account"; subtitle text includes user email dynamically; email input with label "To confirm, type your email below."; Cancel button + destructive "Delete Account" button; on success → sign out and redirect to home
   - All use `useActionState` + `FormErrorAlert` + `AuthSubmitButton` pattern
-  **Patterns to follow:**
+    **Patterns to follow:**
   - All existing auth form components for `useActionState` pattern
   - `packages/ui/src/components/alert-dialog.tsx` for Delete Account (destructive action styling)
-  **Test scenarios:**
+    **Test scenarios:**
   - Change Email happy path: pre-filled email field visible; on success, switches to check-email dialog
   - Change Password happy path: on success, dialog closes
   - Change Password error path: mismatched confirm password shows error
   - Delete Account happy path: correct email submitted → success → signout triggered
   - Delete Account error path: wrong email entered → error message shown without API call
   - Delete Account edge: Cancel button calls `onClose()`
-  **Verification:**
+    **Verification:**
   - All three dialogs render without errors; Delete Account requires exact email match before enabling submit
 
 ---
@@ -334,23 +334,23 @@ Dialog chaining:
   - Modify: `apps/web/app/(main)/auth/register/page.tsx`
   - Modify: `apps/web/app/(main)/auth/forgot-password/page.tsx`
   - Test: `apps/web/components/navbar/user-menu.test.tsx` (update existing)
-  **Approach:**
+    **Approach:**
   - `user-menu.tsx`: replace `<Link href="/auth/signin">Sign in</Link>` with a `<Button>` that calls `openDialog(router, 'login')`; replace `<Link href="/profile">Profile</Link>` `DropdownMenuItem` with an `onSelect` handler calling `openDialog(router, 'profile')`
   - `profile/page.tsx`: authenticated users get `redirect('/?modal=profile')` immediately after session check; unauthenticated redirect stays as-is (`/auth/signin?callbackUrl=/profile`)
   - `auth/signin/page.tsx` → `redirect('/?modal=login')`
   - `auth/register/page.tsx` → `redirect('/?modal=register')`
   - `auth/forgot-password/page.tsx` → `redirect('/?modal=forgot')`
   - Auth layout (`auth/layout.tsx`) can be kept or deleted depending on whether any child pages remain active (reset-password stays as a page)
-  **Patterns to follow:**
+    **Patterns to follow:**
   - `apps/web/components/navbar/user-menu.tsx` — current `onSelect` pattern for signout
   - `apps/web/app/(main)/profile/page.tsx` — `await auth()` + `isAuthenticatedSession` + `redirect()`
-  **Test scenarios:**
+    **Test scenarios:**
   - Happy path: unauthenticated user → "Sign in" button in navbar → `?modal=login` appears in URL
   - Happy path: authenticated user → avatar menu → "Profile" item → `?modal=profile` appears in URL
   - Happy path: visiting `/auth/signin` → redirects to `/?modal=login`
   - Happy path: visiting `/profile` while authenticated → redirects to `/?modal=profile`
   - Happy path: visiting `/profile` while unauthenticated → redirects to `/auth/signin?callbackUrl=/profile`
-  **Verification:**
+    **Verification:**
   - No broken navigation links remain; browser back button dismisses open dialogs; direct URL `/auth/signin` lands user on home with login dialog
 
 ## System-Wide Impact
@@ -360,20 +360,18 @@ Dialog chaining:
 - **State lifecycle risks:** After successful sign-in, `router.refresh()` must be called to invalidate Next.js router cache and re-run Server Components that read session; without it the navbar avatar may not update.
 - **API surface parity:** Reset-password page (`/auth/reset-password`) is unchanged — it stays as a full page and its action is unchanged.
 - **Integration coverage:** Sign-in dialog → session refresh → user menu update chain must be integration-tested end-to-end (not just unit-tested in isolation).
-- **Unchanged invariants:** `/api/auth/[...nextauth]` handler, `/api/auth/federated-signout` route, token refresh logic in `packages/auth/src/auth.config.ts` — none of these change.
+- **Unchanged invariants:** `/api/auth/[...nextauth]` handler, `/api/auth/signout` route, token refresh logic in `packages/auth/src/auth.config.ts` — none of these change.
 
 ## Risks & Dependencies
-
 
 | Risk                                                                                  | Mitigation                                                                                                                               |
 | ------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
 | `useSearchParams()` in layout breaks static rendering                                 | Wrap `AuthDialogManager` in `<Suspense fallback={null}>` — required by Next.js                                                           |
 | `router.refresh()` after sign-in is too slow → navbar flash                           | Show loading skeleton in `UserMenu` during `status === 'loading'` — already implemented                                                  |
 | Backend API endpoints for change-email / change-password / delete-account are unknown | Implementer checks `packages/api-client/src/generated/` or contacts backend team before building Unit 2 actions                          |
-| Delete account flow may require OIDC token revocation (not just API call)             | Implementer checks if `/api/auth/federated-signout` must also be called post-delete; if yes, sequence it after the API delete            |
+| Delete account flow may require OIDC token revocation (not just API call)             | Implementer checks if `/api/auth/signout` must also be called post-delete; if yes, sequence it after the API delete                      |
 | Dialog z-index conflicts with Navbar (sticky)                                         | Radix `DialogPortal` renders at `document.body` level — z-index above Navbar is handled by shadcn defaults; verify during implementation |
 | Existing `/auth/signin` URL in OAuth redirect_uri config                              | `redirect()` shims in Unit 8 preserve the route so external OIDC redirects still land correctly before being forwarded                   |
-
 
 ## Sources & References
 
@@ -382,4 +380,3 @@ Dialog chaining:
 - Related code: `apps/web/components/navbar/user-menu.tsx`
 - Related code: `apps/web/app/(main)/profile/page.tsx`
 - Related commits: `fix(web): stabilize auth flow and AML date rendering` (d6e21b5)
-
