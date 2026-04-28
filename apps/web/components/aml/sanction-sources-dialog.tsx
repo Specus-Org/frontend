@@ -49,11 +49,11 @@ export default function SanctionSourcesDialog(): React.ReactNode {
       <DialogTrigger className="cursor-pointer text-blue-700 underline underline-offset-4 decoration-blue-700 hover:opacity-95 transition-all">
         sources
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-h-[80vh] flex flex-col">
         <DialogHeader>
           <DialogTitle className="font-semibold text-lg">Sanction Sources</DialogTitle>
         </DialogHeader>
-        <div className="flex flex-col gap-3 mt-2">
+        <div className="mt-2 flex flex-col gap-3 overflow-y-auto pr-1">
           {loading &&
             Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="flex flex-row gap-4 items-center animate-pulse">

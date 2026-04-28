@@ -14,8 +14,12 @@ interface CountryFlagProps {
 
 export function CountryFlag({ countryCode, authority, alt, size = 'md' }: CountryFlagProps) {
   const isInterpol = authority?.toLowerCase().includes('interpol');
-  const countryCodeSrc = countryCode.toLocaleLowerCase();
+  let countryCodeSrc = countryCode.toLocaleLowerCase();
   const { width, height, fontSize, cdnHeight } = SIZE[size];
+
+  if (countryCode.toLocaleLowerCase() == 'intl') {
+    countryCodeSrc = 'un';
+  }
 
   if (isInterpol) {
     return (
@@ -24,7 +28,10 @@ export function CountryFlag({ countryCode, authority, alt, size = 'md' }: Countr
         style={{ width, height }}
         title="INTERPOL"
       >
-        <span className="text-white font-bold tracking-widest leading-none" style={{ fontSize }}>
+        <span
+          className="text-white font-bold text-xs tracking-widest leading-none"
+          style={{ fontSize }}
+        >
           INTERPOL
         </span>
       </div>
