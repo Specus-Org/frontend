@@ -1,6 +1,7 @@
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import type { NextAuthConfig } from 'next-auth';
+import type { JWT } from 'next-auth/jwt';
 
 import './types/next-auth';
 
@@ -21,6 +22,17 @@ function decodeJwtPayload(jwt: string): Record<string, unknown> | null {
   } catch {
     return null;
   }
+}
+
+function markRefreshTokenError(token: JWT): JWT {
+  const nextToken: JWT = { ...token, error: 'RefreshTokenError' as const };
+
+  delete nextToken.access_token;
+  delete nextToken.id_token;
+  delete nextToken.expires_at;
+  delete nextToken.refresh_token;
+
+  return nextToken;
 }
 
 // ---------------------------------------------------------------------------
@@ -113,7 +125,12 @@ const config: NextAuthConfig = {
           id_token: user.idToken,
           expires_at: user.expiresAt,
           refresh_token: user.refreshToken,
+          error: undefined,
         };
+      }
+
+      if (token.error === 'RefreshTokenError') {
+        return token;
       }
 
       // Token has not expired yet — return as-is
@@ -123,7 +140,7 @@ const config: NextAuthConfig = {
 
       // Token expired — attempt refresh via backend
       if (!token.refresh_token) {
-        return { ...token, error: 'RefreshTokenError' as const };
+        return markRefreshTokenError(token);
       }
 
       try {
@@ -160,8 +177,18 @@ const config: NextAuthConfig = {
           error: undefined,
         };
       } catch (error) {
-        console.error('Error refreshing access_token', error);
-        return { ...token, error: 'RefreshTokenError' as const };
+        if (
+          typeof error === 'object' &&
+          error != null &&
+          'code' in error &&
+          error.code === 'TOKEN_INVALID'
+        ) {
+          console.warn('Refresh token expired; clearing local session');
+        } else {
+          console.error('Error refreshing access_token', error);
+        }
+
+        return markRefreshTokenError(token);
       }
     },
 
