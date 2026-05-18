@@ -4,8 +4,48 @@ export type ClientOptions = {
     baseUrl: 'http://localhost:8080' | (string & {});
 };
 
+export type AccountChangeEmailRequest = {
+    current_password: string;
+    new_email: string;
+};
+
+export type AccountChangePasswordRequest = {
+    current_password: string;
+    new_password: string;
+};
+
+export type AccountConfirmEmailChangeRequest = {
+    token: string;
+};
+
+export type AccountDeleteRequest = {
+    current_password: string;
+    refresh_token?: string;
+};
+
+export type AccountError = {
+    code: 'BAD_REQUEST' | 'INVALID_CREDENTIALS' | 'NOT_FOUND' | 'TOKEN_INVALID' | 'NOT_IMPLEMENTED' | 'AUTH_SERVICE_UNAVAILABLE' | 'INTERNAL_ERROR' | 'UNAUTHORIZED' | 'FORBIDDEN' | 'EMAIL_ALREADY_TAKEN';
+    message: string;
+};
+
+export type AccountMessageResponse = {
+    message: string;
+};
+
+export type AccountProfile = {
+    created_at: string;
+    email: string;
+    id: string;
+    name: string;
+    updated_at: string;
+};
+
+export type AccountUpdateProfileRequest = {
+    name: string;
+};
+
 export type AdminAuthError = {
-    code: 'BAD_REQUEST' | 'INVALID_CREDENTIALS' | 'ACCOUNT_NOT_VERIFIED' | 'TOKEN_INVALID' | 'AUTH_SERVICE_UNAVAILABLE' | 'AUTH_ERROR' | 'INTERNAL_ERROR';
+    code: 'BAD_REQUEST' | 'INVALID_CREDENTIALS' | 'ACCOUNT_NOT_VERIFIED' | 'INSUFFICIENT_PERMISSIONS' | 'TOKEN_INVALID' | 'AUTH_SERVICE_UNAVAILABLE' | 'AUTH_ERROR' | 'INTERNAL_ERROR';
     message: string;
 };
 
@@ -37,6 +77,58 @@ export type AdminAuthTokenPair = {
     refresh_token: string;
 };
 
+export type AuthError = {
+    code: 'BAD_REQUEST' | 'INVALID_CREDENTIALS' | 'ACCOUNT_NOT_VERIFIED' | 'TOKEN_INVALID' | 'AUTH_SERVICE_UNAVAILABLE' | 'AUTH_ERROR' | 'INTERNAL_ERROR' | 'UNAUTHORIZED' | 'FORBIDDEN' | 'NOT_IMPLEMENTED';
+    message: string;
+};
+
+export type AuthForgotPasswordRequest = {
+    email: string;
+};
+
+export type AuthLoginRequest = {
+    email: string;
+    password: string;
+};
+
+export type AuthLogoutRequest = {
+    refresh_token?: string;
+};
+
+export type AuthMessageResponse = {
+    message: string;
+};
+
+export type AuthRefreshRequest = {
+    refresh_token: string;
+};
+
+export type AuthRegisterRequest = {
+    email: string;
+    name?: string;
+    password: string;
+};
+
+export type AuthResetPasswordRequest = {
+    flow_token: string;
+    new_password: string;
+};
+
+export type AuthTokenPair = {
+    /**
+     * Short-lived JWT access token (15 minutes)
+     */
+    access_token: string;
+    /**
+     * OIDC ID token with user claims
+     */
+    id_token?: string;
+    /**
+     * Long-lived refresh token (30 days, rotated on use)
+     */
+    refresh_token: string;
+};
+
 export type CmsAdminContent = CmsContent & {
     footer?: CmsContentFooterAssignment | null;
 };
@@ -47,6 +139,7 @@ export type CmsAssignFooterRequest = {
 };
 
 export type CmsAuthor = {
+    authentik_sub?: string | null;
     avatar_url?: string | null;
     bio?: string | null;
     created_at: string;
@@ -81,7 +174,7 @@ export type CmsContent = {
     author_id?: string | null;
     body?: string | null;
     categories?: Array<CmsCategory>;
-    content_type: 'static_page' | 'blog_post' | 'flexible_page';
+    content_type: 'static_page' | 'blog_post' | 'flexible_page' | 'news_article';
     created_at: string;
     excerpt?: string | null;
     id: string;
@@ -113,7 +206,7 @@ export type CmsContentListItem = {
     author?: CmsAuthor;
     author_id?: string | null;
     categories?: Array<CmsCategory>;
-    content_type: 'static_page' | 'blog_post' | 'flexible_page';
+    content_type: 'static_page' | 'blog_post' | 'flexible_page' | 'news_article';
     created_at: string;
     excerpt?: string | null;
     id: string;
@@ -158,7 +251,7 @@ export type CmsCreateContentRequest = {
     author_id?: string | null;
     body?: string | null;
     category_ids?: Array<string>;
-    content_type: 'static_page' | 'blog_post' | 'flexible_page';
+    content_type: 'static_page' | 'blog_post' | 'flexible_page' | 'news_article';
     excerpt?: string | null;
     meta_description?: string | null;
     meta_title?: string | null;
@@ -212,7 +305,7 @@ export type CmsFooterGroupWithItems = CmsFooterGroup & {
 };
 
 export type CmsFooterItem = {
-    content_type: 'static_page' | 'flexible_page';
+    content_type: 'static_page' | 'blog_post' | 'flexible_page' | 'news_article';
     id: string;
     page_type?: CmsFooterItemPageType | null;
     slug: string;
@@ -227,6 +320,10 @@ export type CmsFooterItemPageType = {
 
 export type CmsFooterResponse = {
     groups: Array<CmsFooterGroupWithItems>;
+};
+
+export type CmsLinkMyAuthorRequest = {
+    author_id: string;
 };
 
 export type CmsNavigationNode = {
@@ -505,7 +602,7 @@ export type ScreeningSearchResponse = {
     items: Array<ScreeningSearchResult>;
     pagination: PaginationMeta;
     /**
-     * Indicates query specificity. "broad" for single-word queries (higher threshold, treat results as suggestions). "specific" for multi-word queries (normal threshold, treat results as matches).
+     * Indicates query specificity by token count. "broad" = single-token query — admission uses the fuzzy floor so edit-distance-1 matches (e.g., 1-character typos) are returned alongside exact matches. "specific" = multi-token query — admission requires strictly more than half of tokens to score, so results are high-precision.
      *
      */
     query_type: 'broad' | 'specific';
@@ -513,17 +610,30 @@ export type ScreeningSearchResponse = {
 
 export type ScreeningSearchResult = {
     /**
+     * Birth date extracted from profile data (free-form, often YYYY-MM-DD)
+     */
+    birth_date?: string | null;
+    /**
      * Display name of the entity
      */
     caption: string;
     entity_type: 'person' | 'organization';
     id: string;
     /**
+     * Primary nationality (free-form text from Lexicon properties)
+     */
+    nationality?: string | null;
+    /**
+     * ISO country code for nationality, when available
+     */
+    nationality_code?: string | null;
+    /**
      * Sanctions lists where this entity appears
      */
     sanctions_sources?: Array<SanctionsListSummary>;
     /**
-     * BM25 relevance score
+     * Raw BM25 score — approximates the count of exact token matches against the entity's name. Integer values indicate N exact-token matches (1.0 = one token matched, 2.0 = two tokens matched, etc.); 0.5 indicates a single fuzzy (edit-distance-1) match. Not normalized to [0, 1] — do not render as a confidence percentage. Typical range: 0.5 to tokenCount of the query.
+     *
      */
     score: number;
     /**
@@ -531,7 +641,7 @@ export type ScreeningSearchResult = {
      */
     topics?: Array<string>;
     /**
-     * Type-specific fields (e.g., nationality, birth_date for persons)
+     * Type-specific fields from Lexicon properties JSONB
      */
     type_fields?: {
         [key: string]: unknown;
@@ -541,6 +651,236 @@ export type ScreeningSearchResult = {
 export type ScreeningSourcesResponse = {
     sources: Array<SanctionsList>;
 };
+
+export type AccountChangeEmailData = {
+    body: AccountChangeEmailRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/account/change-email';
+};
+
+export type AccountChangeEmailErrors = {
+    /**
+     * Invalid request body
+     */
+    400: AccountError;
+    /**
+     * Invalid current password or unauthorized
+     */
+    401: AccountError;
+    /**
+     * New email already in use
+     */
+    409: AccountError;
+    /**
+     * Feature not available (Authentik admin API not configured)
+     */
+    501: AccountError;
+    /**
+     * Authentication service unavailable
+     */
+    502: AccountError;
+};
+
+export type AccountChangeEmailError = AccountChangeEmailErrors[keyof AccountChangeEmailErrors];
+
+export type AccountChangeEmailResponses = {
+    /**
+     * Verification email sent
+     */
+    202: AccountMessageResponse;
+};
+
+export type AccountChangeEmailResponse = AccountChangeEmailResponses[keyof AccountChangeEmailResponses];
+
+export type AccountChangePasswordData = {
+    body: AccountChangePasswordRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/account/change-password';
+};
+
+export type AccountChangePasswordErrors = {
+    /**
+     * Invalid request body
+     */
+    400: AccountError;
+    /**
+     * Invalid current password or unauthorized
+     */
+    401: AccountError;
+    /**
+     * Feature not available (Authentik admin API not configured)
+     */
+    501: AccountError;
+    /**
+     * Authentication service unavailable
+     */
+    502: AccountError;
+};
+
+export type AccountChangePasswordError = AccountChangePasswordErrors[keyof AccountChangePasswordErrors];
+
+export type AccountChangePasswordResponses = {
+    /**
+     * Password changed
+     */
+    200: AccountMessageResponse;
+};
+
+export type AccountChangePasswordResponse = AccountChangePasswordResponses[keyof AccountChangePasswordResponses];
+
+export type AccountDeleteData = {
+    body: AccountDeleteRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/account/delete';
+};
+
+export type AccountDeleteErrors = {
+    /**
+     * Invalid request body
+     */
+    400: AccountError;
+    /**
+     * Invalid current password or unauthorized
+     */
+    401: AccountError;
+    /**
+     * Internal server error
+     */
+    500: AccountError;
+    /**
+     * Feature not available (Authentik admin API not configured)
+     */
+    501: AccountError;
+    /**
+     * Authentication service unavailable
+     */
+    502: AccountError;
+};
+
+export type AccountDeleteError = AccountDeleteErrors[keyof AccountDeleteErrors];
+
+export type AccountDeleteResponses = {
+    /**
+     * Account deactivated
+     */
+    204: void;
+};
+
+export type AccountDeleteResponse = AccountDeleteResponses[keyof AccountDeleteResponses];
+
+export type AccountConfirmEmailChangeData = {
+    body: AccountConfirmEmailChangeRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/account/email-change/confirm';
+};
+
+export type AccountConfirmEmailChangeErrors = {
+    /**
+     * Token invalid or expired
+     */
+    400: AccountError;
+    /**
+     * New email already in use
+     */
+    409: AccountError;
+    /**
+     * Internal server error
+     */
+    500: AccountError;
+    /**
+     * Feature not available (Authentik admin API not configured)
+     */
+    501: AccountError;
+    /**
+     * Authentication service unavailable
+     */
+    502: AccountError;
+};
+
+export type AccountConfirmEmailChangeError = AccountConfirmEmailChangeErrors[keyof AccountConfirmEmailChangeErrors];
+
+export type AccountConfirmEmailChangeResponses = {
+    /**
+     * Email updated
+     */
+    200: AccountMessageResponse;
+};
+
+export type AccountConfirmEmailChangeResponse = AccountConfirmEmailChangeResponses[keyof AccountConfirmEmailChangeResponses];
+
+export type AccountGetProfileData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/account/profile';
+};
+
+export type AccountGetProfileErrors = {
+    /**
+     * Unauthorized
+     */
+    401: AccountError;
+    /**
+     * Profile not found
+     */
+    404: AccountError;
+    /**
+     * Internal server error
+     */
+    500: AccountError;
+};
+
+export type AccountGetProfileError = AccountGetProfileErrors[keyof AccountGetProfileErrors];
+
+export type AccountGetProfileResponses = {
+    /**
+     * Profile retrieved
+     */
+    200: AccountProfile;
+};
+
+export type AccountGetProfileResponse = AccountGetProfileResponses[keyof AccountGetProfileResponses];
+
+export type AccountUpdateProfileData = {
+    body: AccountUpdateProfileRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/account/profile';
+};
+
+export type AccountUpdateProfileErrors = {
+    /**
+     * Invalid input
+     */
+    400: AccountError;
+    /**
+     * Unauthorized
+     */
+    401: AccountError;
+    /**
+     * Profile not found
+     */
+    404: AccountError;
+    /**
+     * Internal server error
+     */
+    500: AccountError;
+};
+
+export type AccountUpdateProfileError = AccountUpdateProfileErrors[keyof AccountUpdateProfileErrors];
+
+export type AccountUpdateProfileResponses = {
+    /**
+     * Profile updated
+     */
+    200: AccountProfile;
+};
+
+export type AccountUpdateProfileResponse = AccountUpdateProfileResponses[keyof AccountUpdateProfileResponses];
 
 export type AdminAuthLoginData = {
     body: AdminAuthLoginRequest;
@@ -559,7 +899,7 @@ export type AdminAuthLoginErrors = {
      */
     401: AdminAuthError;
     /**
-     * Account not verified
+     * Account not verified or insufficient permissions
      */
     403: AdminAuthError;
     /**
@@ -611,6 +951,10 @@ export type AdminAuthRefreshErrors = {
      * Invalid or expired refresh token
      */
     401: AdminAuthError;
+    /**
+     * Insufficient permissions
+     */
+    403: AdminAuthError;
     /**
      * Authentication service unavailable
      */
@@ -758,6 +1102,85 @@ export type AdminUpdateAuthorResponses = {
 
 export type AdminUpdateAuthorResponse = AdminUpdateAuthorResponses[keyof AdminUpdateAuthorResponses];
 
+export type AdminUnlinkMyAuthorData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/admin/cms/authors/me';
+};
+
+export type AdminUnlinkMyAuthorErrors = {
+    /**
+     * No linked author found
+     */
+    404: CmsError;
+};
+
+export type AdminUnlinkMyAuthorError = AdminUnlinkMyAuthorErrors[keyof AdminUnlinkMyAuthorErrors];
+
+export type AdminUnlinkMyAuthorResponses = {
+    /**
+     * Author link removed
+     */
+    204: void;
+};
+
+export type AdminUnlinkMyAuthorResponse = AdminUnlinkMyAuthorResponses[keyof AdminUnlinkMyAuthorResponses];
+
+export type AdminGetMyAuthorData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/admin/cms/authors/me';
+};
+
+export type AdminGetMyAuthorErrors = {
+    /**
+     * No linked author found
+     */
+    404: CmsError;
+};
+
+export type AdminGetMyAuthorError = AdminGetMyAuthorErrors[keyof AdminGetMyAuthorErrors];
+
+export type AdminGetMyAuthorResponses = {
+    /**
+     * Linked author found
+     */
+    200: CmsAuthor;
+};
+
+export type AdminGetMyAuthorResponse = AdminGetMyAuthorResponses[keyof AdminGetMyAuthorResponses];
+
+export type AdminLinkMyAuthorData = {
+    body: CmsLinkMyAuthorRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/admin/cms/authors/me';
+};
+
+export type AdminLinkMyAuthorErrors = {
+    /**
+     * Invalid request
+     */
+    400: CmsError;
+    /**
+     * Author not found
+     */
+    404: CmsError;
+};
+
+export type AdminLinkMyAuthorError = AdminLinkMyAuthorErrors[keyof AdminLinkMyAuthorErrors];
+
+export type AdminLinkMyAuthorResponses = {
+    /**
+     * Author linked
+     */
+    200: CmsAuthor;
+};
+
+export type AdminLinkMyAuthorResponse = AdminLinkMyAuthorResponses[keyof AdminLinkMyAuthorResponses];
+
 export type AdminListCategoriesData = {
     body?: never;
     path?: never;
@@ -876,7 +1299,7 @@ export type AdminListContentsData = {
         /**
          * Filter by content type
          */
-        content_type?: 'static_page' | 'blog_post' | 'flexible_page';
+        content_type?: 'static_page' | 'blog_post' | 'flexible_page' | 'news_article';
         /**
          * Filter by status
          */
@@ -1490,8 +1913,77 @@ export type AdminPresignUploadResponses = {
 
 export type AdminPresignUploadResponse = AdminPresignUploadResponses[keyof AdminPresignUploadResponses];
 
+export type AuthForgotPasswordData = {
+    body: AuthForgotPasswordRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/forgot-password';
+};
+
+export type AuthForgotPasswordResponses = {
+    /**
+     * Reset request accepted
+     */
+    202: AuthMessageResponse;
+};
+
+export type AuthForgotPasswordResponse = AuthForgotPasswordResponses[keyof AuthForgotPasswordResponses];
+
+export type AuthLoginData = {
+    body: AuthLoginRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/login';
+};
+
+export type AuthLoginErrors = {
+    /**
+     * Invalid request body
+     */
+    400: AuthError;
+    /**
+     * Invalid credentials
+     */
+    401: AuthError;
+    /**
+     * Account not verified
+     */
+    403: AuthError;
+    /**
+     * Authentication service unavailable
+     */
+    502: AuthError;
+};
+
+export type AuthLoginError = AuthLoginErrors[keyof AuthLoginErrors];
+
+export type AuthLoginResponses = {
+    /**
+     * Authentication successful
+     */
+    200: AuthTokenPair;
+};
+
+export type AuthLoginResponse = AuthLoginResponses[keyof AuthLoginResponses];
+
+export type AuthLogoutData = {
+    body: AuthLogoutRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/logout';
+};
+
+export type AuthLogoutResponses = {
+    /**
+     * Logout accepted
+     */
+    204: void;
+};
+
+export type AuthLogoutResponse = AuthLogoutResponses[keyof AuthLogoutResponses];
+
 export type AuthRefreshData = {
-    body: AdminAuthRefreshRequest;
+    body: AuthRefreshRequest;
     path?: never;
     query?: never;
     url: '/api/v1/auth/refresh';
@@ -1501,15 +1993,15 @@ export type AuthRefreshErrors = {
     /**
      * Invalid request body
      */
-    400: AdminAuthError;
+    400: AuthError;
     /**
      * Invalid or expired refresh token
      */
-    401: AdminAuthError;
+    401: AuthError;
     /**
      * Authentication service unavailable
      */
-    502: AdminAuthError;
+    502: AuthError;
 };
 
 export type AuthRefreshError = AuthRefreshErrors[keyof AuthRefreshErrors];
@@ -1518,10 +2010,68 @@ export type AuthRefreshResponses = {
     /**
      * Token refreshed
      */
-    200: AdminAuthTokenPair;
+    200: AuthTokenPair;
 };
 
 export type AuthRefreshResponse = AuthRefreshResponses[keyof AuthRefreshResponses];
+
+export type AuthRegisterData = {
+    body: AuthRegisterRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/register';
+};
+
+export type AuthRegisterErrors = {
+    /**
+     * Invalid request body
+     */
+    400: AuthError;
+    /**
+     * Authentication service unavailable
+     */
+    502: AuthError;
+};
+
+export type AuthRegisterError = AuthRegisterErrors[keyof AuthRegisterErrors];
+
+export type AuthRegisterResponses = {
+    /**
+     * Registration accepted
+     */
+    201: AuthMessageResponse;
+};
+
+export type AuthRegisterResponse = AuthRegisterResponses[keyof AuthRegisterResponses];
+
+export type AuthResetPasswordData = {
+    body: AuthResetPasswordRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/auth/reset-password';
+};
+
+export type AuthResetPasswordErrors = {
+    /**
+     * Invalid request body or flow token
+     */
+    400: AuthError;
+    /**
+     * Authentication service unavailable
+     */
+    502: AuthError;
+};
+
+export type AuthResetPasswordError = AuthResetPasswordErrors[keyof AuthResetPasswordErrors];
+
+export type AuthResetPasswordResponses = {
+    /**
+     * Password reset successful
+     */
+    200: AuthMessageResponse;
+};
+
+export type AuthResetPasswordResponse = AuthResetPasswordResponses[keyof AuthResetPasswordResponses];
 
 export type PublicGetAuthorBySlugData = {
     body?: never;
@@ -1581,7 +2131,7 @@ export type PublicListContentsData = {
         /**
          * Filter by content type
          */
-        content_type?: 'static_page' | 'blog_post' | 'flexible_page';
+        content_type?: 'static_page' | 'blog_post' | 'flexible_page' | 'news_article';
         /**
          * Filter by tag slug
          */
@@ -1619,7 +2169,7 @@ export type PublicListContentsResponse = PublicListContentsResponses[keyof Publi
 export type PublicGetContentByTypeAndSlugData = {
     body?: never;
     path: {
-        content_type: 'static_page' | 'blog_post' | 'flexible_page';
+        content_type: 'static_page' | 'blog_post' | 'flexible_page' | 'news_article';
         slug: string;
     };
     query?: never;

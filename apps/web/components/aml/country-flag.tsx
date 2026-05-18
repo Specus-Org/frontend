@@ -23,7 +23,7 @@ export function CountryFlag({ countryCode, authority, alt, size = 'md' }: Countr
 
   if (isInterpol) {
     return (
-      <div
+      <span
         className="flex items-center justify-center rounded-sm border bg-[#003F87] shrink-0"
         style={{ width, height }}
         title="INTERPOL"
@@ -34,12 +34,15 @@ export function CountryFlag({ countryCode, authority, alt, size = 'md' }: Countr
         >
           INTERPOL
         </span>
-      </div>
+      </span>
     );
   }
 
   return (
-    <div className="rounded-sm border overflow-hidden shrink-0" style={{ width, height }}>
+    <span
+      className="inline-block overflow-hidden rounded-sm border shrink-0"
+      style={{ width, height }}
+    >
       <picture>
         <source
           type="image/webp"
@@ -55,6 +58,6 @@ export function CountryFlag({ countryCode, authority, alt, size = 'md' }: Countr
           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
         />
       </picture>
-    </div>
+    </span>
   );
 }
