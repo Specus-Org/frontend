@@ -13,13 +13,13 @@ export default function ParaguayPage(): React.ReactNode {
   if (!dashboardUrl) notFound();
 
   return (
-    <div className="flex-1 overflow-hidden">
+    <div className="w-full overflow-x-hidden bg-background">
       <iframe
         src={dashboardUrl}
         title={IFRAME_TITLE}
         referrerPolicy="no-referrer"
         sandbox="allow-scripts allow-forms allow-same-origin"
-        className="h-full w-full border-0"
+        className="block min-h-[2200px] w-full border-0"
       />
     </div>
   );

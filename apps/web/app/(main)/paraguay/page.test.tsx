@@ -36,6 +36,16 @@ describe('ParaguayPage', () => {
     expect(iframe).toHaveAttribute('sandbox', 'allow-scripts allow-forms allow-same-origin');
   });
 
+  it('lets the dashboard define the document height instead of clipping it', () => {
+    render(<ParaguayPage />);
+
+    const iframe = screen.getByTitle('Paraguay Procurement Analysis SPECUS Dashboard');
+    expect(iframe.parentElement).toHaveClass('overflow-x-hidden');
+    expect(iframe.parentElement).not.toHaveClass('overflow-hidden');
+    expect(iframe).toHaveClass('block', 'min-h-[2200px]', 'w-full', 'border-0');
+    expect(iframe).not.toHaveClass('min-w-[960px]');
+  });
+
   it('triggers notFound when the dashboard URL env var is unset', async () => {
     vi.stubEnv('NEXT_PUBLIC_PARAGUAY_DASHBOARD_URL', '');
     const { notFound } = await import('next/navigation');
