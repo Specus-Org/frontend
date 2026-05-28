@@ -14,7 +14,7 @@ export default function MainLayout({
       <Suspense>
         <Navbar />
       </Suspense>
-      <main className="flex-1 rounded-t-xl rounded-b-xl border-y">
+      <main className="flex flex-1 flex-col rounded-t-xl rounded-b-xl border-y">
         {children}
       </main>
       <Footer />
