@@ -1,8 +1,10 @@
 import type { ScreeningSearchResult } from '@specus/api-client';
+import { Badge } from '@specus/ui/components/badge';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 import { CountryFlag } from '@/components/aml/country-flag';
+import { formatLabel } from '@/components/aml/entity-detail-formatters';
 import { tryFormatDisplayDate } from '@/lib/date-format';
 
 interface EntityItemProps {
@@ -62,6 +64,9 @@ export function EntityItem({ entity }: EntityItemProps): React.ReactElement {
   const nationalityCode = getNationalityCode(entity);
   const birthDate = getBirthDate(entity);
   const hasSummary = nationality || birthDate;
+  const sanctionTypes = Array.from(new Set(entity.sanction_types ?? [])).filter(
+    (sanctionType) => sanctionType.trim() !== '',
+  );
 
   return (
     <Link
@@ -92,6 +97,15 @@ export function EntityItem({ entity }: EntityItemProps): React.ReactElement {
             {birthDate && <span>{birthDate}</span>}
           </p>
         )}
+        {sanctionTypes.length > 0 ? (
+          <div aria-label="Sanction types" className="mt-2 flex min-w-0 flex-wrap gap-1.5">
+            {sanctionTypes.map((sanctionType) => (
+              <Badge key={sanctionType} variant="secondary">
+                {formatLabel(sanctionType)}
+              </Badge>
+            ))}
+          </div>
+        ) : null}
       </div>
     </Link>
   );

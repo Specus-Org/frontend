@@ -524,7 +524,7 @@ export type EntitySanction = {
     delisting_date_label?: string;
     designation_date?: string;
     designation_date_label?: string;
-    event_type: 'sanction' | 'pep' | 'blacklist';
+    event_type: 'sanction' | 'pep' | 'blacklist' | 'case_law';
     is_active: boolean;
     list_url?: string;
     program?: string;
@@ -536,6 +536,10 @@ export type EntitySanction = {
     };
     remarks?: string;
     role?: string;
+    /**
+     * Nature of the sanction (criminal, financial, political); null if unclassified
+     */
+    sanction_type?: SanctionType | null;
     sanctions_list?: SanctionsListSummary;
     title?: string;
 };
@@ -564,6 +568,11 @@ export type PaginationMeta = {
     next_cursor?: string | null;
 };
 
+/**
+ * Nature of a sanction record (criminal, financial, political).
+ */
+export type SanctionType = 'criminal' | 'financial' | 'political';
+
 export type SanctionsList = {
     authority: string;
     country_code: string;
@@ -589,6 +598,9 @@ export type ScreeningEntity = {
     names: Array<EntityName>;
     sanctions: Array<EntitySanction>;
     summary?: string;
+    /**
+     * Entity classifications: sanction, pep, blacklist, case_law
+     */
     topics?: Array<string>;
     /**
      * Type-specific fields from Lexicon properties JSONB
@@ -628,6 +640,10 @@ export type ScreeningSearchResult = {
      */
     nationality_code?: string | null;
     /**
+     * Distinct sanction types across this entity's sanction records
+     */
+    sanction_types?: Array<SanctionType>;
+    /**
      * Sanctions lists where this entity appears
      */
     sanctions_sources?: Array<SanctionsListSummary>;
@@ -637,7 +653,7 @@ export type ScreeningSearchResult = {
      */
     score: number;
     /**
-     * Entity classifications: sanction, pep, blacklist
+     * Entity classifications: sanction, pep, blacklist, case_law
      */
     topics?: Array<string>;
     /**
@@ -2385,11 +2401,15 @@ export type ScreeningSearchData = {
         /**
          * Filter by topics (repeated param)
          */
-        topics?: Array<'sanction' | 'pep' | 'blacklist'>;
+        topics?: Array<'sanction' | 'pep' | 'blacklist' | 'case_law'>;
         /**
          * Filter by sanctions list ID
          */
         sanctions_list_id?: string;
+        /**
+         * Filter by sanction type
+         */
+        sanction_type?: SanctionType;
     };
     url: '/api/v1/screening/search';
 };

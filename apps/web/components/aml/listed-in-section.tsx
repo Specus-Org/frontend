@@ -1,7 +1,12 @@
 import Link from 'next/link';
 import type { EntitySanction } from '@specus/api-client';
+import { Badge } from '@specus/ui/components/badge';
 import { CountryFlag } from '@/components/aml/country-flag';
-import { buildSanctionRows, getSanctionLink } from '@/components/aml/entity-detail-formatters';
+import {
+  buildSanctionRows,
+  formatLabel,
+  getSanctionLink,
+} from '@/components/aml/entity-detail-formatters';
 
 interface ListedInSectionProps {
   items: EntitySanction[];
@@ -19,6 +24,10 @@ export function ListedInSection({ items }: ListedInSectionProps) {
           const sanctionLink = getSanctionLink(item);
           const summary = item.sanctions_list;
           const title = summary?.name ?? `Sanction Entry ${index + 1}`;
+          const sanctionType =
+            typeof item.sanction_type === 'string' && item.sanction_type.trim() !== ''
+              ? item.sanction_type
+              : null;
 
           return (
             <div key={`${title}-${index}`} className="flex flex-row gap-4 items-start w-full">
@@ -67,11 +76,19 @@ export function ListedInSection({ items }: ListedInSectionProps) {
                   <p className="text-muted-foreground mt-2">{summary.authority}</p>
                 ) : null}
 
-                {item.is_active && (
-                  <span className="mb-1 w-fit rounded-full mt-2 px-2.5 py-0.5 text-xs font-medium text-destructive border-destructive border bg-destructive/5">
-                    Active
-                  </span>
-                )}
+                {sanctionType || item.is_active ? (
+                  <div className="mt-2 mb-1 flex flex-wrap gap-1.5">
+                    {sanctionType ? (
+                      <Badge variant="secondary">{formatLabel(sanctionType)}</Badge>
+                    ) : null}
+
+                    {item.is_active ? (
+                      <span className="w-fit rounded-full border border-destructive bg-destructive/5 px-2.5 py-0.5 text-xs font-medium text-destructive">
+                        Active
+                      </span>
+                    ) : null}
+                  </div>
+                ) : null}
 
                 {sanctionRows.length > 0 ? (
                   <div className="space-y-2 overflow-hidden mt-2">
