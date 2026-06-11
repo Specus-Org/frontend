@@ -26,10 +26,13 @@ describe('Landing storytelling sections', () => {
   });
 
   it('renders trusted data sources', () => {
-    render(<CoverageSection trustedSources={landingContent.trustedSources} />);
+    render(<CoverageSection trustedSources={landingContent.platforms} />);
 
-    for (const source of landingContent.trustedSources) {
-      expect(screen.getByText(`– ${source}`)).toBeInTheDocument();
+    for (const source of landingContent.platforms) {
+      expect(screen.getByRole('link', { name: source.name })).toHaveAttribute(
+        'href',
+        source.href,
+      );
     }
   });
 });

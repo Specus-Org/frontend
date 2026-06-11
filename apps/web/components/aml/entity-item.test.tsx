@@ -27,6 +27,10 @@ describe('EntityItem', () => {
       caption: 'Very Long Organization Name That Should Still Wrap Cleanly On Mobile',
       entity_type: 'organization',
       score: 0.92,
+      nationality: 'Indonesia',
+      nationality_code: 'ID',
+      birth_date: '2026-04-03',
+      sanction_types: ['criminal', 'financial'],
     };
 
     const { container } = render(<EntityItem entity={entity} />);
@@ -42,6 +46,10 @@ describe('EntityItem', () => {
     expect(link.className).toContain('min-w-0');
     expect(title.className).toContain('line-clamp-2');
     expect(title.className).toContain('break-words');
+    expect(screen.getByText('Indonesia')).toBeInTheDocument();
+    expect(screen.getByText('April 3, 2026')).toBeInTheDocument();
+    expect(screen.getByText('Criminal')).toBeInTheDocument();
+    expect(screen.getByText('Financial')).toBeInTheDocument();
     expect(screen.getByTestId('entity-image')).toHaveAttribute(
       'data-alt',
       'Very Long Organization Name That Should Still Wrap Cleanly On Mobile',
@@ -70,6 +78,53 @@ describe('EntityItem', () => {
       'src',
       expect.stringContaining('/id.png'),
     );
+  });
+
+  it('renders sanction type badges with formatted labels when provided', () => {
+    const entity: ScreeningSearchResult = {
+      id: 'entity-1',
+      caption: 'Screened Person',
+      entity_type: 'person',
+      score: 0.92,
+      sanction_types: ['criminal', 'financial'],
+    };
+
+    render(<EntityItem entity={entity} />);
+
+    expect(screen.getByLabelText('Sanction types')).toBeInTheDocument();
+    expect(screen.getByText('Criminal')).toBeInTheDocument();
+    expect(screen.getByText('Financial')).toBeInTheDocument();
+  });
+
+  it('does not render sanction type badges when sanction_types is undefined', () => {
+    const entity: ScreeningSearchResult = {
+      id: 'entity-1',
+      caption: 'Screened Person',
+      entity_type: 'person',
+      score: 0.92,
+    };
+
+    render(<EntityItem entity={entity} />);
+
+    expect(screen.queryByLabelText('Sanction types')).not.toBeInTheDocument();
+    expect(screen.queryByText('Criminal')).not.toBeInTheDocument();
+    expect(screen.queryByText('Financial')).not.toBeInTheDocument();
+  });
+
+  it('does not render sanction type badges when sanction_types is empty', () => {
+    const entity: ScreeningSearchResult = {
+      id: 'entity-1',
+      caption: 'Screened Person',
+      entity_type: 'person',
+      score: 0.92,
+      sanction_types: [],
+    };
+
+    render(<EntityItem entity={entity} />);
+
+    expect(screen.queryByLabelText('Sanction types')).not.toBeInTheDocument();
+    expect(screen.queryByText('Criminal')).not.toBeInTheDocument();
+    expect(screen.queryByText('Financial')).not.toBeInTheDocument();
   });
 
   it('omits empty summary parts and separator', () => {

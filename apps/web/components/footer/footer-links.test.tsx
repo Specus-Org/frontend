@@ -73,7 +73,7 @@ describe('FooterLinks', () => {
 
     render(<FooterLinks groups={[]} />);
 
-    fireEvent.click(screen.getByRole('link', { name: 'Insights' }));
+    fireEvent.click(screen.getByRole('link', { name: 'Bangladesh' }));
 
     expect(scrollTo).toHaveBeenCalledWith({ top: 0, behavior: 'smooth' });
   });

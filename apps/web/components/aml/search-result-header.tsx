@@ -1,4 +1,5 @@
 import { ScreeningEntity } from '@specus/api-client';
+import { formatLabel } from '@/components/aml/entity-detail-formatters';
 
 interface SearchResultHeaderProps {
   entity: ScreeningEntity;
@@ -14,7 +15,7 @@ export function SearchResultHeader({ entity }: SearchResultHeaderProps) {
             key={topic}
             className={`mb-1 w-fit rounded-full mt-2 px-2.5 py-0.5 text-xs font-medium text-white bg-destructive`}
           >
-            {topic}
+            {formatLabel(topic)}
           </span>
         ))}
       </div>

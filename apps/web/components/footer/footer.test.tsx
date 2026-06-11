@@ -73,11 +73,7 @@ describe('Footer', () => {
     render(await Footer());
 
     const headings = screen.getAllByRole('heading', { level: 3 });
-    expect(headings.map((heading) => heading.textContent)).toEqual([
-      'Specus',
-      'Products',
-      'Company',
-    ]);
+    expect(headings.map((heading) => heading.textContent)).toEqual(['Products', 'Company']);
     expect(screen.queryByRole('heading', { name: 'Empty' })).not.toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'About' })).toHaveAttribute('href', '/about');
   });
@@ -87,9 +83,9 @@ describe('Footer', () => {
 
     render(await Footer());
 
-    expect(screen.getByRole('img', { name: 'Specus logo' })).toHaveAttribute('src', '/ic_logo.png');
+    expect(screen.getByText(/Specus is a global compliance intelligence platform/i)).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Products' })).toBeInTheDocument();
     expect(screen.queryByRole('heading', { name: 'Company' })).not.toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Insights' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Bangladesh' })).toBeInTheDocument();
   });
 });

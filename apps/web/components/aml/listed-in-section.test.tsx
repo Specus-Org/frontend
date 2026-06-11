@@ -24,6 +24,7 @@ describe('ListedInSection', () => {
           {
             event_type: 'sanction',
             is_active: true,
+            sanction_type: 'criminal',
             program: 'OFAC SDN',
             designation_date: '2024-10-01',
             delisting_date: '2025-01-01',
@@ -44,6 +45,10 @@ describe('ListedInSection', () => {
       .map((element) => element.textContent);
 
     expect(labels).toEqual(['Program', 'Designation Date', 'Delisted Date', 'Remarks']);
+    expect(screen.getByText('Criminal')).toBeInTheDocument();
+    expect(screen.getByText('OFAC SDN')).toBeInTheDocument();
+    expect(screen.getByText('October 1, 2024')).toBeInTheDocument();
+    expect(screen.getByText('Review required')).toBeInTheDocument();
   });
 
   it('omits empty sanction rows and renders a source link only when available', () => {
@@ -84,6 +89,98 @@ describe('ListedInSection', () => {
       'href',
       'https://example.com/source',
     );
+    expect(screen.getByText('Active')).toBeInTheDocument();
+  });
+
+  it('renders a formatted sanction type badge when a record is classified', () => {
+    render(
+      <ListedInSection
+        items={[
+          {
+            event_type: 'sanction',
+            is_active: false,
+            sanction_type: 'criminal',
+            sanctions_list: {
+              id: 'ofac',
+              name: 'OFAC SDN List',
+              authority: 'U.S. Department of Treasury',
+              country_code: 'us',
+            },
+          } as EntitySanction,
+        ]}
+      />,
+    );
+
+    expect(screen.getByText('Criminal')).toBeInTheDocument();
+  });
+
+  it('does not render a sanction type badge when sanction_type is null', () => {
+    render(
+      <ListedInSection
+        items={[
+          {
+            event_type: 'sanction',
+            is_active: false,
+            sanction_type: null,
+            sanctions_list: {
+              id: 'ofac',
+              name: 'OFAC SDN List',
+              authority: 'U.S. Department of Treasury',
+              country_code: 'us',
+            },
+          } as EntitySanction,
+        ]}
+      />,
+    );
+
+    expect(screen.queryByText('Criminal')).not.toBeInTheDocument();
+    expect(screen.queryByText('Financial')).not.toBeInTheDocument();
+    expect(screen.queryByText('Political')).not.toBeInTheDocument();
+  });
+
+  it('does not render a sanction type badge when sanction_type is undefined', () => {
+    render(
+      <ListedInSection
+        items={[
+          {
+            event_type: 'sanction',
+            is_active: false,
+            sanctions_list: {
+              id: 'ofac',
+              name: 'OFAC SDN List',
+              authority: 'U.S. Department of Treasury',
+              country_code: 'us',
+            },
+          } as EntitySanction,
+        ]}
+      />,
+    );
+
+    expect(screen.queryByText('Criminal')).not.toBeInTheDocument();
+    expect(screen.queryByText('Financial')).not.toBeInTheDocument();
+    expect(screen.queryByText('Political')).not.toBeInTheDocument();
+  });
+
+  it('shows both sanction type and active status for active classified records', () => {
+    render(
+      <ListedInSection
+        items={[
+          {
+            event_type: 'sanction',
+            is_active: true,
+            sanction_type: 'financial',
+            sanctions_list: {
+              id: 'ofac',
+              name: 'OFAC SDN List',
+              authority: 'U.S. Department of Treasury',
+              country_code: 'us',
+            },
+          } as EntitySanction,
+        ]}
+      />,
+    );
+
+    expect(screen.getByText('Financial')).toBeInTheDocument();
     expect(screen.getByText('Active')).toBeInTheDocument();
   });
 });
