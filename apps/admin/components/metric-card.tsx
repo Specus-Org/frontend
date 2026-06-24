@@ -11,6 +11,7 @@ interface MetricCardProps {
   loading?: boolean;
   error?: boolean;
   href?: string;
+  variant?: 'default' | 'success' | 'error' | 'feature';
 }
 
 export function MetricCard({
@@ -21,21 +22,31 @@ export function MetricCard({
   loading,
   error,
   href,
+  variant,
 }: MetricCardProps) {
+  const resolvedVariant = variant ?? (error ? 'error' : 'default');
+
+  const iconClass = {
+    default: 'bg-primary/10 text-primary',
+    success: 'bg-green-0 dark:bg-green-4/10 text-green-5',
+    error: 'bg-red-0 dark:bg-red-4/10 text-destructive',
+    feature: 'bg-teal-0 dark:bg-teal-4/10 text-feature',
+  }[resolvedVariant];
+
   const content = (
     <Card
       className={
         href
-          ? 'transition-colors hover:border-primary/30 cursor-pointer'
-          : undefined
+          ? 'shadow-sm transition-colors hover:border-primary/30 cursor-pointer'
+          : 'shadow-sm'
       }
     >
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium text-muted-foreground">
           {title}
         </CardTitle>
-        <div className="flex size-8 items-center justify-center rounded-md bg-muted">
-          <Icon className="size-4 text-muted-foreground" />
+        <div className={`flex size-8 items-center justify-center rounded-md ${iconClass}`}>
+          <Icon className="size-4" />
         </div>
       </CardHeader>
       <CardContent>
