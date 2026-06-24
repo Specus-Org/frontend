@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Tag, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import useSWR from 'swr';
 import { Button } from '@specus/ui/components/button';
@@ -19,6 +19,8 @@ import {
 import type { CmsTag } from '@specus/api-client';
 import dynamic from 'next/dynamic';
 import { fetcher } from '@/lib/fetcher';
+import { PageHeader } from '@/components/page-header';
+import { EmptyState } from '@/components/empty-state';
 
 const TagDialog = dynamic(
   () => import('@/components/tags/tag-dialog').then((m) => m.TagDialog),
@@ -75,24 +77,17 @@ export default function TagsPage() {
 
   return (
     <div className="flex flex-1 flex-col gap-6">
-      {/* Page header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-semibold tracking-tight">Tags</h1>
-            {!isLoading ? (
-              <Badge variant="secondary">
-                {tags.length}
-              </Badge>
-            ) : null}
-          </div>
-          <p className="mt-1 text-sm text-muted-foreground">Label and organize content with tags.</p>
-        </div>
-        <Button onClick={() => { setDialogKey((k) => k + 1); setDialogOpen(true); }} size="sm">
-          <Plus className="size-4" />
-          Add Tag
-        </Button>
-      </div>
+      <PageHeader
+        title="Tags"
+        description="Label and organize content with tags."
+        titleAdornment={!isLoading && tags.length > 0 ? <Badge variant="secondary">{tags.length}</Badge> : null}
+        action={
+          <Button onClick={() => { setDialogKey((k) => k + 1); setDialogOpen(true); }} size="sm">
+            <Plus className="size-4" />
+            Add Tag
+          </Button>
+        }
+      />
 
       {/* Tags grid */}
       {isLoading ? (
@@ -100,9 +95,12 @@ export default function TagsPage() {
           Loading...
         </div>
       ) : tags.length === 0 ? (
-        <div className="flex h-24 items-center justify-center text-muted-foreground">
-          No tags yet. Create one to get started.
-        </div>
+        <EmptyState
+          icon={Tag}
+          title="No tags yet"
+          description="Create a tag to label and organize your content."
+          action={{ label: 'Add Tag', onClick: () => { setDialogKey((k) => k + 1); setDialogOpen(true); } }}
+        />
       ) : (
         <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {tags.map((tag) => (

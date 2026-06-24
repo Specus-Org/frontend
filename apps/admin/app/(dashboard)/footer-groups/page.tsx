@@ -7,6 +7,7 @@ import useSWR from 'swr';
 import { Button } from '@specus/ui/components/button';
 import { Badge } from '@specus/ui/components/badge';
 import { fetcher } from '@/lib/fetcher';
+import { PageHeader } from '@/components/page-header';
 import { FooterGroupsTable } from '@/components/footer-groups/footer-groups-table';
 import type { FooterGroup, FooterGroupListResponse } from '@/components/footer-groups/types';
 
@@ -41,18 +42,16 @@ export default function FooterGroupsPage() {
 
   return (
     <div className="flex flex-1 flex-col gap-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Footer Groups</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Organize which content links appear together in the site footer.
-          </p>
-        </div>
-        <Button onClick={openCreateDialog} size="sm" disabled={!integrationReady}>
-          <Plus className="size-4" />
-          Add Footer Group
-        </Button>
-      </div>
+      <PageHeader
+        title="Footer Groups"
+        description="Organize which content links appear together in the site footer."
+        action={
+          <Button onClick={openCreateDialog} size="sm" disabled={!integrationReady}>
+            <Plus className="size-4" />
+            Add Footer Group
+          </Button>
+        }
+      />
 
       {isLoading ? (
         <div className="flex min-h-[240px] items-center justify-center rounded-md border">

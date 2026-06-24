@@ -12,6 +12,7 @@ import {
 import { Card, CardContent } from '@specus/ui/components/card';
 
 import { MetricCard } from '@/components/metric-card';
+import { PageHeader } from '@/components/page-header';
 import { fetchWithAuth, fetchBackend } from '@/lib/api-client';
 
 // ---------- Async server metric components ----------
@@ -28,6 +29,7 @@ async function SourcesMetric() {
         value={count}
         description="Active screening databases"
         icon={Shield}
+        variant="feature"
       />
     );
   } catch {
@@ -37,6 +39,7 @@ async function SourcesMetric() {
         value={0}
         description="Active screening databases"
         icon={Shield}
+        variant="feature"
         error
       />
     );
@@ -55,6 +58,7 @@ async function HealthMetric() {
         value={healthy ? 'Operational' : 'Unreachable'}
         description="Backend API status"
         icon={Activity}
+        variant={healthy ? 'success' : 'error'}
         href="/health"
       />
     );
@@ -65,6 +69,7 @@ async function HealthMetric() {
         value="Unreachable"
         description="Backend API status"
         icon={Activity}
+        variant="error"
         error
         href="/health"
       />
@@ -85,6 +90,7 @@ async function ContentMetric() {
         value={hasContent ? 'Active' : 'Empty'}
         description={hasContent ? 'Content entries created' : 'No content yet'}
         icon={FileText}
+        variant="default"
         href="/contents"
       />
     );
@@ -95,6 +101,7 @@ async function ContentMetric() {
         value="—"
         description="Failed to load"
         icon={FileText}
+        variant="default"
         error
         href="/contents"
       />
@@ -135,13 +142,7 @@ function QuickAction({ title, description, href, icon: Icon }: QuickActionProps)
 export default function DashboardPage() {
   return (
     <div className="space-y-8">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Overview of your system at a glance.
-        </p>
-      </div>
+      <PageHeader title="Dashboard" description="System status and quick navigation." />
 
       {/* Metric cards — each streams independently via Suspense */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -160,8 +161,8 @@ export default function DashboardPage() {
 
       {/* Quick actions */}
       <div>
-        <h2 className="mb-3 text-sm font-medium text-muted-foreground">
-          Quick Actions
+        <h2 className="mb-3 text-xs font-medium tracking-wide uppercase text-muted-foreground">
+          Manage
         </h2>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           <QuickAction

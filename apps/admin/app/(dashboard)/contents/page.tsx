@@ -21,6 +21,7 @@ import { DataTable } from '@/components/contents/data-table';
 import { getColumns } from '@/components/contents/columns';
 import { EmptyState } from '@/components/empty-state';
 import { fetcher } from '@/lib/fetcher';
+import { PageHeader } from '@/components/page-header';
 
 const PAGE_SIZE = 20;
 
@@ -147,21 +148,18 @@ export default function ContentsPage() {
 
   return (
     <div className="flex flex-1 flex-col gap-6">
-      {/* Page header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Content</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Manage your pages, blog posts, and other content.
-          </p>
-        </div>
-        <Button asChild size="sm">
-          <Link href="/contents/new">
-            <Plus className="size-4" />
-            New Content
-          </Link>
-        </Button>
-      </div>
+      <PageHeader
+        title="Content"
+        description="Manage your pages, blog posts, and other content."
+        action={
+          <Button asChild size="sm">
+            <Link href="/contents/new">
+              <Plus className="size-4" />
+              New Content
+            </Link>
+          </Button>
+        }
+      />
 
       {/* Filter toolbar */}
       <div className="flex flex-wrap items-center gap-3">

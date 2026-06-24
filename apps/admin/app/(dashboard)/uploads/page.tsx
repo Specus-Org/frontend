@@ -16,6 +16,7 @@ import { EmptyState } from '@/components/empty-state';
 import { UploadEditDialog } from '@/components/uploads/upload-edit-dialog';
 import { UploadList } from '@/components/uploads/upload-list';
 import { fetcher } from '@/lib/fetcher';
+import { PageHeader } from '@/components/page-header';
 import type { CmsUploadExtended, CmsUploadListResponseExtended } from '@/types/uploads';
 
 const UploadDialog = dynamic(
@@ -170,18 +171,16 @@ export default function UploadsPage() {
 
   return (
     <div className="flex flex-1 flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Uploads</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Manage images and documents for your content.
-          </p>
-        </div>
-        <Button onClick={() => setDialogOpen(true)}>
-          <Upload className="mr-2 size-4" />
-          Upload File
-        </Button>
-      </div>
+      <PageHeader
+        title="Uploads"
+        description="Manage images and documents for your content."
+        action={
+          <Button onClick={() => setDialogOpen(true)}>
+            <Upload className="mr-2 size-4" />
+            Upload File
+          </Button>
+        }
+      />
 
       <div className="flex flex-wrap items-center gap-3">
         <Select value={uploadType} onValueChange={handleUploadTypeChange}>

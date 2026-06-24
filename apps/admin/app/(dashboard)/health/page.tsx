@@ -9,6 +9,7 @@ import {
   HealthDetailCard,
   type HealthStatus,
 } from '@/components/health/health-detail-card';
+import { PageHeader } from '@/components/page-header';
 
 const POLL_INTERVAL = 30_000;
 
@@ -65,40 +66,25 @@ export default function HealthPage() {
 
   return (
     <div className="flex flex-1 flex-col gap-6">
-      {/* Page header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-semibold tracking-tight">
-              System Health
-            </h1>
-            {isRefreshing && (
-              <RefreshCw className="size-3.5 animate-spin text-muted-foreground" />
-            )}
-          </div>
-          {data?.lastChecked && (
-            <p className="text-sm text-muted-foreground">
-              Last checked:{' '}
-              {data.lastChecked.toLocaleString(undefined, {
-                dateStyle: 'medium',
-                timeStyle: 'medium',
-              })}
-            </p>
-          )}
-        </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleManualRefresh}
-          disabled={isRefreshing}
-          className="w-fit"
-        >
-          <RefreshCw
-            className={`size-4 ${isRefreshing ? 'animate-spin' : ''}`}
-          />
-          Refresh
-        </Button>
-      </div>
+      <PageHeader
+        title="System Health"
+        description={data?.lastChecked
+          ? `Last checked: ${data.lastChecked.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'medium' })}`
+          : undefined}
+        titleAdornment={isRefreshing ? <RefreshCw className="size-3.5 animate-spin text-muted-foreground" /> : null}
+        action={
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleManualRefresh}
+            disabled={isRefreshing}
+            className="w-fit"
+          >
+            <RefreshCw className={`size-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+            Refresh
+          </Button>
+        }
+      />
 
       {/* Health cards */}
       <div className="grid gap-6 md:grid-cols-2">
