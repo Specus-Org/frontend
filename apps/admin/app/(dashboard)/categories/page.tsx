@@ -32,7 +32,6 @@ import {
 import type { CmsCategory } from '@specus/api-client';
 import dynamic from 'next/dynamic';
 import { fetcher } from '@/lib/fetcher';
-import { PageHeader } from '@/components/page-header';
 import { EmptyState } from '@/components/empty-state';
 
 const CategoryDialog = dynamic(
@@ -114,16 +113,10 @@ export default function CategoriesPage() {
 
   return (
     <div className="flex flex-1 flex-col gap-6">
-      <PageHeader
-        title="Categories"
-        description="Organize content into categories."
-        action={
-          <Button onClick={handleCreate} size="sm">
-            <Plus className="size-4" />
-            Add Category
-          </Button>
-        }
-      />
+      <div className="flex items-center justify-between">
+        <h1 className="text-lg font-semibold">Categories</h1>
+        <Button onClick={handleCreate} size="sm"><Plus className="size-4" />Add Category</Button>
+      </div>
 
       {!isLoading && categories.length === 0 ? (
         <EmptyState

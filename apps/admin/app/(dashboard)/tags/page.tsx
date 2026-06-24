@@ -19,7 +19,6 @@ import {
 import type { CmsTag } from '@specus/api-client';
 import dynamic from 'next/dynamic';
 import { fetcher } from '@/lib/fetcher';
-import { PageHeader } from '@/components/page-header';
 import { EmptyState } from '@/components/empty-state';
 
 const TagDialog = dynamic(
@@ -77,17 +76,13 @@ export default function TagsPage() {
 
   return (
     <div className="flex flex-1 flex-col gap-6">
-      <PageHeader
-        title="Tags"
-        description="Label and organize content with tags."
-        titleAdornment={!isLoading && tags.length > 0 ? <Badge variant="secondary">{tags.length}</Badge> : null}
-        action={
-          <Button onClick={() => { setDialogKey((k) => k + 1); setDialogOpen(true); }} size="sm">
-            <Plus className="size-4" />
-            Add Tag
-          </Button>
-        }
-      />
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <h1 className="text-lg font-semibold">Tags</h1>
+          {!isLoading && tags.length > 0 && <Badge variant="secondary">{tags.length}</Badge>}
+        </div>
+        <Button onClick={() => { setDialogKey((k) => k + 1); setDialogOpen(true); }} size="sm"><Plus className="size-4" />Add Tag</Button>
+      </div>
 
       {/* Tags grid */}
       {isLoading ? (

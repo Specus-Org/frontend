@@ -32,7 +32,6 @@ import {
 import type { CmsPageType } from '@specus/api-client';
 import dynamic from 'next/dynamic';
 import { fetcher } from '@/lib/fetcher';
-import { PageHeader } from '@/components/page-header';
 import { EmptyState } from '@/components/empty-state';
 
 const PageTypeDialog = dynamic(
@@ -94,16 +93,10 @@ export default function PageTypesPage() {
 
   return (
     <div className="flex flex-1 flex-col gap-6">
-      <PageHeader
-        title="Page Types"
-        description="Define page type templates for flexible pages."
-        action={
-          <Button onClick={() => { setDialogKey((k) => k + 1); setDialogOpen(true); }} size="sm">
-            <Plus className="size-4" />
-            Add Page Type
-          </Button>
-        }
-      />
+      <div className="flex items-center justify-between">
+        <h1 className="text-lg font-semibold">Page Types</h1>
+        <Button onClick={() => { setDialogKey((k) => k + 1); setDialogOpen(true); }} size="sm"><Plus className="size-4" />Add Page Type</Button>
+      </div>
 
       {!isLoading && pageTypes.length === 0 ? (
         <EmptyState

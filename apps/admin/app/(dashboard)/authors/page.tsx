@@ -37,7 +37,6 @@ import {
 import type { CmsAuthor } from '@specus/api-client';
 import dynamic from 'next/dynamic';
 import { fetcher } from '@/lib/fetcher';
-import { PageHeader } from '@/components/page-header';
 import { EmptyState } from '@/components/empty-state';
 
 const AuthorDialog = dynamic(
@@ -122,16 +121,10 @@ export default function AuthorsPage() {
 
   return (
     <div className="flex flex-1 flex-col gap-6">
-      <PageHeader
-        title="Authors"
-        description="Manage author profiles for your content."
-        action={
-          <Button onClick={handleCreate} size="sm">
-            <Plus className="size-4" />
-            Add Author
-          </Button>
-        }
-      />
+      <div className="flex items-center justify-between">
+        <h1 className="text-lg font-semibold">Authors</h1>
+        <Button onClick={handleCreate} size="sm"><Plus className="size-4" />Add Author</Button>
+      </div>
 
       {!isLoading && authors.length === 0 ? (
         <EmptyState
