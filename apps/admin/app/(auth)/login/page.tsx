@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Shield, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { Button } from '@specus/ui/components/button';
 import { Input } from '@specus/ui/components/input';
 import { Label } from '@specus/ui/components/label';
@@ -68,18 +68,15 @@ export default function LoginPage() {
   }
 
   return (
-    <Card className="border-border/50 py-8 shadow-lg">
+    <Card>
       <CardHeader className="text-center">
-        <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-          <Shield className="size-6" />
-        </div>
-        <CardTitle className="text-xl font-semibold">Specus Admin</CardTitle>
+        <CardTitle className="text-xl">Specus Admin</CardTitle>
         <CardDescription>Sign in to the administration dashboard</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="grid gap-5">
           {error && (
-            <div className="rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2.5 text-sm text-destructive">
+            <div className="rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2.5 text-sm text-destructive">
               {error}
             </div>
           )}
@@ -128,3 +125,4 @@ export default function LoginPage() {
     </Card>
   );
 }
+
