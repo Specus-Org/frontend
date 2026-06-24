@@ -16,7 +16,7 @@ export function WorkflowSection({ steps }: WorkflowSectionProps): React.ReactEle
             key={step.step}
             className="rounded-xl border border-secondary p-[17px]"
           >
-            <p className="text-base font-semibold leading-6 text-[#00adb2] uppercase">
+            <p className="text-base font-semibold leading-6 text-feature uppercase">
               STEP {i + 1}
             </p>
             <h3 className="mt-2 text-xl font-semibold leading-7 text-foreground">{step.title}</h3>

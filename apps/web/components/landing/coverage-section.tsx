@@ -35,8 +35,8 @@ export function CoverageSection({ trustedSources }: CoverageSectionProps): React
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         {features.map((feature) => (
           <div key={feature.title} className="rounded-xl border border-secondary p-[17px]">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#00adb2]/10">
-              <feature.Icon className="h-6 w-6 text-[#00adb2]" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-feature/10">
+              <feature.Icon className="h-6 w-6 text-feature" />
             </div>
             <h3 className="mt-3 text-xl font-semibold leading-7 text-foreground">
               {feature.title}

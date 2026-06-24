@@ -21,7 +21,7 @@ export function VisionMissionSection({
           key={key}
           className="flex flex-1 flex-col gap-2 rounded-xl border border-secondary p-6"
         >
-          <p className="text-base font-semibold leading-6 text-[#00adb2]">{label}</p>
+          <p className="text-base font-semibold leading-6 text-feature">{label}</p>
           <p className="text-lg leading-7 text-foreground">{texts[key]}</p>
         </div>
       ))}
