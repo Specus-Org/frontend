@@ -53,7 +53,13 @@ export function CheckEmailDialog({ open, type, onClose }: CheckEmailDialogProps)
           <DialogDescription className="text-center">{content.description}</DialogDescription>
         </DialogHeader>
         <DialogFooter className="sm:justify-center">
-          <Button onClick={onClose}>Done</Button>
+          <Button
+            onClick={onClose}
+            data-umami-event="check_email_done_click"
+            data-umami-event-type={type}
+          >
+            Done
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

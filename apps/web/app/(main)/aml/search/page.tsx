@@ -8,6 +8,7 @@ import { Button } from '@specus/ui/components/button';
 import { Search } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { Suspense, useEffect, useState } from 'react';
+import { trackEvent } from '@/lib/analytics';
 
 export default function AMLSearchPage(): React.ReactElement {
   return (
@@ -45,14 +46,29 @@ function AMLSearchContent(): React.ReactElement {
         const queryType = data?.query_type;
 
         if (queryType === 'specific' && items.length === 1 && items[0].id) {
+          trackEvent('aml_search_result', {
+            source: 'results',
+            'result-count': items.length,
+            'query-type': queryType,
+            redirected: true,
+          });
           router.replace(`/aml/search/${items[0].id}`);
           return;
         }
 
+        trackEvent('aml_search_result', {
+          source: 'results',
+          'result-count': items.length,
+          'query-type': queryType ?? 'unknown',
+          redirected: false,
+        });
         setResults(items);
       })
       .catch(() => {
-        if (!cancelled) setError(true);
+        if (!cancelled) {
+          trackEvent('aml_search_error', { source: 'results' });
+          setError(true);
+        }
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -65,6 +81,7 @@ function AMLSearchContent(): React.ReactElement {
 
   const handleSearch = () => {
     if (query.trim()) {
+      trackEvent('aml_search_submit', { source: 'results' });
       router.replace(`/aml/search?q=${encodeURIComponent(query.trim())}`);
     }
   };
@@ -87,6 +104,8 @@ function AMLSearchContent(): React.ReactElement {
           onClick={handleSearch}
           disabled={!query.trim()}
           className="bg-brand cursor-pointer hover:bg-brand/90 absolute top-1/2 right-2 h-7 w-7 -translate-y-1/2 transition-all duration-200 sm:right-2.5 sm:h-8 sm:w-8 disabled:opacity-50 disabled:cursor-not-allowed"
+          data-umami-event="aml_search_button_click"
+          data-umami-event-placement="results"
         >
           <Search className="h-4 w-4" />
         </Button>

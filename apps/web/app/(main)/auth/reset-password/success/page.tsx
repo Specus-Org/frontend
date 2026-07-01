@@ -20,7 +20,12 @@ export default function ResetPasswordSuccessPage() {
           Your password has been reset successfully. You can now sign in with your new password.
         </p>
       </div>
-      <Button size="lg" className="w-full" asChild>
+      <Button
+        size="lg"
+        className="w-full"
+        asChild
+        data-umami-event="reset_success_signin_click"
+      >
         <Link href="/auth/signin">Sign in</Link>
       </Button>
     </div>

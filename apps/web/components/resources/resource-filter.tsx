@@ -4,6 +4,7 @@ import { useTransition } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { Button } from '@specus/ui/components/button';
+import { analyticsEvent } from '@/lib/analytics';
 
 const FILTER_OPTIONS = [
   { value: 'all', label: 'All' },
@@ -48,6 +49,7 @@ export function ResourceFilter({ uploadType }: ResourceFilterProps) {
           onClick={() => handleFilterChange(option.value)}
           aria-pressed={uploadType === option.value}
           disabled={isPending && uploadType === option.value}
+          {...analyticsEvent('resource_filter_click', { type: option.value })}
         >
           {option.label}
         </Button>

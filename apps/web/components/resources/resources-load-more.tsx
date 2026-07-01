@@ -53,7 +53,14 @@ export function ResourcesLoadMore({ initialCursor, hasMore, uploadType }: Resour
 
       {canLoadMore ? (
         <div className="flex justify-center pt-8">
-          <Button variant="outline" size="lg" onClick={handleLoadMore} disabled={isPending}>
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={handleLoadMore}
+            disabled={isPending}
+            data-umami-event="resources_load_more_click"
+            data-umami-event-upload-type={uploadType ?? 'all'}
+          >
             {isPending ? <Loader2 className="mr-2 size-4 animate-spin" /> : null}
             {isPending ? 'Loading...' : 'Load More'}
           </Button>

@@ -15,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from '@specus/ui/components/dropdown-menu';
 import { openDialog } from '@/lib/auth-dialog';
+import { trackEvent } from '@/lib/analytics';
 
 function getInitials(name: string): string {
   const parts = name.trim().split(/\s+/);
@@ -35,7 +36,13 @@ export default function UserMenu(): React.ReactNode {
 
   if (!isAuthenticated) {
     return (
-      <Button className="bg-brand" size="sm" onClick={() => openDialog(router, 'login')}>
+      <Button
+        className="bg-brand"
+        size="sm"
+        data-umami-event="signin_dialog_open"
+        data-umami-event-placement="desktop_nav"
+        onClick={() => openDialog(router, 'login')}
+      >
         Sign in
       </Button>
     );
@@ -46,7 +53,11 @@ export default function UserMenu(): React.ReactNode {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative size-8 rounded-full p-0">
+        <Button
+          variant="ghost"
+          className="relative size-8 rounded-full p-0"
+          data-umami-event="user_menu_open"
+        >
           <Avatar>
             {image && <AvatarImage src={image} alt={name ?? 'User'} />}
             <AvatarFallback>
@@ -63,13 +74,19 @@ export default function UserMenu(): React.ReactNode {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onSelect={() => openDialog(router, 'profile')}>
+        <DropdownMenuItem
+          data-umami-event="profile_dialog_open"
+          onSelect={() => openDialog(router, 'profile')}
+        >
           <User className="size-4" />
           Profile
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
+          data-umami-event="signout_click"
+          data-umami-event-placement="desktop_nav"
           onSelect={() => {
+            trackEvent('signout_form_submit', { placement: 'desktop_nav' });
             const form = document.createElement('form');
             form.method = 'POST';
             form.action = '/api/auth/logout';

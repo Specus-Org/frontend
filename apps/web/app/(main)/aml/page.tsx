@@ -1,6 +1,7 @@
 'use client';
 
 import AmlSearchCard from '@/components/aml/aml-search-card';
+import { trackEvent } from '@/lib/analytics';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -21,7 +22,11 @@ export default function AMLPage(): React.ReactNode {
         query={query}
         onQueryChange={setQuery}
         onSearch={() => {
-          if (query.trim()) router.push(`/aml/search?q=${encodeURIComponent(query.trim())}`);
+          const trimmedQuery = query.trim();
+          if (trimmedQuery) {
+            trackEvent('aml_search_submit', { source: 'landing' });
+            router.push(`/aml/search?q=${encodeURIComponent(trimmedQuery)}`);
+          }
         }}
       />
     </div>

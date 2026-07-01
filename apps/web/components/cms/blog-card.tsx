@@ -9,6 +9,7 @@ import {
 } from '@specus/ui/components/card';
 import { formatDisplayDate } from '@/lib/date-format';
 import Link from 'next/link';
+import { analyticsEvent } from '@/lib/analytics';
 
 interface BlogCardProps {
   post: CmsContentListItem;
@@ -18,7 +19,14 @@ export function BlogCard({ post }: BlogCardProps) {
   const publishedDate = post.published_at ? formatDisplayDate(post.published_at) : null;
 
   return (
-    <Link href={`/blog/${post.slug}`} className="group">
+    <Link
+      href={`/blog/${post.slug}`}
+      className="group"
+      {...analyticsEvent('blog_card_click', {
+        slug: post.slug,
+        title: post.title,
+      })}
+    >
       <Card className="h-full transition-colors hover:border-primary/30">
         <CardHeader>
           <CardTitle className="line-clamp-2 text-lg">{post.title}</CardTitle>

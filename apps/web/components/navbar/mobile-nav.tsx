@@ -16,6 +16,7 @@ import {
 } from '@specus/ui/components/sheet';
 import { Avatar, AvatarFallback, AvatarImage } from '@specus/ui/components/avatar';
 import { NavItem } from '@/components/navbar/nav-items';
+import { analyticsEvent } from '@/lib/analytics';
 
 function getInitials(name: string): string {
   const parts = name.trim().split(/\s+/);
@@ -47,7 +48,13 @@ export default function MobileNav({
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label="Open menu" className="md:hidden">
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label="Open menu"
+          className="md:hidden"
+          data-umami-event="mobile_menu_open"
+        >
           <Menu className="size-6" />
         </Button>
       </SheetTrigger>
@@ -91,6 +98,11 @@ export default function MobileNav({
                   ? 'bg-accent text-accent-foreground'
                   : 'text-muted-foreground'
               }`}
+              {...analyticsEvent('nav_link_click', {
+                label: item.labelKey,
+                href: item.href,
+                placement: 'mobile',
+              })}
             >
               <span className="text-base font-medium">{item.labelKey}</span>
             </Link>
@@ -104,15 +116,24 @@ export default function MobileNav({
                   href="/profile"
                   onClick={handleMenuItemClick}
                   className="hover:bg-accent flex items-center gap-3 rounded-lg px-3 py-3 text-muted-foreground transition-colors"
+                  data-umami-event="profile_link_click"
+                  data-umami-event-placement="mobile"
                 >
                   <User className="size-4" />
                   <span className="text-base font-medium">Profile</span>
                 </Link>
-                <form method="POST" action="/api/auth/logout">
+                <form
+                  method="POST"
+                  action="/api/auth/logout"
+                  data-umami-event="signout_form_submit"
+                  data-umami-event-placement="mobile"
+                >
                   <button
                     type="submit"
                     onClick={handleMenuItemClick}
                     className="hover:bg-accent flex w-full items-center gap-3 rounded-lg px-3 py-3 text-muted-foreground transition-colors"
+                    data-umami-event="signout_click"
+                    data-umami-event-placement="mobile"
                   >
                     <LogOut className="size-4" />
                     <span className="text-base font-medium">Sign out</span>
@@ -124,6 +145,8 @@ export default function MobileNav({
                 href="/auth/signin"
                 onClick={handleMenuItemClick}
                 className="hover:bg-accent flex items-center gap-3 rounded-lg px-3 py-3 text-muted-foreground transition-colors"
+                data-umami-event="signin_link_click"
+                data-umami-event-placement="mobile"
               >
                 <span className="text-base font-medium">Sign in</span>
               </Link>

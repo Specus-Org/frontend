@@ -18,6 +18,7 @@ import { AuthSubmitButton } from '@/app/(main)/auth/auth-submit-button';
 import { FormErrorAlert } from '@/app/(main)/auth/form-error-alert';
 import { signInDialogAction } from '@/app/(main)/auth/actions/sign-in-action';
 import type { AuthDialogKey } from '@/lib/auth-dialog';
+import { trackEvent } from '@/lib/analytics';
 
 interface LoginDialogProps {
   open: boolean;
@@ -56,7 +57,13 @@ export function LoginDialog({ open, onClose, onSwitch }: LoginDialogProps) {
           </DialogDescription>
         </DialogHeader>
 
-        <form action={formAction} className="flex flex-col gap-4">
+        <form
+          action={formAction}
+          className="flex flex-col gap-4"
+          data-umami-event="signin_form_submit"
+          data-umami-event-surface="dialog"
+          onSubmit={() => trackEvent('signin_form_submit', { surface: 'dialog' })}
+        >
           <FormErrorAlert message={state?.error} />
 
           <div className="flex flex-col gap-2">
@@ -79,6 +86,9 @@ export function LoginDialog({ open, onClose, onSwitch }: LoginDialogProps) {
                 type="button"
                 onClick={() => onSwitch('forgot')}
                 className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+                data-umami-event="auth_switch_click"
+                data-umami-event-from="login"
+                data-umami-event-to="forgot"
               >
                 Forgot password?
               </button>
@@ -101,6 +111,9 @@ export function LoginDialog({ open, onClose, onSwitch }: LoginDialogProps) {
                 variant="link"
                 className="h-auto p-0 text-sm font-medium"
                 onClick={() => onSwitch('register')}
+                data-umami-event="auth_switch_click"
+                data-umami-event-from="login"
+                data-umami-event-to="register"
               >
                 Register
               </Button>
@@ -109,6 +122,8 @@ export function LoginDialog({ open, onClose, onSwitch }: LoginDialogProps) {
               idleLabel="Continue"
               pendingLabel="Signing in…"
               className="sm:w-auto"
+              analyticsEventName="signin_submit_click"
+              analyticsEventData={{ surface: 'dialog' }}
             />
           </DialogFooter>
         </form>

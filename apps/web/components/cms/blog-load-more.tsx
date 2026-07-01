@@ -60,6 +60,7 @@ export function BlogLoadMore({ initialCursor, hasMore }: BlogLoadMoreProps) {
             size="lg"
             onClick={handleLoadMore}
             disabled={isPending}
+            data-umami-event="blog_load_more_click"
           >
             {isPending ? <Loader2 className="mr-2 size-4 animate-spin" /> : null}
             {isPending ? 'Loading...' : 'Load More'}

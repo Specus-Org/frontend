@@ -7,6 +7,7 @@ import {
   formatLabel,
   getSanctionLink,
 } from '@/components/aml/entity-detail-formatters';
+import { analyticsEvent } from '@/lib/analytics';
 
 interface ListedInSectionProps {
   items: EntitySanction[];
@@ -53,6 +54,12 @@ export function ListedInSection({ items }: ListedInSectionProps) {
                       rel="noreferrer"
                       aria-label="Open source"
                       className="shrink-0 text-muted-foreground"
+                      {...analyticsEvent('sanction_source_click', {
+                        title,
+                        href: sanctionLink,
+                        'sanction-type': sanctionType,
+                        'is-active': item.is_active,
+                      })}
                     >
                       <svg
                         width="20"

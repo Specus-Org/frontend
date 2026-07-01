@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import React from 'react';
 import type { FooterLinkGroup } from './footer-link-groups';
+import { analyticsEvent } from '@/lib/analytics';
 
 interface FooterLinksProps {
   groups: FooterLinkGroup[];
@@ -23,6 +24,8 @@ export default function FooterLinks({ groups }: FooterLinksProps): React.ReactNo
               href="/bangladesh"
               className={linkClassName}
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              data-umami-event="footer_product_click"
+              data-umami-event-product="bangladesh"
             >
               Bangladesh
             </Link>
@@ -32,6 +35,8 @@ export default function FooterLinks({ groups }: FooterLinksProps): React.ReactNo
               href="/indonesia"
               className={linkClassName}
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              data-umami-event="footer_product_click"
+              data-umami-event-product="indonesia"
             >
               Indonesia
             </Link>
@@ -41,6 +46,8 @@ export default function FooterLinks({ groups }: FooterLinksProps): React.ReactNo
               href="/paraguay"
               className={linkClassName}
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              data-umami-event="footer_product_click"
+              data-umami-event-product="paraguay"
             >
               Paraguay
             </Link>
@@ -50,6 +57,8 @@ export default function FooterLinks({ groups }: FooterLinksProps): React.ReactNo
               href="/aml"
               className={linkClassName}
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              data-umami-event="footer_product_click"
+              data-umami-event-product="aml"
             >
               AML Screening
             </Link>
@@ -67,6 +76,11 @@ export default function FooterLinks({ groups }: FooterLinksProps): React.ReactNo
                   href={item.urlPath}
                   className={linkClassName}
                   onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                  {...analyticsEvent('footer_cms_link_click', {
+                    group: group.name,
+                    title: item.title,
+                    href: item.urlPath,
+                  })}
                 >
                   {item.title}
                 </Link>

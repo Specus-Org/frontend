@@ -6,6 +6,7 @@ import React from 'react';
 import { CountryFlag } from '@/components/aml/country-flag';
 import { formatLabel } from '@/components/aml/entity-detail-formatters';
 import { tryFormatDisplayDate } from '@/lib/date-format';
+import { analyticsEvent } from '@/lib/analytics';
 
 interface EntityItemProps {
   entity: ScreeningSearchResult;
@@ -72,6 +73,12 @@ export function EntityItem({ entity }: EntityItemProps): React.ReactElement {
     <Link
       href={`/aml/search/${entity.id}`}
       className="flex w-full min-w-0 items-center gap-3 rounded-2xl bg-slate-50 px-2 py-3 transition-all duration-200 hover:border-gray-200 hover:shadow-md"
+      {...analyticsEvent('aml_entity_click', {
+        id: entity.id,
+        type: entity.entity_type,
+        'sanction-types-count': sanctionTypes.length,
+        'sanction-types': sanctionTypes.join(','),
+      })}
     >
       <Image src={imageSrc} alt={entity.caption} width={96} height={96} />
 

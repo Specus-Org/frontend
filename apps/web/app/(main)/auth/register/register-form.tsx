@@ -7,6 +7,7 @@ import { Label } from '@specus/ui/components/label';
 import { AuthSubmitButton } from '../auth-submit-button';
 import { FormErrorAlert } from '../form-error-alert';
 import { register } from './action';
+import { trackEvent } from '@/lib/analytics';
 
 export function RegisterForm() {
   const [state, formAction] = useActionState(register, null);
@@ -15,7 +16,14 @@ export function RegisterForm() {
     <>
       <FormErrorAlert message={state?.error} />
 
-      <form action={formAction} className="flex flex-col gap-5" aria-label="Create account form">
+      <form
+        action={formAction}
+        className="flex flex-col gap-5"
+        aria-label="Create account form"
+        data-umami-event="register_form_submit"
+        data-umami-event-surface="page"
+        onSubmit={() => trackEvent('register_form_submit', { surface: 'page' })}
+      >
         <div className="flex flex-col gap-2">
           <Label htmlFor="name">Full name</Label>
           <Input
@@ -68,12 +76,23 @@ export function RegisterForm() {
           />
         </div>
 
-        <AuthSubmitButton idleLabel="Create account" pendingLabel="Creating account…" />
+        <AuthSubmitButton
+          idleLabel="Create account"
+          pendingLabel="Creating account…"
+          analyticsEventName="register_submit_click"
+          analyticsEventData={{ surface: 'page' }}
+        />
       </form>
 
       <p className="text-center text-sm text-muted-foreground">
         Already have an account?{' '}
-        <Link href="/auth/signin" className="font-medium text-primary hover:underline">
+        <Link
+          href="/auth/signin"
+          className="font-medium text-primary hover:underline"
+          data-umami-event="auth_switch_click"
+          data-umami-event-from="register_page"
+          data-umami-event-to="signin"
+        >
           Sign in
         </Link>
       </p>

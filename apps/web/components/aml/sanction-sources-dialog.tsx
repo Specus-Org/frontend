@@ -11,6 +11,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { CountryFlag } from './country-flag';
 import { listScreeningSources, SanctionsList } from '@specus/api-client';
+import { analyticsEvent, trackEvent } from '@/lib/analytics';
 
 export default function SanctionSourcesDialog(): React.ReactNode {
   const [open, setOpen] = useState(false);
@@ -45,8 +46,17 @@ export default function SanctionSourcesDialog(): React.ReactNode {
   }, [open]);
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger className="cursor-pointer text-blue-700 underline underline-offset-4 decoration-blue-700 hover:opacity-95 transition-all">
+    <Dialog
+      open={open}
+      onOpenChange={(isOpen) => {
+        if (isOpen) trackEvent('sanction_sources_open');
+        setOpen(isOpen);
+      }}
+    >
+      <DialogTrigger
+        className="cursor-pointer text-blue-700 underline underline-offset-4 decoration-blue-700 hover:opacity-95 transition-all"
+        data-umami-event="sanction_sources_click"
+      >
         sources
       </DialogTrigger>
       <DialogContent className="max-h-[80vh] flex flex-col">
@@ -81,6 +91,10 @@ export default function SanctionSourcesDialog(): React.ReactNode {
                       href={source.source_url}
                       target="_blank"
                       className="text-blue-700 hover:opacity-95 text-base underline underline-offset-4 decoration-blue-700 py-1 sm:text-lg"
+                      {...analyticsEvent('sanction_source_click', {
+                        name: source.name,
+                        href: source.source_url,
+                      })}
                     >
                       {source.name}
                     </Link>

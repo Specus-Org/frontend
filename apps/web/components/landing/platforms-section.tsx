@@ -1,6 +1,7 @@
 import { ExternalLink } from 'lucide-react';
 import type { Platform } from '@/lib/landing-content';
 import Link from 'next/link';
+import { analyticsEvent } from '@/lib/analytics';
 
 interface PlatformsSectionProps {
   platforms: readonly Platform[];
@@ -19,6 +20,10 @@ export function PlatformsSection({ platforms }: PlatformsSectionProps): React.Re
             href={platform.href ?? '/'}
             target="_blank"
             className="rounded-xl border border-secondary p-[17px]"
+            {...analyticsEvent('platform_link_click', {
+              name: platform.name,
+              href: platform.href ?? '/',
+            })}
           >
             <div className="flex items-start justify-between gap-2">
               <span className="text-xl font-semibold leading-7 text-foreground">

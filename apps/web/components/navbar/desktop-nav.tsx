@@ -2,6 +2,7 @@ import Link from 'next/link';
 import React from 'react';
 import { NavItem } from '@/components/navbar/nav-items';
 import UserMenu from '@/components/navbar/user-menu';
+import { analyticsEvent } from '@/lib/analytics';
 
 interface DesktopNavProps {
   items: NavItem[];
@@ -18,6 +19,11 @@ export default function DesktopNav({ items, currentPath }: DesktopNavProps): Rea
             className={
               'text-sm font-medium transition-all px-4 duration-200 hover:cursor-pointer hover:opacity-40'
             }
+            {...analyticsEvent('nav_link_click', {
+              label: navigation.labelKey,
+              href: navigation.href,
+              placement: 'desktop',
+            })}
           >
             {navigation.labelKey}
           </Link>

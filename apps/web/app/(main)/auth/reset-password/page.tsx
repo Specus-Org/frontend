@@ -24,6 +24,7 @@ export default async function ResetPasswordPage({ searchParams }: ResetPasswordP
         <Link
           href="/auth/forgot-password"
           className="text-center text-sm font-medium text-primary hover:underline"
+          data-umami-event="invalid_reset_request_click"
         >
           Request new reset link
         </Link>
