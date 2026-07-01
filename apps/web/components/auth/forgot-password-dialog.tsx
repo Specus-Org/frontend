@@ -15,6 +15,7 @@ import { AuthSubmitButton } from '@/app/(main)/auth/auth-submit-button';
 import { FormErrorAlert } from '@/app/(main)/auth/form-error-alert';
 import { forgotPasswordDialogAction } from '@/app/(main)/auth/actions/forgot-password-action';
 import type { AuthDialogKey } from '@/lib/auth-dialog';
+import { trackEvent } from '@/lib/analytics';
 
 interface ForgotPasswordDialogProps {
   open: boolean;
@@ -50,7 +51,13 @@ export function ForgotPasswordDialog({ open, onClose, onSwitch }: ForgotPassword
           </DialogDescription>
         </DialogHeader>
 
-        <form action={formAction} className="flex flex-col gap-4">
+        <form
+          action={formAction}
+          className="flex flex-col gap-4"
+          data-umami-event="forgot_password_submit"
+          data-umami-event-surface="dialog"
+          onSubmit={() => trackEvent('forgot_password_submit', { surface: 'dialog' })}
+        >
           <FormErrorAlert message={state?.error} />
 
           <div className="flex flex-col gap-2">
@@ -71,6 +78,8 @@ export function ForgotPasswordDialog({ open, onClose, onSwitch }: ForgotPassword
               idleLabel="Send reset link"
               pendingLabel="Sending…"
               className="sm:w-auto"
+              analyticsEventName="forgot_password_click"
+              analyticsEventData={{ surface: 'dialog' }}
             />
           </DialogFooter>
         </form>

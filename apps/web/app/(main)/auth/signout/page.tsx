@@ -28,13 +28,30 @@ export default async function SignOutPage() {
       </div>
 
       <div className="flex flex-col gap-3" role="group" aria-label="Sign out actions">
-        <form method="POST" action="/api/auth/logout">
-          <Button type="submit" className="w-full" size="lg">
+        <form
+          method="POST"
+          action="/api/auth/logout"
+          data-umami-event="signout_form_submit"
+          data-umami-event-placement="signout_page"
+        >
+          <Button
+            type="submit"
+            className="w-full"
+            size="lg"
+            data-umami-event="signout_click"
+            data-umami-event-placement="signout_page"
+          >
             Sign out
           </Button>
         </form>
 
-        <Button variant="outline" size="lg" className="w-full" asChild>
+        <Button
+          variant="outline"
+          size="lg"
+          className="w-full"
+          asChild
+          data-umami-event="signout_cancel_click"
+        >
           <Link href="/">Cancel</Link>
         </Button>
       </div>

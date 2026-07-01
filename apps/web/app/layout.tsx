@@ -5,6 +5,7 @@ import './globals.css';
 import { auth } from '@specus/auth';
 import { ThemeProvider } from '@/components/theme-provider';
 import { SessionProvider } from '@/components/session-provider';
+import { UmamiScript } from '@/components/analytics/umami-script';
 
 const rethinkSans = Rethink_Sans({
   subsets: ['latin'],
@@ -63,6 +64,7 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`min-h-screen bg-background font-sans antialiased ${rethinkSans.variable}`}>
+        <UmamiScript />
         <ThemeProvider defaultTheme="light" forcedTheme="light" disableTransitionOnChange>
           <SessionProvider session={session}>{children}</SessionProvider>
         </ThemeProvider>

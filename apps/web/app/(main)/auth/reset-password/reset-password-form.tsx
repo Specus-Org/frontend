@@ -6,6 +6,7 @@ import { Label } from '@specus/ui/components/label';
 import { AuthSubmitButton } from '../auth-submit-button';
 import { FormErrorAlert } from '../form-error-alert';
 import { resetPassword } from './action';
+import { trackEvent } from '@/lib/analytics';
 
 export function ResetPasswordForm({ token }: { token: string }) {
   const [state, formAction] = useActionState(resetPassword, null);
@@ -14,7 +15,13 @@ export function ResetPasswordForm({ token }: { token: string }) {
     <>
       <FormErrorAlert message={state?.error} />
 
-      <form action={formAction} className="flex flex-col gap-5" aria-label="Reset password form">
+      <form
+        action={formAction}
+        className="flex flex-col gap-5"
+        aria-label="Reset password form"
+        data-umami-event="reset_password_submit"
+        onSubmit={() => trackEvent('reset_password_submit')}
+      >
         <input type="hidden" name="flow_token" value={token} />
 
         <div className="flex flex-col gap-2">
@@ -43,7 +50,11 @@ export function ResetPasswordForm({ token }: { token: string }) {
           />
         </div>
 
-        <AuthSubmitButton idleLabel="Reset password" pendingLabel="Resetting…" />
+        <AuthSubmitButton
+          idleLabel="Reset password"
+          pendingLabel="Resetting…"
+          analyticsEventName="reset_password_click"
+        />
       </form>
     </>
   );

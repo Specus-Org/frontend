@@ -15,6 +15,7 @@ import { AuthSubmitButton } from '@/app/(main)/auth/auth-submit-button';
 import { FormErrorAlert } from '@/app/(main)/auth/form-error-alert';
 import { registerDialogAction } from '@/app/(main)/auth/actions/register-action';
 import type { AuthDialogKey } from '@/lib/auth-dialog';
+import { trackEvent } from '@/lib/analytics';
 
 interface RegisterDialogProps {
   open: boolean;
@@ -47,7 +48,13 @@ export function RegisterDialog({ open, onClose, onSwitch }: RegisterDialogProps)
           <DialogTitle>Register</DialogTitle>
         </DialogHeader>
 
-        <form action={formAction} className="flex flex-col gap-4">
+        <form
+          action={formAction}
+          className="flex flex-col gap-4"
+          data-umami-event="register_form_submit"
+          data-umami-event-surface="dialog"
+          onSubmit={() => trackEvent('register_form_submit', { surface: 'dialog' })}
+        >
           <FormErrorAlert message={state?.error} />
 
           <div className="flex flex-col gap-2">
@@ -110,6 +117,9 @@ export function RegisterDialog({ open, onClose, onSwitch }: RegisterDialogProps)
                 variant="link"
                 className="h-auto p-0 text-sm font-medium"
                 onClick={() => onSwitch('login')}
+                data-umami-event="auth_switch_click"
+                data-umami-event-from="register"
+                data-umami-event-to="login"
               >
                 Sign in
               </Button>
@@ -118,6 +128,8 @@ export function RegisterDialog({ open, onClose, onSwitch }: RegisterDialogProps)
               idleLabel="Create account"
               pendingLabel="Creating…"
               className="sm:w-auto"
+              analyticsEventName="register_submit_click"
+              analyticsEventData={{ surface: 'dialog' }}
             />
           </DialogFooter>
         </form>

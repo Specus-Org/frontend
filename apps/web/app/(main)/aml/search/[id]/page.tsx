@@ -9,6 +9,7 @@ import { Button } from '@specus/ui/components/button';
 import { Search } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+import { trackEvent } from '@/lib/analytics';
 
 export default function AMLEntityDetailPage(): React.ReactElement {
   const { id } = useParams<{ id: string }>();
@@ -48,6 +49,7 @@ export default function AMLEntityDetailPage(): React.ReactElement {
 
   const handleSearch = () => {
     if (query.trim()) {
+      trackEvent('aml_search_submit', { source: 'entity_detail' });
       router.push(`/aml/search?q=${encodeURIComponent(query.trim())}`);
     }
   };
@@ -69,6 +71,8 @@ export default function AMLEntityDetailPage(): React.ReactElement {
           <Button
             onClick={handleSearch}
             className="bg-brand hover:bg-brand/90 absolute top-1/2 right-2 h-7 w-7 -translate-y-1/2 transition-all duration-200 sm:right-2.5 sm:h-8 sm:w-8"
+            data-umami-event="aml_search_button_click"
+            data-umami-event-placement="entity_detail"
           >
             <Search className="h-4 w-4" />
           </Button>

@@ -37,7 +37,13 @@ export function ProfileDialog({ open, onClose, onSwitch }: ProfileDialogProps) {
               <p className="text-sm font-medium">Email</p>
               <p className="text-sm text-muted-foreground">{email}</p>
             </div>
-            <Button variant="outline" size="sm" onClick={() => onSwitch('change-email')}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onSwitch('change-email')}
+              data-umami-event="profile_action_click"
+              data-umami-event-action="change_email"
+            >
               Change email
             </Button>
           </div>
@@ -50,7 +56,13 @@ export function ProfileDialog({ open, onClose, onSwitch }: ProfileDialogProps) {
               <p className="text-sm font-medium">Password</p>
               <p className="text-sm text-muted-foreground">Configured</p>
             </div>
-            <Button variant="outline" size="sm" onClick={() => onSwitch('change-password')}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onSwitch('change-password')}
+              data-umami-event="profile_action_click"
+              data-umami-event-action="change_password"
+            >
               Change password
             </Button>
           </div>
@@ -64,6 +76,8 @@ export function ProfileDialog({ open, onClose, onSwitch }: ProfileDialogProps) {
               type="button"
               onClick={() => onSwitch('delete-account')}
               className="w-fit text-sm text-destructive hover:underline transition-colors"
+              data-umami-event="profile_action_click"
+              data-umami-event-action="delete_account"
             >
               Delete Account
             </button>

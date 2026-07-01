@@ -7,6 +7,7 @@ import { Button } from '@specus/ui/components/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@specus/ui/components/card';
 import { formatDisplayDate } from '@/lib/date-format';
 import type { CmsUploadPublic } from '@/types/uploads';
+import { analyticsEvent, trackEvent } from '@/lib/analytics';
 
 interface ResourceCardProps {
   upload: CmsUploadPublic;
@@ -28,6 +29,10 @@ export function ResourceCard({ upload }: ResourceCardProps) {
   async function handleCopyLink() {
     try {
       await navigator.clipboard.writeText(upload.public_url);
+      trackEvent('resource_copy_link', {
+        id: upload.id,
+        type: upload.upload_type,
+      });
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1600);
     } catch {
@@ -99,12 +104,29 @@ export function ResourceCard({ upload }: ResourceCardProps) {
 
       <CardFooter className="mt-auto flex flex-wrap gap-2">
         <Button asChild size="sm">
-          <a href={upload.public_url} target="_blank" rel="noreferrer">
+          <a
+            href={upload.public_url}
+            target="_blank"
+            rel="noreferrer"
+            {...analyticsEvent('resource_open_click', {
+              id: upload.id,
+              type: upload.upload_type,
+            })}
+          >
             <ExternalLink className="mr-2 size-4" />
             {isImage ? 'Open Image' : 'Open File'}
           </a>
         </Button>
-        <Button type="button" variant="outline" size="sm" onClick={handleCopyLink}>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={handleCopyLink}
+          {...analyticsEvent('resource_copy_click', {
+            id: upload.id,
+            type: upload.upload_type,
+          })}
+        >
           <Copy className="mr-2 size-4" />
           {copied ? 'Copied' : 'Copy Link'}
         </Button>

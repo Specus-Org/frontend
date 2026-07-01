@@ -16,6 +16,7 @@ import { AuthSubmitButton } from '@/app/(main)/auth/auth-submit-button';
 import { FormErrorAlert } from '@/app/(main)/auth/form-error-alert';
 import { changeEmailAction } from '@/app/(main)/auth/actions/change-email-action';
 import type { AuthDialogKey } from '@/lib/auth-dialog';
+import { trackEvent } from '@/lib/analytics';
 
 interface ChangeEmailDialogProps {
   open: boolean;
@@ -50,7 +51,12 @@ export function ChangeEmailDialog({ open, onClose, onSwitch }: ChangeEmailDialog
           <DialogTitle>Email</DialogTitle>
         </DialogHeader>
 
-        <form action={formAction} className="flex flex-col gap-4">
+        <form
+          action={formAction}
+          className="flex flex-col gap-4"
+          data-umami-event="change_email_submit"
+          onSubmit={() => trackEvent('change_email_submit')}
+        >
           <FormErrorAlert message={state?.error} />
 
           <div className="flex flex-col gap-2">
@@ -71,6 +77,7 @@ export function ChangeEmailDialog({ open, onClose, onSwitch }: ChangeEmailDialog
               idleLabel="Update email"
               pendingLabel="Updating…"
               className="sm:w-auto"
+              analyticsEventName="change_email_click"
             />
           </DialogFooter>
         </form>

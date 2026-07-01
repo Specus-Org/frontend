@@ -15,6 +15,7 @@ import { AuthSubmitButton } from '@/app/(main)/auth/auth-submit-button';
 import { FormErrorAlert } from '@/app/(main)/auth/form-error-alert';
 import { changePasswordAction } from '@/app/(main)/auth/actions/change-password-action';
 import type { AuthDialogKey } from '@/lib/auth-dialog';
+import { trackEvent } from '@/lib/analytics';
 
 interface ChangePasswordDialogProps {
   open: boolean;
@@ -47,7 +48,12 @@ export function ChangePasswordDialog({ open, onClose, onSwitch }: ChangePassword
           <DialogTitle>Password</DialogTitle>
         </DialogHeader>
 
-        <form action={formAction} className="flex flex-col gap-4">
+        <form
+          action={formAction}
+          className="flex flex-col gap-4"
+          data-umami-event="change_password_submit"
+          onSubmit={() => trackEvent('change_password_submit')}
+        >
           <FormErrorAlert message={state?.error} />
 
           <div className="flex flex-col gap-2">
@@ -95,6 +101,9 @@ export function ChangePasswordDialog({ open, onClose, onSwitch }: ChangePassword
               size="sm"
               className="px-0 text-sm text-muted-foreground hover:text-foreground"
               onClick={() => onSwitch('forgot')}
+              data-umami-event="auth_switch_click"
+              data-umami-event-from="change_password"
+              data-umami-event-to="forgot"
             >
               Forgot password?
             </Button>
@@ -105,6 +114,7 @@ export function ChangePasswordDialog({ open, onClose, onSwitch }: ChangePassword
               idleLabel="Update password"
               pendingLabel="Updating…"
               className="sm:w-auto"
+              analyticsEventName="change_password_click"
             />
           </DialogFooter>
         </form>

@@ -22,6 +22,7 @@ export default function Navbar(): React.ReactNode {
           href="/"
           onClick={handleMenuItemClick}
           className="text-blue-900 font-sans text-4xl font-semibold"
+          data-umami-event="nav_logo_click"
         >
           <svg
             width="167"

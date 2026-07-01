@@ -68,7 +68,13 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   return (
     <div className="mx-auto max-w-3xl px-4 py-8 md:px-8 md:py-12">
       <div className="mb-8">
-        <Button variant="ghost" size="sm" className="gap-2" asChild>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="gap-2"
+          asChild
+          data-umami-event="blog_back_click"
+        >
           <Link href="/blog">
             <ArrowLeft className="size-4" />
             Back to Blog

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
+import { analyticsEvent } from '@/lib/analytics';
 
 interface BreadcrumbItem {
   label: string;
@@ -28,6 +29,10 @@ export function AuthBreadcrumb({ items }: { items: BreadcrumbItem[] }) {
                 <Link
                   href={item.href!}
                   className="hover:text-foreground transition-colors"
+                  {...analyticsEvent('auth_breadcrumb_click', {
+                    label: item.label,
+                    href: item.href!,
+                  })}
                 >
                   {item.label}
                 </Link>

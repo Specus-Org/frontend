@@ -19,11 +19,17 @@ import { deleteAccountAction } from '@/app/(main)/auth/actions/delete-account-ac
 import type { AuthDialogKey } from '@/lib/auth-dialog';
 import { useFormStatus } from 'react-dom';
 import { Loader2 } from 'lucide-react';
+import { trackEvent } from '@/lib/analytics';
 
 function DeleteSubmitButton() {
   const { pending } = useFormStatus();
   return (
-    <Button type="submit" variant="destructive" disabled={pending}>
+    <Button
+      type="submit"
+      variant="destructive"
+      disabled={pending}
+      data-umami-event="delete_account_click"
+    >
       {pending ? (
         <>
           <Loader2 className="size-4 animate-spin" />
@@ -77,7 +83,12 @@ export function DeleteAccountDialog({ open, onClose }: DeleteAccountDialogProps)
           </DialogDescription>
         </DialogHeader>
 
-        <form action={formAction} className="flex flex-col gap-4">
+        <form
+          action={formAction}
+          className="flex flex-col gap-4"
+          data-umami-event="delete_account_submit"
+          onSubmit={() => trackEvent('delete_account_submit')}
+        >
           <FormErrorAlert message={state?.error} />
 
           <div className="flex flex-col gap-2">
@@ -93,7 +104,12 @@ export function DeleteAccountDialog({ open, onClose }: DeleteAccountDialogProps)
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              data-umami-event="delete_account_cancel"
+            >
               Cancel
             </Button>
             <DeleteSubmitButton />

@@ -30,6 +30,8 @@ export default function NotFound(): React.ReactElement {
               size="lg"
               className="gap-2"
               onClick={() => window.history.back()}
+              data-umami-event="not_found_back_click"
+              data-umami-event-scope="main"
             >
               <ArrowLeft className="size-4" />
               Go Back
@@ -40,7 +42,12 @@ export default function NotFound(): React.ReactElement {
 
       <div className="mt-16 flex items-center gap-2 text-sm text-muted-foreground">
         <span>Need help?</span>
-        <Link href="/contact" className="text-primary underline-offset-4 hover:underline">
+        <Link
+          href="/contact"
+          className="text-primary underline-offset-4 hover:underline"
+          data-umami-event="not_found_contact_click"
+          data-umami-event-scope="main"
+        >
           Contact us
         </Link>
       </div>

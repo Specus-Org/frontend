@@ -19,6 +19,8 @@ export function LandingHero({ title, description }: LandingHeroProps): React.Rea
           variant="outline"
           size="default"
           className="rounded-sm border-border px-3 py-2.5 text-sm font-semibold"
+          data-umami-event="landing_contact_click"
+          data-umami-event-placement="hero"
         >
           <Link href="mailto:hello@specus.org">Contact us</Link>
         </Button>
@@ -26,6 +28,8 @@ export function LandingHero({ title, description }: LandingHeroProps): React.Rea
           asChild
           size="default"
           className="rounded-sm bg-brand px-3 py-2.5 text-sm font-semibold text-slate-50 hover:bg-brand/90"
+          data-umami-event="landing_get_started_click"
+          data-umami-event-placement="hero"
         >
           <Link href="/aml">Get started</Link>
         </Button>

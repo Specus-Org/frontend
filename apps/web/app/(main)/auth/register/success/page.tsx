@@ -28,6 +28,7 @@ export default function RegisterSuccessPage() {
       <Link
         href="/auth/signin"
         className="text-center text-sm font-medium text-primary hover:underline"
+        data-umami-event="register_success_signin_click"
       >
         Back to sign in
       </Link>

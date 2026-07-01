@@ -1,6 +1,7 @@
 import { Platform } from '@/lib/landing-content';
 import { Globe2, Radar, ScanSearch } from 'lucide-react';
 import Link from 'next/link';
+import { analyticsEvent } from '@/lib/analytics';
 
 interface CoverageSectionProps {
   trustedSources: readonly Platform[];
@@ -49,6 +50,10 @@ export function CoverageSection({ trustedSources }: CoverageSectionProps): React
                       className="underline underline-offset-4"
                       target="_blank"
                       href={b.href ?? '/'}
+                      {...analyticsEvent('trusted_source_click', {
+                        name: b.name,
+                        href: b.href ?? '/',
+                      })}
                     >
                       {b.name}
                     </Link>
