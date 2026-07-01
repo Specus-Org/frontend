@@ -57,6 +57,8 @@ export function ListedInSection({ items }: ListedInSectionProps) {
                       {...analyticsEvent('sanction_source_click', {
                         title,
                         href: sanctionLink,
+                        'sanction-type': sanctionType,
+                        'is-active': item.is_active,
                       })}
                     >
                       <svg

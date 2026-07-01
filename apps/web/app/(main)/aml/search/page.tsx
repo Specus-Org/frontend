@@ -46,14 +46,29 @@ function AMLSearchContent(): React.ReactElement {
         const queryType = data?.query_type;
 
         if (queryType === 'specific' && items.length === 1 && items[0].id) {
+          trackEvent('aml_search_result', {
+            source: 'results',
+            'result-count': items.length,
+            'query-type': queryType,
+            redirected: true,
+          });
           router.replace(`/aml/search/${items[0].id}`);
           return;
         }
 
+        trackEvent('aml_search_result', {
+          source: 'results',
+          'result-count': items.length,
+          'query-type': queryType ?? 'unknown',
+          redirected: false,
+        });
         setResults(items);
       })
       .catch(() => {
-        if (!cancelled) setError(true);
+        if (!cancelled) {
+          trackEvent('aml_search_error', { source: 'results' });
+          setError(true);
+        }
       })
       .finally(() => {
         if (!cancelled) setLoading(false);

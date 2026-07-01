@@ -43,6 +43,9 @@ describe('EntityItem', () => {
     });
 
     expect(link).toHaveAttribute('href', '/aml/search/entity-1');
+    expect(link).toHaveAttribute('data-umami-event', 'aml_entity_click');
+    expect(link).toHaveAttribute('data-umami-event-sanction-types-count', '2');
+    expect(link).toHaveAttribute('data-umami-event-sanction-types', 'criminal,financial');
     expect(link.className).toContain('min-w-0');
     expect(title.className).toContain('line-clamp-2');
     expect(title.className).toContain('break-words');
@@ -91,9 +94,12 @@ describe('EntityItem', () => {
 
     render(<EntityItem entity={entity} />);
 
+    const link = screen.getByRole('link', { name: /screened person/i });
     expect(screen.getByLabelText('Sanction types')).toBeInTheDocument();
     expect(screen.getByText('Criminal')).toBeInTheDocument();
     expect(screen.getByText('Financial')).toBeInTheDocument();
+    expect(link).toHaveAttribute('data-umami-event-sanction-types-count', '2');
+    expect(link).toHaveAttribute('data-umami-event-sanction-types', 'criminal,financial');
   });
 
   it('does not render sanction type badges when sanction_types is undefined', () => {
@@ -106,6 +112,10 @@ describe('EntityItem', () => {
 
     render(<EntityItem entity={entity} />);
 
+    expect(screen.getByRole('link', { name: /screened person/i })).toHaveAttribute(
+      'data-umami-event-sanction-types-count',
+      '0',
+    );
     expect(screen.queryByLabelText('Sanction types')).not.toBeInTheDocument();
     expect(screen.queryByText('Criminal')).not.toBeInTheDocument();
     expect(screen.queryByText('Financial')).not.toBeInTheDocument();
@@ -122,6 +132,10 @@ describe('EntityItem', () => {
 
     render(<EntityItem entity={entity} />);
 
+    expect(screen.getByRole('link', { name: /screened person/i })).toHaveAttribute(
+      'data-umami-event-sanction-types-count',
+      '0',
+    );
     expect(screen.queryByLabelText('Sanction types')).not.toBeInTheDocument();
     expect(screen.queryByText('Criminal')).not.toBeInTheDocument();
     expect(screen.queryByText('Financial')).not.toBeInTheDocument();

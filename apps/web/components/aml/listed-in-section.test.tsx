@@ -85,10 +85,10 @@ describe('ListedInSection', () => {
     );
 
     expect(screen.queryByText('Designation Date')).not.toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /open source/i })).toHaveAttribute(
-      'href',
-      'https://example.com/source',
-    );
+    const sourceLink = screen.getByRole('link', { name: /open source/i });
+    expect(sourceLink).toHaveAttribute('href', 'https://example.com/source');
+    expect(sourceLink).toHaveAttribute('data-umami-event', 'sanction_source_click');
+    expect(sourceLink).toHaveAttribute('data-umami-event-is-active', 'false');
     expect(screen.getByText('Active')).toBeInTheDocument();
   });
 

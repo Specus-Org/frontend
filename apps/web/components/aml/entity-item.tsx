@@ -76,6 +76,8 @@ export function EntityItem({ entity }: EntityItemProps): React.ReactElement {
       {...analyticsEvent('aml_entity_click', {
         id: entity.id,
         type: entity.entity_type,
+        'sanction-types-count': sanctionTypes.length,
+        'sanction-types': sanctionTypes.join(','),
       })}
     >
       <Image src={imageSrc} alt={entity.caption} width={96} height={96} />
