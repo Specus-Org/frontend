@@ -7,7 +7,7 @@ import { screeningSearch, ScreeningSearchResult } from '@specus/api-client';
 import { Button } from '@specus/ui/components/button';
 import { Search } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import React, { Suspense, useEffect, useState } from 'react';
+import React, { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { trackEvent } from '@/lib/analytics';
 
 export default function AMLSearchPage(): React.ReactElement {
@@ -23,24 +23,34 @@ function AMLSearchContent(): React.ReactElement {
   const q = searchParams.get('q') ?? '';
   const [query, setQuery] = useState(q);
   const [results, setResults] = useState<ScreeningSearchResult[]>([]);
+  const [nextCursor, setNextCursor] = useState<string | null>(null);
+  const [hasMore, setHasMore] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(false);
   const router = useRouter();
+  // Bumped on every new query so in-flight responses from a previous query are discarded.
+  const requestIdRef = useRef(0);
 
   useEffect(() => {
     setQuery(q);
   }, [q]);
 
   useEffect(() => {
+    const requestId = ++requestIdRef.current;
+
+    setResults([]);
+    setNextCursor(null);
+    setHasMore(false);
+
     if (!q) return;
 
-    let cancelled = false;
     setLoading(true);
     setError(false);
 
     screeningSearch({ query: { q } })
       .then((response) => {
-        if (cancelled) return;
+        if (requestIdRef.current !== requestId) return;
         const data = response.data;
         const items = data?.items ?? [];
         const queryType = data?.query_type;
@@ -63,21 +73,52 @@ function AMLSearchContent(): React.ReactElement {
           redirected: false,
         });
         setResults(items);
+        setNextCursor(data?.pagination?.next_cursor ?? null);
+        setHasMore(Boolean(data?.pagination?.has_more && data?.pagination?.next_cursor));
       })
       .catch(() => {
-        if (!cancelled) {
-          trackEvent('aml_search_error', { source: 'results' });
-          setError(true);
-        }
+        if (requestIdRef.current !== requestId) return;
+        trackEvent('aml_search_error', { source: 'results' });
+        setError(true);
       })
       .finally(() => {
-        if (!cancelled) setLoading(false);
+        if (requestIdRef.current === requestId) setLoading(false);
       });
-
-    return () => {
-      cancelled = true;
-    };
   }, [q, router]);
+
+  const handleLoadMore = useCallback(() => {
+    if (!q || !nextCursor || loadingMore) return;
+
+    const requestId = requestIdRef.current;
+    setLoadingMore(true);
+
+    screeningSearch({ query: { q, cursor: nextCursor } })
+      .then((response) => {
+        if (requestIdRef.current !== requestId) return;
+        const data = response.data;
+        const items = data?.items ?? [];
+
+        setResults((previous) => {
+          const seen = new Set(previous.map((entity) => entity.id));
+          return [...previous, ...items.filter((entity) => !seen.has(entity.id))];
+        });
+        setNextCursor(data?.pagination?.next_cursor ?? null);
+        setHasMore(Boolean(data?.pagination?.has_more && data?.pagination?.next_cursor));
+
+        trackEvent('aml_search_load_more', {
+          source: 'results',
+          'result-count': items.length,
+        });
+      })
+      .catch(() => {
+        if (requestIdRef.current !== requestId) return;
+        trackEvent('aml_search_error', { source: 'load-more' });
+        setHasMore(false);
+      })
+      .finally(() => {
+        if (requestIdRef.current === requestId) setLoadingMore(false);
+      });
+  }, [q, nextCursor, loadingMore]);
 
   const handleSearch = () => {
     if (query.trim()) {
@@ -118,7 +159,14 @@ function AMLSearchContent(): React.ReactElement {
 
         {!loading && !error && results.length === 0 && <NoMatchesSection name={q} />}
 
-        {!loading && !error && results.length > 0 && <SearchResultList entities={results} />}
+        {!loading && !error && results.length > 0 && (
+          <SearchResultList
+            entities={results}
+            hasMore={hasMore}
+            loadingMore={loadingMore}
+            onLoadMore={handleLoadMore}
+          />
+        )}
       </div>
     </div>
   );
