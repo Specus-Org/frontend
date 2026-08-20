@@ -128,7 +128,7 @@ function AMLSearchContent(): React.ReactElement {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-4 md:px-8 md:py-8">
+    <div className="mx-auto w-full max-w-7xl px-4 py-4 md:px-8 md:py-8">
       <div className="relative rounded-xl border bg-white transition-all focus-within:ring max-w-3xl">
         <input
           className="placeholder-muted-foreground w-full rounded-xl px-3 py-2.5 text-base font-normal outline-none sm:px-4 sm:py-3 sm:text-lg"
