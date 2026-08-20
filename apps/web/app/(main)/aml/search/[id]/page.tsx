@@ -55,7 +55,7 @@ export default function AMLEntityDetailPage(): React.ReactElement {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-4 md:px-8 md:py-8">
+    <div className="mx-auto w-full max-w-7xl px-4 py-4 md:px-8 md:py-8">
       <div className="max-w-3xl">
         <div className="relative rounded-xl border bg-white transition-all focus-within:ring">
           <input

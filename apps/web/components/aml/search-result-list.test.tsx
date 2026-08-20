@@ -29,7 +29,6 @@ describe('SearchResultList', () => {
 
     const { container } = render(<SearchResultList entities={entities} />);
 
-    expect(screen.queryByText(/records found/)).not.toBeInTheDocument();
     expect(screen.getAllByTestId('entity-item')).toHaveLength(2);
 
     const grid = container.querySelector('.grid');
@@ -54,5 +53,31 @@ describe('SearchResultList', () => {
 
     rerender(<SearchResultList entities={entities} hasMore loadingMore onLoadMore={onLoadMore} />);
     expect(screen.getByRole('button', { name: /loading/i })).toBeDisabled();
+  });
+
+  it('reports the total match count rather than the loaded count', () => {
+    const entities: ScreeningSearchResult[] = [
+      { id: '1', caption: 'Entity One', entity_type: 'person', score: 0.9 },
+    ];
+
+    const { rerender } = render(<SearchResultList entities={entities} total={842} />);
+    expect(screen.getByText('842 Potential')).toBeInTheDocument();
+    expect(screen.getByText('records found')).toBeInTheDocument();
+
+    rerender(<SearchResultList entities={entities} total={1} />);
+    expect(screen.getByText('record found')).toBeInTheDocument();
+
+    rerender(<SearchResultList entities={entities} total={12500} />);
+    expect(screen.getByText('12.5K Potential')).toBeInTheDocument();
+    expect(screen.getByTitle('12,500 potential records')).toBeInTheDocument();
+  });
+
+  it('omits the count label when no total is supplied', () => {
+    const entities: ScreeningSearchResult[] = [
+      { id: '1', caption: 'Entity One', entity_type: 'person', score: 0.9 },
+    ];
+
+    render(<SearchResultList entities={entities} />);
+    expect(screen.queryByText(/records found/)).not.toBeInTheDocument();
   });
 });

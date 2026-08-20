@@ -24,6 +24,7 @@ function AMLSearchContent(): React.ReactElement {
   const [query, setQuery] = useState(q);
   const [results, setResults] = useState<ScreeningSearchResult[]>([]);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
+  const [total, setTotal] = useState<number | null>(null);
   const [hasMore, setHasMore] = useState(false);
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -41,6 +42,7 @@ function AMLSearchContent(): React.ReactElement {
 
     setResults([]);
     setNextCursor(null);
+    setTotal(null);
     setHasMore(false);
 
     if (!q) return;
@@ -73,6 +75,7 @@ function AMLSearchContent(): React.ReactElement {
           redirected: false,
         });
         setResults(items);
+        setTotal(data?.pagination?.total ?? null);
         setNextCursor(data?.pagination?.next_cursor ?? null);
         setHasMore(Boolean(data?.pagination?.has_more && data?.pagination?.next_cursor));
       })
@@ -102,6 +105,7 @@ function AMLSearchContent(): React.ReactElement {
           const seen = new Set(previous.map((entity) => entity.id));
           return [...previous, ...items.filter((entity) => !seen.has(entity.id))];
         });
+        setTotal((previous) => data?.pagination?.total ?? previous);
         setNextCursor(data?.pagination?.next_cursor ?? null);
         setHasMore(Boolean(data?.pagination?.has_more && data?.pagination?.next_cursor));
 
@@ -128,7 +132,7 @@ function AMLSearchContent(): React.ReactElement {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-4 md:px-8 md:py-8">
+    <div className="mx-auto w-full max-w-7xl px-4 py-4 md:px-8 md:py-8">
       <div className="relative rounded-xl border bg-white transition-all focus-within:ring max-w-3xl">
         <input
           className="placeholder-muted-foreground w-full rounded-xl px-3 py-2.5 text-base font-normal outline-none sm:px-4 sm:py-3 sm:text-lg"
@@ -162,6 +166,7 @@ function AMLSearchContent(): React.ReactElement {
         {!loading && !error && results.length > 0 && (
           <SearchResultList
             entities={results}
+            total={total ?? undefined}
             hasMore={hasMore}
             loadingMore={loadingMore}
             onLoadMore={handleLoadMore}
