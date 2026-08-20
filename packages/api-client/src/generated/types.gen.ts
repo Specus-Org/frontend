@@ -566,6 +566,11 @@ export type PaginationMeta = {
      * Opaque cursor token for the next page
      */
     next_cursor?: string | null;
+    /**
+     * Total number of distinct entities matching the query and filters across all pages, independent of the current cursor position.
+     *
+     */
+    total: number;
 };
 
 /**
