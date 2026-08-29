@@ -41,17 +41,9 @@ export default function FooterGroupsPage() {
 
   return (
     <div className="flex flex-1 flex-col gap-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Footer Groups</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Organize which content links appear together in the site footer.
-          </p>
-        </div>
-        <Button onClick={openCreateDialog} size="sm" disabled={!integrationReady}>
-          <Plus className="size-4" />
-          Add Footer Group
-        </Button>
+      <div className="flex items-center justify-between">
+        <h1 className="text-lg font-semibold">Footer Groups</h1>
+        <Button onClick={openCreateDialog} size="sm" disabled={!integrationReady}><Plus className="size-4" />Add Footer Group</Button>
       </div>
 
       {isLoading ? (

@@ -147,20 +147,9 @@ export default function ContentsPage() {
 
   return (
     <div className="flex flex-1 flex-col gap-6">
-      {/* Page header */}
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Content</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Manage your pages, blog posts, and other content.
-          </p>
-        </div>
-        <Button asChild size="sm">
-          <Link href="/contents/new">
-            <Plus className="size-4" />
-            New Content
-          </Link>
-        </Button>
+        <h1 className="text-lg font-semibold">Content</h1>
+        <Button asChild size="sm"><Link href="/contents/new"><Plus className="size-4" />New Content</Link></Button>
       </div>
 
       {/* Filter toolbar */}

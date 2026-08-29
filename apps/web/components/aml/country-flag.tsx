@@ -24,7 +24,7 @@ export function CountryFlag({ countryCode, authority, alt, size = 'md' }: Countr
   if (isInterpol) {
     return (
       <span
-        className="flex items-center justify-center rounded-sm border bg-[#003F87] shrink-0"
+        className="flex items-center justify-center rounded-sm border bg-blue-8 shrink-0"
         style={{ width, height }}
         title="INTERPOL"
       >

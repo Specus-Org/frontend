@@ -19,8 +19,8 @@ export function SolutionsGrid({ solutions }: SolutionsGridProps): React.ReactEle
           const Icon = solutionIcons[index % solutionIcons.length];
           return (
             <div key={solution.title} className="rounded-xl border border-secondary p-[17px]">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#00adb2]/10">
-                <Icon className="h-6 w-6 text-[#00adb2]" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-feature/10">
+                <Icon className="h-6 w-6 text-feature" />
               </div>
               <h3 className="mt-3 text-xl font-semibold leading-7 text-foreground">
                 {solution.title}

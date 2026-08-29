@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { MoreHorizontal, Plus, Trash2 } from 'lucide-react';
+import { MoreHorizontal, Plus, Trash2, LayoutTemplate } from 'lucide-react';
 import { toast } from 'sonner';
 import useSWR from 'swr';
 import { Button } from '@specus/ui/components/button';
@@ -32,6 +32,7 @@ import {
 import type { CmsPageType } from '@specus/api-client';
 import dynamic from 'next/dynamic';
 import { fetcher } from '@/lib/fetcher';
+import { EmptyState } from '@/components/empty-state';
 
 const PageTypeDialog = dynamic(
   () =>
@@ -92,19 +93,19 @@ export default function PageTypesPage() {
 
   return (
     <div className="flex flex-1 flex-col gap-6">
-      {/* Page header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Page Types</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Define page type templates for flexible pages.</p>
-        </div>
-        <Button onClick={() => { setDialogKey((k) => k + 1); setDialogOpen(true); }} size="sm">
-          <Plus className="size-4" />
-          Add Page Type
-        </Button>
+      <div className="flex items-center justify-between">
+        <h1 className="text-lg font-semibold">Page Types</h1>
+        <Button onClick={() => { setDialogKey((k) => k + 1); setDialogOpen(true); }} size="sm"><Plus className="size-4" />Add Page Type</Button>
       </div>
 
-      {/* Table */}
+      {!isLoading && pageTypes.length === 0 ? (
+        <EmptyState
+          icon={LayoutTemplate}
+          title="No page types yet"
+          description="Create a page type template to structure your flexible pages."
+          action={{ label: 'Add Page Type', onClick: () => { setDialogKey((k) => k + 1); setDialogOpen(true); } }}
+        />
+      ) : (
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -122,15 +123,6 @@ export default function PageTypesPage() {
               <TableRow>
                 <TableCell colSpan={4} className="h-24 text-center">
                   Loading...
-                </TableCell>
-              </TableRow>
-            ) : pageTypes.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={4}
-                  className="h-24 text-center text-muted-foreground"
-                >
-                  No page types yet. Create one to get started.
                 </TableCell>
               </TableRow>
             ) : (
@@ -170,6 +162,7 @@ export default function PageTypesPage() {
           </TableBody>
         </Table>
       </div>
+      )}
 
       {/* Create dialog */}
       <PageTypeDialog

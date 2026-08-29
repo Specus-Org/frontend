@@ -1,15 +1,13 @@
 import { Suspense } from 'react';
 import Link from 'next/link';
 import {
-  Shield,
-  Activity,
-  FileText,
-  ArrowRight,
   PenLine,
   Users,
   HeartPulse,
+  ChevronRight,
 } from 'lucide-react';
 import { Card, CardContent } from '@specus/ui/components/card';
+import { Separator } from '@specus/ui/components/separator';
 
 import { MetricCard } from '@/components/metric-card';
 import { fetchWithAuth, fetchBackend } from '@/lib/api-client';
@@ -27,16 +25,14 @@ async function SourcesMetric() {
         title="Sanctions Sources"
         value={count}
         description="Active screening databases"
-        icon={Shield}
       />
     );
   } catch {
     return (
       <MetricCard
         title="Sanctions Sources"
-        value={0}
-        description="Active screening databases"
-        icon={Shield}
+        value="—"
+        description="Could not load"
         error
       />
     );
@@ -52,9 +48,8 @@ async function HealthMetric() {
     return (
       <MetricCard
         title="System Health"
-        value={healthy ? 'Operational' : 'Unreachable'}
+        value={healthy ? 'Operational' : 'Degraded'}
         description="Backend API status"
-        icon={Activity}
         href="/health"
       />
     );
@@ -64,7 +59,6 @@ async function HealthMetric() {
         title="System Health"
         value="Unreachable"
         description="Backend API status"
-        icon={Activity}
         error
         href="/health"
       />
@@ -84,7 +78,6 @@ async function ContentMetric() {
         title="Content"
         value={hasContent ? 'Active' : 'Empty'}
         description={hasContent ? 'Content entries created' : 'No content yet'}
-        icon={FileText}
         href="/contents"
       />
     );
@@ -93,8 +86,7 @@ async function ContentMetric() {
       <MetricCard
         title="Content"
         value="—"
-        description="Failed to load"
-        icon={FileText}
+        description="Could not load"
         error
         href="/contents"
       />
@@ -102,31 +94,25 @@ async function ContentMetric() {
   }
 }
 
-// ---------- Quick action ----------
-interface QuickActionProps {
+// ---------- Nav link ----------
+interface NavLinkProps {
   title: string;
   description: string;
   href: string;
   icon: React.ComponentType<{ className?: string }>;
 }
 
-function QuickAction({ title, description, href, icon: Icon }: QuickActionProps) {
+function NavLink({ title, description, href, icon: Icon }: NavLinkProps) {
   return (
-    <Link href={href} className="group block">
-      <Card className="h-full transition-colors hover:border-primary/30">
-        <CardContent className="flex items-start gap-4 p-5">
-          <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-            <Icon className="size-4" />
-          </div>
-          <div className="flex-1 space-y-1">
-            <div className="flex items-center justify-between">
-              <p className="text-sm font-medium">{title}</p>
-              <ArrowRight className="size-3.5 text-muted-foreground opacity-0 transition-all group-hover:translate-x-0.5 group-hover:opacity-100" />
-            </div>
-            <p className="text-xs text-muted-foreground leading-relaxed">{description}</p>
-          </div>
-        </CardContent>
-      </Card>
+    <Link href={href} className="group flex items-center justify-between py-3">
+      <div className="flex items-center gap-3">
+        <Icon className="size-4 text-muted-foreground" />
+        <div>
+          <p className="text-sm font-medium leading-none">{title}</p>
+          <p className="mt-0.5 text-xs text-muted-foreground">{description}</p>
+        </div>
+      </div>
+      <ChevronRight className="size-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
     </Link>
   );
 }
@@ -134,56 +120,43 @@ function QuickAction({ title, description, href, icon: Icon }: QuickActionProps)
 // ---------- Dashboard page (Server Component) ----------
 export default function DashboardPage() {
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Overview of your system at a glance.
-        </p>
-      </div>
-
-      {/* Metric cards — each streams independently via Suspense */}
+    <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <Suspense fallback={<MetricCard title="Sanctions Sources" value={0} description="Active screening databases" icon={Shield} loading />}>
+        <Suspense fallback={<MetricCard title="Sanctions Sources" value="…" loading />}>
           <SourcesMetric />
         </Suspense>
-
-        <Suspense fallback={<MetricCard title="System Health" value="..." description="Backend API status" icon={Activity} loading href="/health" />}>
+        <Suspense fallback={<MetricCard title="System Health" value="…" loading href="/health" />}>
           <HealthMetric />
         </Suspense>
-
-        <Suspense fallback={<MetricCard title="Content" value="..." description="Loading..." icon={FileText} loading href="/contents" />}>
+        <Suspense fallback={<MetricCard title="Content" value="…" loading href="/contents" />}>
           <ContentMetric />
         </Suspense>
       </div>
 
-      {/* Quick actions */}
-      <div>
-        <h2 className="mb-3 text-sm font-medium text-muted-foreground">
-          Quick Actions
-        </h2>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          <QuickAction
+      <Card>
+        <CardContent className="px-4 py-2">
+          <NavLink
             title="Manage Content"
             description="Create, edit, and publish articles and pages."
             href="/contents"
             icon={PenLine}
           />
-          <QuickAction
-            title="View Authors"
+          <Separator />
+          <NavLink
+            title="Authors"
             description="Manage author profiles and linked content."
             href="/authors"
             icon={Users}
           />
-          <QuickAction
+          <Separator />
+          <NavLink
             title="System Health"
             description="Monitor backend services and infrastructure."
             href="/health"
             icon={HeartPulse}
           />
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

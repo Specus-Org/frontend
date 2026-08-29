@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { MoreHorizontal, Pencil, Plus, Trash2 } from 'lucide-react';
+import { MoreHorizontal, Pencil, Plus, Trash2, Users } from 'lucide-react';
 import { toast } from 'sonner';
 import useSWR from 'swr';
 import { Button } from '@specus/ui/components/button';
@@ -37,6 +37,7 @@ import {
 import type { CmsAuthor } from '@specus/api-client';
 import dynamic from 'next/dynamic';
 import { fetcher } from '@/lib/fetcher';
+import { EmptyState } from '@/components/empty-state';
 
 const AuthorDialog = dynamic(
   () => import('@/components/authors/author-dialog').then((m) => m.AuthorDialog),
@@ -120,19 +121,19 @@ export default function AuthorsPage() {
 
   return (
     <div className="flex flex-1 flex-col gap-6">
-      {/* Page header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Authors</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Manage author profiles for your content.</p>
-        </div>
-        <Button onClick={handleCreate} size="sm">
-          <Plus className="size-4" />
-          Add Author
-        </Button>
+      <div className="flex items-center justify-between">
+        <h1 className="text-lg font-semibold">Authors</h1>
+        <Button onClick={handleCreate} size="sm"><Plus className="size-4" />Add Author</Button>
       </div>
 
-      {/* Table */}
+      {!isLoading && authors.length === 0 ? (
+        <EmptyState
+          icon={Users}
+          title="No authors yet"
+          description="Create an author profile to assign to your content."
+          action={{ label: 'Add Author', onClick: handleCreate }}
+        />
+      ) : (
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -151,15 +152,6 @@ export default function AuthorsPage() {
               <TableRow>
                 <TableCell colSpan={5} className="h-24 text-center">
                   Loading...
-                </TableCell>
-              </TableRow>
-            ) : authors.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={5}
-                  className="h-24 text-center text-muted-foreground"
-                >
-                  No authors yet. Create one to get started.
                 </TableCell>
               </TableRow>
             ) : (
@@ -214,6 +206,7 @@ export default function AuthorsPage() {
           </TableBody>
         </Table>
       </div>
+      )}
 
       {/* Create / Edit dialog */}
       <AuthorDialog

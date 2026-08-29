@@ -171,16 +171,8 @@ export default function UploadsPage() {
   return (
     <div className="flex flex-1 flex-col gap-6">
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Uploads</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Manage images and documents for your content.
-          </p>
-        </div>
-        <Button onClick={() => setDialogOpen(true)}>
-          <Upload className="mr-2 size-4" />
-          Upload File
-        </Button>
+        <h1 className="text-lg font-semibold">Uploads</h1>
+        <Button onClick={() => setDialogOpen(true)}><Upload className="mr-2 size-4" />Upload File</Button>
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
