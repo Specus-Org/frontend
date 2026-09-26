@@ -14,10 +14,10 @@ interface CountryFlagProps {
 
 export function CountryFlag({ countryCode, authority, alt, size = 'md' }: CountryFlagProps) {
   const isInterpol = authority?.toLowerCase().includes('interpol');
-  let countryCodeSrc = countryCode.toLocaleLowerCase();
+  let countryCodeSrc = (countryCode ?? '').toLocaleLowerCase();
   const { width, height, fontSize, cdnHeight } = SIZE[size];
 
-  if (countryCode.toLocaleLowerCase() == 'intl') {
+  if (countryCodeSrc == 'intl') {
     countryCodeSrc = 'un';
   }
 
