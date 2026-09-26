@@ -594,6 +594,21 @@ export type SanctionsListSummary = {
     name: string;
 };
 
+export type ScreeningCountriesResponse = {
+    countries: Array<ScreeningCountry>;
+};
+
+export type ScreeningCountry = {
+    /**
+     * ISO 3166-1 alpha-2 code; use as a `countries` value on search
+     */
+    code: string;
+    /**
+     * Display name (falls back to the code when no name is recorded)
+     */
+    name: string;
+};
+
 export type ScreeningEntity = {
     caption: string;
     entity_type: 'person' | 'organization';
@@ -619,10 +634,10 @@ export type ScreeningSearchResponse = {
     items: Array<ScreeningSearchResult>;
     pagination: PaginationMeta;
     /**
-     * Indicates query specificity by token count. "broad" = single-token query — admission uses the fuzzy floor so edit-distance-1 matches (e.g., 1-character typos) are returned alongside exact matches. "specific" = multi-token query — admission requires strictly more than half of tokens to score, so results are high-precision.
+     * Indicates query specificity by token count, or `browse` when no `q` was given and results are a filter-only listing ordered by name. "broad" = single-token query — admission uses the fuzzy floor so edit-distance-1 matches (e.g., 1-character typos) are returned alongside exact matches. "specific" = multi-token query — admission requires strictly more than half of tokens to score, so results are high-precision.
      *
      */
-    query_type: 'broad' | 'specific';
+    query_type: 'broad' | 'specific' | 'browse';
 };
 
 export type ScreeningSearchResult = {
@@ -653,7 +668,7 @@ export type ScreeningSearchResult = {
      */
     sanctions_sources?: Array<SanctionsListSummary>;
     /**
-     * Raw BM25 score — approximates the count of exact token matches against the entity's name. Integer values indicate N exact-token matches (1.0 = one token matched, 2.0 = two tokens matched, etc.); 0.5 indicates a single fuzzy (edit-distance-1) match. Not normalized to [0, 1] — do not render as a confidence percentage. Typical range: 0.5 to tokenCount of the query.
+     * Raw BM25 score — approximates the count of exact token matches against the entity's name. Integer values indicate N exact-token matches (1.0 = one token matched, 2.0 = two tokens matched, etc.); 0.5 indicates a single fuzzy (edit-distance-1) match. Not normalized to [0, 1] — do not render as a confidence percentage. Typical range: 0.5 to tokenCount of the query. Always 0 when query_type is browse (no relevance ranking).
      *
      */
     score: number;
@@ -671,6 +686,21 @@ export type ScreeningSearchResult = {
 
 export type ScreeningSourcesResponse = {
     sources: Array<SanctionsList>;
+};
+
+export type ScreeningTopic = {
+    /**
+     * Classification code; use as a `topics` value on search
+     */
+    code: 'sanction' | 'pep' | 'blacklist' | 'case_law';
+    /**
+     * Display label
+     */
+    name: string;
+};
+
+export type ScreeningTopicsResponse = {
+    topics: Array<ScreeningTopic>;
 };
 
 export type AccountChangeEmailData = {
@@ -2356,6 +2386,22 @@ export type PublicGetUploadUrlResponses = {
 
 export type PublicGetUploadUrlResponse = PublicGetUploadUrlResponses[keyof PublicGetUploadUrlResponses];
 
+export type ListScreeningCountriesData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/screening/countries';
+};
+
+export type ListScreeningCountriesResponses = {
+    /**
+     * List of countries
+     */
+    200: ScreeningCountriesResponse;
+};
+
+export type ListScreeningCountriesResponse = ListScreeningCountriesResponses[keyof ListScreeningCountriesResponses];
+
 export type GetScreeningEntityData = {
     body?: never;
     path: {
@@ -2386,11 +2432,12 @@ export type GetScreeningEntityResponse = GetScreeningEntityResponses[keyof GetSc
 export type ScreeningSearchData = {
     body?: never;
     path?: never;
-    query: {
+    query?: {
         /**
-         * Name to search for
+         * Name to search for. Optional when at least one filter is set; a blank value counts as omitted.
+         *
          */
-        q: string;
+        q?: string;
         /**
          * Opaque cursor token for fetching the next page of results
          */
@@ -2407,6 +2454,11 @@ export type ScreeningSearchData = {
          * Filter by topics (repeated param)
          */
         topics?: Array<'sanction' | 'pep' | 'blacklist' | 'case_law'>;
+        /**
+         * Filter by the entity's country (repeated param): a person's nationality or an organization's jurisdiction, as an ISO 3166-1 alpha-2 code. Case-insensitive; matches the `nationality_code` returned on each result. Multiple values are OR-ed.
+         *
+         */
+        countries?: Array<string>;
         /**
          * Filter by sanctions list ID
          */
@@ -2452,6 +2504,22 @@ export type ListScreeningSourcesResponses = {
 };
 
 export type ListScreeningSourcesResponse = ListScreeningSourcesResponses[keyof ListScreeningSourcesResponses];
+
+export type ListScreeningTopicsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/screening/topics';
+};
+
+export type ListScreeningTopicsResponses = {
+    /**
+     * List of topics
+     */
+    200: ScreeningTopicsResponse;
+};
+
+export type ListScreeningTopicsResponse = ListScreeningTopicsResponses[keyof ListScreeningTopicsResponses];
 
 export type HealthLiveData = {
     body?: never;
