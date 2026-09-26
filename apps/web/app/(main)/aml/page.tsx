@@ -1,12 +1,18 @@
 'use client';
 
 import AmlSearchCard from '@/components/aml/aml-search-card';
+import {
+  type AmlSearchFilters,
+  buildAmlSearchUrl,
+  EMPTY_AML_SEARCH_FILTERS,
+} from '@/lib/aml-search-params';
 import { trackEvent } from '@/lib/analytics';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 export default function AMLPage(): React.ReactNode {
   const [query, setQuery] = useState('');
+  const [filters, setFilters] = useState<AmlSearchFilters>(EMPTY_AML_SEARCH_FILTERS);
   const router = useRouter();
 
   return (
@@ -19,14 +25,22 @@ export default function AMLPage(): React.ReactNode {
       </p>
 
       <AmlSearchCard
+        className="mx-auto mt-8 max-w-3xl sm:mt-10 md:mt-12"
+        placement="landing"
         query={query}
         onQueryChange={setQuery}
+        filters={filters}
+        onFiltersChange={setFilters}
         onSearch={() => {
           const trimmedQuery = query.trim();
-          if (trimmedQuery) {
-            trackEvent('aml_search_submit', { source: 'landing' });
-            router.push(`/aml/search?q=${encodeURIComponent(trimmedQuery)}`);
-          }
+          if (!trimmedQuery) return;
+
+          trackEvent('aml_search_submit', {
+            source: 'landing',
+            'topics-count': filters.topics.length,
+            country: filters.country,
+          });
+          router.push(buildAmlSearchUrl(trimmedQuery, filters));
         }}
       />
     </div>
