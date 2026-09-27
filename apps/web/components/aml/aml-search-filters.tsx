@@ -89,11 +89,13 @@ function FilterTrigger({ label, value, ...props }: FilterTriggerProps): React.Re
   return (
     <button
       type="button"
-      className="flex w-full min-w-0 cursor-pointer flex-col items-start rounded-md px-3 py-1 text-left transition-colors outline-none hover:bg-slate-200/60 focus-visible:ring-2 focus-visible:ring-ring data-[state=open]:bg-slate-200/60"
+      className="flex w-full min-w-0 cursor-pointer flex-col items-start rounded-md px-2.5 py-0.5 text-left transition-colors outline-none hover:bg-slate-200/60 focus-visible:ring-2 focus-visible:ring-ring data-[state=open]:bg-slate-200/60"
       {...props}
     >
-      <span className="text-muted-foreground text-xs font-medium sm:text-sm">{label}</span>
-      <span className="text-foreground w-full truncate text-sm sm:text-base" title={value}>
+      <span className="text-muted-foreground text-[11px] leading-4 font-medium sm:text-xs">
+        {label}
+      </span>
+      <span className="text-foreground w-full truncate text-xs sm:text-sm" title={value}>
         {value}
       </span>
     </button>
