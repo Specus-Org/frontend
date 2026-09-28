@@ -23,7 +23,7 @@ import {
   DropdownMenuTrigger,
 } from '@specus/ui/components/dropdown-menu';
 import { Popover, PopoverContent, PopoverTrigger } from '@specus/ui/components/popover';
-import { Check } from 'lucide-react';
+import { Check, ChevronDown } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { CountryFlag } from '@/components/aml/country-flag';
 import {
@@ -35,6 +35,8 @@ import {
 } from '@/lib/aml-search-params';
 
 type LoadStatus = 'loading' | 'ready' | 'error';
+
+type FilterVariant = 'bar' | 'chips';
 
 const FALLBACK_TOPICS: ScreeningTopic[] = TOPIC_CODES.map((code) => ({
   code,
@@ -80,12 +82,39 @@ function useFilterOptions() {
   return { topics, countries, countriesStatus };
 }
 
-interface FilterTriggerProps extends React.ComponentProps<'button'> {
+interface FilterTriggerProps extends Omit<React.ComponentProps<'button'>, 'value'> {
   label: string;
-  value: string;
+  /** Display text of the selection, or null when the filter is not set. */
+  selection: string | null;
+  variant: FilterVariant;
 }
 
-function FilterTrigger({ label, value, ...props }: FilterTriggerProps): React.ReactElement {
+function FilterTrigger({
+  label,
+  selection,
+  variant,
+  ...props
+}: FilterTriggerProps): React.ReactElement {
+  if (variant === 'chips') {
+    const text = selection ? `${label}: ${selection}` : label;
+    const stateClassName = selection
+      ? 'border-brand bg-brand/5 text-brand font-medium hover:bg-brand/10'
+      : 'text-foreground bg-white hover:bg-slate-50 data-[state=open]:bg-slate-50';
+
+    return (
+      <button
+        type="button"
+        title={text}
+        className={`inline-flex h-7 max-w-64 cursor-pointer items-center gap-1 rounded-full border px-2.5 text-xs transition-colors sm:h-8 sm:px-3 sm:text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring ${stateClassName}`}
+        {...props}
+      >
+        <span className="truncate">{text}</span>
+        <ChevronDown className="size-3.5 shrink-0 opacity-60 sm:size-4" />
+      </button>
+    );
+  }
+
+  const text = selection ?? 'All';
   return (
     <button
       type="button"
@@ -95,8 +124,8 @@ function FilterTrigger({ label, value, ...props }: FilterTriggerProps): React.Re
       <span className="text-muted-foreground text-[11px] leading-4 font-medium sm:text-xs">
         {label}
       </span>
-      <span className="text-foreground w-full truncate text-xs sm:text-sm" title={value}>
-        {value}
+      <span className="text-foreground w-full truncate text-xs sm:text-sm" title={text}>
+        {text}
       </span>
     </button>
   );
@@ -106,14 +135,20 @@ interface TopicFilterProps {
   options: ScreeningTopic[];
   selected: ScreeningTopicCode[];
   onChange: (topics: ScreeningTopicCode[]) => void;
+  variant: FilterVariant;
 }
 
-function TopicFilter({ options, selected, onChange }: TopicFilterProps): React.ReactElement {
+function TopicFilter({
+  options,
+  selected,
+  onChange,
+  variant,
+}: TopicFilterProps): React.ReactElement {
   const selectedSet = new Set(selected);
   const labels = new Map(options.map((topic) => [topic.code, topic.name]));
   const display =
     selected.length === 0
-      ? 'All'
+      ? null
       : selected.map((code) => labels.get(code) ?? TOPIC_FALLBACK_LABELS[code]).join(', ');
 
   const toggle = (code: ScreeningTopicCode, checked: boolean) => {
@@ -126,7 +161,7 @@ function TopicFilter({ options, selected, onChange }: TopicFilterProps): React.R
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <FilterTrigger label="Topics" value={display} />
+        <FilterTrigger label="Topics" selection={display} variant={variant} />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="w-56">
         {options.map((topic) => (
@@ -159,6 +194,7 @@ interface CountryFilterProps {
   status: LoadStatus;
   selected: string | null;
   onChange: (country: string | null) => void;
+  variant: FilterVariant;
 }
 
 function CountryFilter({
@@ -166,11 +202,12 @@ function CountryFilter({
   status,
   selected,
   onChange,
+  variant,
 }: CountryFilterProps): React.ReactElement {
   const [open, setOpen] = useState(false);
   const isSelected = (code: string) => selected?.toLowerCase() === code.toLowerCase();
   const selectedCountry = selected ? options.find((country) => isSelected(country.code)) : null;
-  const display = selected ? (selectedCountry?.name ?? selected.toUpperCase()) : 'All';
+  const display = selected ? (selectedCountry?.name ?? selected.toUpperCase()) : null;
 
   const select = (country: string | null) => {
     onChange(country);
@@ -180,7 +217,7 @@ function CountryFilter({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <FilterTrigger label="Country" value={display} />
+        <FilterTrigger label="Country" selection={display} variant={variant} />
       </PopoverTrigger>
       <PopoverContent align="start" className="w-72 p-0">
         <Command>
@@ -224,31 +261,50 @@ function CountryFilter({
 interface AmlSearchFilterBarProps {
   value: AmlSearchFilters;
   onChange: (value: AmlSearchFilters) => void;
+  /** `bar`: labelled columns inside the search card. `chips`: compact pills under the input. */
+  variant?: FilterVariant;
+  className?: string;
 }
 
 export function AmlSearchFilterBar({
   value,
   onChange,
+  variant = 'bar',
+  className = '',
 }: AmlSearchFilterBarProps): React.ReactElement {
   const { topics, countries, countriesStatus } = useFilterOptions();
 
+  const topicFilter = (
+    <TopicFilter
+      variant={variant}
+      options={topics}
+      selected={value.topics}
+      onChange={(nextTopics) => onChange({ ...value, topics: nextTopics })}
+    />
+  );
+  const countryFilter = (
+    <CountryFilter
+      variant={variant}
+      options={countries}
+      status={countriesStatus}
+      selected={value.country}
+      onChange={(country) => onChange({ ...value, country })}
+    />
+  );
+
+  if (variant === 'chips') {
+    return (
+      <div className={`flex flex-wrap items-center gap-2 ${className}`}>
+        {topicFilter}
+        {countryFilter}
+      </div>
+    );
+  }
+
   return (
-    <div className="grid grid-cols-2 p-1">
-      <div className="min-w-0 pr-1">
-        <TopicFilter
-          options={topics}
-          selected={value.topics}
-          onChange={(nextTopics) => onChange({ ...value, topics: nextTopics })}
-        />
-      </div>
-      <div className="min-w-0 border-l border-slate-200 pl-1">
-        <CountryFilter
-          options={countries}
-          status={countriesStatus}
-          selected={value.country}
-          onChange={(country) => onChange({ ...value, country })}
-        />
-      </div>
+    <div className={`grid grid-cols-2 p-1 ${className}`}>
+      <div className="min-w-0 pr-1">{topicFilter}</div>
+      <div className="min-w-0 border-l border-slate-200 pl-1">{countryFilter}</div>
     </div>
   );
 }
